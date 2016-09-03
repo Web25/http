@@ -13,7 +13,7 @@ public class TestApp {
         Http.server(8080)
                 .use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", (request, response) -> {
-                    response.entity("Hello World ${{time}}");
+                    response.entity("Hello World ${{iso_datetime}}");
                     response.header("X-Replace-Env", "true");
                     return true;
                 })
