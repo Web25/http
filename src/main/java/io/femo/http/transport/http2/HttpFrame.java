@@ -2,6 +2,8 @@ package io.femo.http.transport.http2;
 
 import io.femo.http.Constants;
 
+import java.io.IOException;
+
 /**
  * Class representing an HTTP/2.0 Frame as defined in RFC 7540, Section 4
  *
@@ -165,5 +167,14 @@ public class HttpFrame {
     public void setPayload(byte[] payload) {
         setLength(payload.length);
         this.payload = payload;
+    }
+
+    /**
+     * This method can be used by subclasses to construct the payload of this frame.
+     *
+     * It will be called shortly before the payload is sent over a connection and can be called multiple times
+     */
+    public void build() {
+
     }
 }

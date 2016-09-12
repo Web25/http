@@ -20,6 +20,7 @@ public class HttpFrameWriter {
     }
 
     public void write(HttpFrame httpFrame) throws IOException {
+        httpFrame.build();
         ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream(httpFrame.getLength() + Constants.Http20.FRAME_HEADER_LENGTH);
         outputBuffer.write(HttpUtil.toByte(httpFrame.getLength()), 1, 3);
         outputBuffer.write(HttpUtil.toByte(httpFrame.getType()), 1, 1);

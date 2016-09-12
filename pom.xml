@@ -200,6 +200,13 @@
             <version>1.7.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.twitter/hpack -->
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>hpack</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>
