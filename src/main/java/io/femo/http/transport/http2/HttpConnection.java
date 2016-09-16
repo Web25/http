@@ -1,19 +1,22 @@
 package io.femo.http.transport.http2;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import com.twitter.hpack.Decoder;
 import com.twitter.hpack.Encoder;
 import io.femo.http.Constants;
+import io.femo.http.drivers.server.HttpHandlerStack;
 import io.femo.http.transport.http2.frames.GoAwayFrame;
+import io.femo.http.transport.http2.frames.SettingsFrame;
+import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -31,7 +34,10 @@ public class HttpConnection {
     private AtomicReference<Decoder> headerCompressionDecoder;
     private AtomicReference<Encoder> headerCompressionEncoder;
 
-    private AtomicInteger lastClient = new AtomicInteger(0);
+    private AtomicInteger lastRemote = new AtomicInteger(0);
+    private final AtomicInteger nextStreamIdentifier;
+
+    private AtomicLong updateTime = new AtomicLong(-1);
 
     private State state;
 
@@ -41,8 +47,20 @@ public class HttpConnection {
 
     private final ConcurrentLinkedQueue<HttpFrame> frameQueue;
 
-    public HttpConnection(Socket socket) throws IOException {
-        this.localSettings = new HttpSettings();
+    public HttpConnection(Socket socket, HttpSettings httpSettings) throws IOException {
+        this.localSettings = httpSettings;
+        this.remoteSettings = new HttpSettings(HttpSettings.EndpointType.CLIENT);
+        if(httpSettings.getEndpointType() == HttpSettings.EndpointType.CLIENT) {
+            nextStreamIdentifier = new AtomicInteger(2);
+        } else if (httpSettings.getEndpointType() == HttpSettings.EndpointType.SERVER) {
+            nextStreamIdentifier = new AtomicInteger(1);
+        } else {
+            if(httpSettings.isInitiator()) {
+                nextStreamIdentifier = new AtomicInteger(2);
+            } else {
+                nextStreamIdentifier = new AtomicInteger(1);
+            }
+        }
         this.frameWriter = new HttpFrameWriter(socket.getOutputStream(), this);
         this.frameReader = new HttpFrameReader(socket.getInputStream(), this);
         this.httpStreams = new TreeMap<>();
@@ -53,7 +71,14 @@ public class HttpConnection {
     }
 
     public synchronized void enqueueFrame(HttpFrame frame, HttpStream httpStream) throws IOException {
-        if(frame.getType() == Constants.Http20.FrameType.DATA) {
+        if(frame.getType() == Constants.Http20.FrameType.SETTINGS) {
+            if(frame.getFlags() == 0) {
+                updateTime.set(System.currentTimeMillis());
+            }
+        }
+        if(frame.getStreamIdentifier() == 0) {
+            frameWriter.write(frame);
+        } else if(frame.getType() == Constants.Http20.FrameType.DATA) {
             if(httpStream.getFlowControlWindow().checkOutgoing(frame.getLength())) {
                 httpStream.getFlowControlWindow().decreaseRemote(frame.getLength());
                 frameWriter.write(frame);
@@ -66,6 +91,10 @@ public class HttpConnection {
 
     }
 
+    public HttpStream openNewStream() {
+        return new HttpStream(this, nextStreamIdentifier.getAndAdd(2));
+    }
+
     public HttpSettings getRemoteSettings() {
         return remoteSettings;
     }
@@ -74,41 +103,131 @@ public class HttpConnection {
         return localSettings;
     }
 
+    public void handler(HttpHandlerStack httpHandlerStack) {
+
+    }
+
+    public void ping() throws IOException {
+        HttpFrame ping = new HttpFrame(remoteSettings);
+        ping.setType(Constants.Http20.FrameType.PING);
+        ping.setPayload(RandomUtils.nextBytes(8));
+        enqueueFrame(ping, null);
+    }
+
+    public void handle() {
+        log.debug("Starting handling of connection");
+        HttpFrame frame;
+        try {
+            frame = frameReader.read();
+        } catch (IOException e) {
+            log.warn("Error while reading handshake setting frame!");
+            return;
+        }
+        if(frame.getType() != Constants.Http20.FrameType.SETTINGS) {
+            log.warn("First frame wasn't a settings frame. Protocol violation");
+            return;
+        }
+        try {
+            remoteSettings.apply(SettingsFrame.from(frame));
+            SettingsFrame settingsFrame = new SettingsFrame(remoteSettings);
+            settingsFrame.setAck(true);
+            enqueueFrame(settingsFrame, null);
+        } catch (Http20Exception e) {
+            try {
+                terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            } catch (IOException e1) {
+                log.error("Error during closing of connection", e);
+            }
+            return;
+        } catch (IOException e) {
+            log.error("Error while sending settings ack");
+            return;
+        }
+        boolean run = true;
+        while (run) {
+            try {
+                frame = frameReader.read();
+                synchronized (httpStreams) {
+                    if (frame.getLength() > localSettings.getMaxFrameSize()) {
+                        log.debug("Reveiced invalidly sized frame");
+                        if (frame.getType() == Constants.Http20.FrameType.HEADERS ||
+                                frame.getType() == Constants.Http20.FrameType.PUSH_PROMISE ||
+                                frame.getType() == Constants.Http20.FrameType.CONTINUATION ||
+                                frame.getType() == Constants.Http20.FrameType.SETTINGS ||
+                                frame.getStreamIdentifier() == 0) {
+                            terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                        } else {
+                            HttpFrame rstFrame = new HttpFrame(remoteSettings);
+                            rstFrame.setType(Constants.Http20.FrameType.RST_STREAM);
+                            rstFrame.setStreamIdentifier(frame.getStreamIdentifier());
+                            rstFrame.setPayload(HttpUtil.toByte(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR));
+                            enqueueFrame(rstFrame, httpStreams.get(frame.getStreamIdentifier()));
+                        }
+                    } else if (frame.getStreamIdentifier() == 0) {
+                        if (frame.getType() == Constants.Http20.FrameType.SETTINGS) {
+                            SettingsFrame settingsFrame = SettingsFrame.from(frame);
+                            if (settingsFrame.isAck() && settingsFrame.getLength() != 0) {
+                                terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                            } else if (settingsFrame.isAck()) {
+                                long diff = System.currentTimeMillis() - updateTime.getAndSet(-1);
+                                if (diff > 100) {
+                                    log.warn("Settings ack took some time...");
+                                }
+                            } else {
+                                remoteSettings.apply(settingsFrame);
+                                SettingsFrame sFrame = new SettingsFrame(remoteSettings);
+                                sFrame.setAck(true);
+                                enqueueFrame(sFrame, null);
+                            }
+                        } else if (frame.getType() == Constants.Http20.FrameType.WINDOW_UPDATE) {
+                            flowControlWindow.incremetRemote(HttpUtil.toInt(frame.getPayload()));
+                        } else if (frame.getType() == Constants.Http20.FrameType.PING) {
+                            if(frame.getFlags() == 1) {
+                                log.debug("Ping acknowledged.");
+                            } else {
+                                if(frame.getLength() != 8) {
+                                    terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                                    break;
+                                }
+                                HttpFrame pong = new HttpFrame(remoteSettings);
+                                pong.setType(Constants.Http20.FrameType.PING);
+                                pong.setPayload(frame.getPayload());
+                                pong.setFlags((short) 1);
+                                enqueueFrame(pong, null);
+                            }
+                        } else {
+                            terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        }
+                    } else if (httpStreams.containsKey(frame.getStreamIdentifier())) {
+                        httpStreams.get(frame.getStreamIdentifier()).handleFrame(frame);
+                    } else {
+                        if (HttpConnection.this.state == State.CLOSE_PENDING) {
+                            log.info("Connection is shutting down, dropping new incoming stream with id " + frame.getStreamIdentifier());
+                        } else if (frame.getType() == Constants.Http20.FrameType.RST_STREAM) {
+                            terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR, "Protocol violation! A stream cannot be closed in IDLE state. Shutting down connection!");
+                        } else {
+                            HttpStream httpStream = new HttpStream(this, frame.getStreamIdentifier());
+                            lastRemote.set(frame.getStreamIdentifier());
+                            httpStreams.put(frame.getStreamIdentifier(), httpStream);
+                            httpStream.handleFrame(frame);
+                        }
+                    }
+                }
+            } catch (SocketException e) {
+                log.debug("Socket closed");
+                run = false;
+            } catch (IOException e) {
+                log.warn("Error during connection handling", e);
+                run = false;
+            }
+        }
+    }
+
     public class HttpConnectionReceiver implements Runnable {
 
         @Override
         public void run() {
-            while (true) {
-                try {
-                    HttpFrame frame = frameReader.read();
-                    synchronized (httpStreams) {
-                        if(frame.getStreamIdentifier() == 0) {
-                            if(frame.getType() == Constants.Http20.FrameType.SETTINGS) {
-
-                            } else if(frame.getType() == Constants.Http20.FrameType.WINDOW_UPDATE) {
-                                flowControlWindow.incremetRemote(HttpUtil.toInt(frame.getPayload()));
-                            } else {
-                                terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                            }
-                        } else if(httpStreams.containsKey(frame.getStreamIdentifier())) {
-                            httpStreams.get(frame.getStreamIdentifier()).handleFrame(frame);
-                        } else {
-                            if(HttpConnection.this.state == State.CLOSE_PENDING) {
-                                log.info("Connection is shutting down, dropping new incoming stream with id " + frame.getStreamIdentifier());
-                            } else if(frame.getType() == Constants.Http20.FrameType.RST_STREAM) {
-                                terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR, "Protocol violation! A stream cannot be closed in IDLE state. Shutting down connection!");
-                            } else {
-                                HttpStream httpStream = new HttpStream(HttpConnection.this, frame.getStreamIdentifier());
-                                lastClient.set(frame.getStreamIdentifier());
-                                httpStreams.put(frame.getStreamIdentifier(), httpStream);
-                                httpStream.handleFrame(frame);
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            handle();
         }
     }
 
@@ -123,7 +242,7 @@ public class HttpConnection {
     public void terminate(int errorCode, byte[] debugData) throws IOException {
         GoAwayFrame goAwayFrame = new GoAwayFrame(remoteSettings);
         goAwayFrame.setErrorCode(errorCode);
-        goAwayFrame.setLastStreamId(lastClient.get());
+        goAwayFrame.setLastStreamId(lastRemote.get());
         goAwayFrame.setDebugData(debugData);
         frameWriter.write(goAwayFrame);
         this.state = State.CLOSE_PENDING;

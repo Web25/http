@@ -55,7 +55,14 @@ public class HttpStream {
         if(httpFrame.getStreamIdentifier() != streamIdentifier) {
             throw new HttpFrameException("Frame was delivered to wrong stream!");
         }
-
+        if(httpFrame.getType() == Constants.Http20.FrameType.PING) {
+            try {
+                httpConnection.terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            } catch (IOException e) {
+                log.warn("Could not terminate connection properly", e);
+                return;
+            }
+        }
         if(httpFrame.getType() == Constants.Http20.FrameType.GOAWAY) {
             try {
                 httpConnection.terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);

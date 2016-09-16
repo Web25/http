@@ -1,5 +1,8 @@
 package io.femo.http.transport.http2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -7,6 +10,8 @@ import java.io.InputStream;
  * Created by felix on 9/3/16.
  */
 public class HttpFrameReader {
+
+    private static final Logger log = LoggerFactory.getLogger("HTTP/2.0");
 
     private InputStream inputStream;
     private HttpConnection httpConnection;
@@ -32,6 +37,7 @@ public class HttpFrameReader {
         buffer = new byte[httpFrame.getLength()];
         inputStream.read(buffer, 0, buffer.length);
         httpFrame.setPayload(buffer);
+        log.debug("Incoming frame: " + httpFrame.toString());
         return httpFrame;
     }
 }

@@ -121,7 +121,7 @@ public class Http11Transport implements io.femo.http.HttpTransport {
         if(version.equals("HTTP/1.1")) {
             httpRequest.version(HttpVersion.HTTP_11);
         } else if (version.equals("HTTP/1.0")) {
-            httpRequest.version(HttpVersion.HTTP_1);
+            httpRequest.version(HttpVersion.HTTP_10);
         }
     }
 

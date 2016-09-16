@@ -3,6 +3,7 @@ package io.femo.http.transport.http2;
 import io.femo.http.Constants;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Class representing an HTTP/2.0 Frame as defined in RFC 7540, Section 4
@@ -176,5 +177,21 @@ public class HttpFrame {
      */
     public void build() {
 
+    }
+
+    public HttpSettings getSettings() {
+        return settings;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpFrame{" +
+                "settings=" + settings +
+                ", length=" + length +
+                ", type=" + Constants.findFrameTypeName(type) +
+                ", flags=" + flags +
+                ", streamIdentifier=" + streamIdentifier +
+                ", payload=" + Arrays.toString(payload) +
+                '}';
     }
 }

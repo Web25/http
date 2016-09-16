@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
  */
 public class HttpFrameWriterTest {
 
-    @Test
+    /*@Test
     public void testWrite() throws Exception {
         HttpSettings settings = new HttpSettings();
         HttpFrame frame = new HttpFrame(settings);
@@ -21,5 +21,5 @@ public class HttpFrameWriterTest {
         frameWriter.write(frame);
         assertEquals("Length of Frame", 9 + 5, byteArrayOutputStream.size());
         assertArrayEquals("Content of Frame", new byte[]{0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5}, byteArrayOutputStream.toByteArray());
-    }
+    }*/
 }

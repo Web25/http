@@ -7,6 +7,7 @@ public interface HttpServer extends HttpRoutable<HttpServer> {
 
     HttpServer start();
     HttpServer stop();
+    HttpsServer secure();
 
     boolean ready();
 }

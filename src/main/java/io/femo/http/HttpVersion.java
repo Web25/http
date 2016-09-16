@@ -5,5 +5,5 @@ package io.femo.http;
  */
 public enum HttpVersion {
 
-    HTTP_1, HTTP_11, HTTP_2
+    HTTP_10, HTTP_11, HTTP_20
 }

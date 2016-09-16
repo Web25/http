@@ -5,6 +5,8 @@ import io.femo.http.drivers.server.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -20,12 +22,12 @@ public class DefaultHttpServer implements HttpServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("HTTP");
 
-    private int port;
-    private boolean ssl;
+    protected int port;
+    protected boolean ssl;
 
-    private HttpHandlerStack httpHandlerStack;
+    protected HttpHandlerStack httpHandlerStack;
 
-    private HttpServerThread serverThread;
+    protected HttpServerThread serverThread;
 
     public DefaultHttpServer(int port, boolean ssl) {
         this.port = port;
@@ -41,7 +43,8 @@ public class DefaultHttpServer implements HttpServer {
             response.entity("Could not find resource at " + request.method().toUpperCase() + " " + request.path());
             return true;
         });
-        this.serverThread = new HttpServerThread(httpHandlerStack);
+        if(serverThread == null)
+            this.serverThread = new HttpServerThread(httpHandlerStack);
         serverThread.setPort(port);
         serverThread.start();
         LOGGER.info("Started HTTP Server on port {}", port);
@@ -52,6 +55,14 @@ public class DefaultHttpServer implements HttpServer {
     public HttpServer stop() {
         this.serverThread.interrupt();
         return this;
+    }
+
+    @Override
+    public HttpsServer secure() {
+        if(this instanceof HttpsServer) {
+            return (HttpsServer) this;
+        }
+        return new DefaultHttpsServer(this);
     }
 
     @Override

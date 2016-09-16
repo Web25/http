@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class HttpFrameReaderTest {
 
 
-    @Test
+    /*@Test
     public void testRead() throws Exception {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[]{0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5});
         HttpSettings httpSettings = new HttpSettings();
@@ -23,5 +23,5 @@ public class HttpFrameReaderTest {
         assertEquals(0, frame.getType());
         assertEquals(0, frame.getStreamIdentifier());
         assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, frame.getPayload());
-    }
+    }*/
 }

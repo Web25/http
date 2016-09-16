@@ -1,5 +1,6 @@
 package io.femo.http.transport.http2.frames;
 
+import io.femo.http.Constants;
 import io.femo.http.transport.http2.HttpFrame;
 import io.femo.http.transport.http2.HttpSettings;
 import io.femo.http.transport.http2.HttpUtil;
@@ -24,7 +25,7 @@ public class GoAwayFrame extends HttpFrame {
      */
     public GoAwayFrame(HttpSettings settings) {
         super(settings);
-
+        setType(Constants.Http20.FrameType.GOAWAY);
     }
 
     public void setErrorCode(int errorCode) {

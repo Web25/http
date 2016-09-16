@@ -23,6 +23,10 @@ public class DefaultDriver extends HttpDriver {
 
     @Override
     public HttpServer server(int port, boolean ssl) {
-        return new DefaultHttpServer(port, ssl);
+        if(ssl) {
+            return new DefaultHttpsServer(port);
+        } else {
+            return new DefaultHttpServer(port, ssl);
+        }
     }
 }

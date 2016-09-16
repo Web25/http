@@ -1,18 +1,12 @@
 package io.femo.http.drivers.server;
 
-import io.femo.http.HttpRequest;
-import io.femo.http.HttpTransport;
-import io.femo.http.drivers.DefaultHttpResponse;
-import io.femo.http.helper.HttpHelper;
-import io.femo.http.helper.HttpSocketOptions;
+import io.femo.http.HttpVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.*;
 
@@ -59,7 +53,7 @@ public class HttpServerThread extends Thread {
             }
             try {
                 Socket socket = serverSocket.accept();
-                futures.add(executorService.submit(new SocketHandler(socket)));
+                futures.add(executorService.submit(new SocketHandlerRunnable(socket)));
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout");
             } catch (IOException e) {
@@ -99,62 +93,29 @@ public class HttpServerThread extends Thread {
         this.port = port;
     }
 
-    private class SocketHandler implements Runnable {
+    private class SocketHandlerRunnable implements Runnable {
 
         private Socket socket;
+        private HttpVersion httpVersion;
+        private SocketHandler socketHandler;
 
-        private SocketHandler(Socket socket) {
+        private SocketHandlerRunnable(Socket socket) {
+            this(socket, HttpVersion.HTTP_11);
+        }
+
+        private SocketHandlerRunnable(Socket socket, HttpVersion httpVersion) {
             this.socket = socket;
+            this.httpVersion = httpVersion;
         }
 
         @Override
         public void run() {
-            boolean run = true;
-            try {
-                socket.setSoTimeout(CONNECTION_TIMEOUT);
-            } catch (SocketException e) {
-                log.warn("Error while setting timeout!", e);
+            if(httpVersion == HttpVersion.HTTP_11) {
+                socketHandler = new Http11SocketHandler(httpHandlerStack);
+            } else if (httpVersion == HttpVersion.HTTP_20) {
+                socketHandler = new Http20SocketHandler(httpHandlerStack);
             }
-            while (run) {
-                try {
-                    run = false;
-                    HttpHelper.get().add(new HttpSocketOptions());
-                    DefaultHttpResponse response = new DefaultHttpResponse();
-                    HttpRequest httpRequest = HttpTransport.def().readRequest(socket.getInputStream());
-                    long start = System.currentTimeMillis();
-                    HttpHelper.remote(socket.getRemoteSocketAddress());
-                    HttpHelper.request(httpRequest);
-                    HttpHelper.response(response);
-                    HttpHelper.get().add(socket);
-                    httpHandlerStack.handle(httpRequest, response);
-                    if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.header("Connection").value().equals("keep-alive")) {
-                        response.header("Connection", "keep-alive");
-                        run = true;
-                    }
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    response.print(byteArrayOutputStream);
-                    log.debug("Writing {} bytes to {}", byteArrayOutputStream.size(), socket.getRemoteSocketAddress().toString());
-                    byteArrayOutputStream.writeTo(socket.getOutputStream());
-                    socket.getOutputStream().flush();
-                    HttpSocketOptions httpSocketOptions = HttpHelper.get().getFirst(HttpSocketOptions.class).get();
-                    if (httpSocketOptions.isClose())
-                        socket.close();
-                    if (httpSocketOptions.hasHandledCallback()) {
-                        httpSocketOptions.callHandledCallback();
-                    }
-                    log.info("Took {} ms to handle request", (System.currentTimeMillis() - start));
-                    HttpHelper.get().reset();
-                } catch (SocketTimeoutException e) {
-                    log.debug("Connection timed out with " + socket.getRemoteSocketAddress().toString());
-                    try {
-                        socket.close();
-                    } catch (IOException e1) {
-                        log.warn("Could not close socket", e1);
-                    }
-                } catch (IOException e) {
-                    log.warn("Socket Error", e);
-                }
-            }
+            socketHandler.handle(socket);
         }
     }
 }
