@@ -183,11 +183,14 @@ public class HttpFrame {
         return settings;
     }
 
+    public boolean hasEndStreamFlag() {
+        return getType() == Constants.Http20.FrameType.HEADERS || getType() == Constants.Http20.FrameType.DATA;
+    }
+
     @Override
     public String toString() {
         return "HttpFrame{" +
-                "settings=" + settings +
-                ", length=" + length +
+                "length=" + length +
                 ", type=" + Constants.findFrameTypeName(type) +
                 ", flags=" + flags +
                 ", streamIdentifier=" + streamIdentifier +

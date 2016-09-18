@@ -107,6 +107,10 @@ public class HttpConnection {
 
     }
 
+    public Decoder getHpackDecoder() {
+        return headerCompressionDecoder.get();
+    }
+
     public void ping() throws IOException {
         HttpFrame ping = new HttpFrame(remoteSettings);
         ping.setType(Constants.Http20.FrameType.PING);
@@ -133,16 +137,14 @@ public class HttpConnection {
             settingsFrame.setAck(true);
             enqueueFrame(settingsFrame, null);
         } catch (Http20Exception e) {
-            try {
-                terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-            } catch (IOException e1) {
-                log.error("Error during closing of connection", e);
-            }
+            terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
             return;
         } catch (IOException e) {
             log.error("Error while sending settings ack");
             return;
         }
+        this.headerCompressionDecoder = new AtomicReference<>(new Decoder(localSettings.getMaxHeaderListSize(), localSettings.getHeaderTableSize()));
+        this.headerCompressionEncoder = new AtomicReference<>(new Encoder(localSettings.getHeaderTableSize()));
         boolean run = true;
         while (run) {
             try {
@@ -165,8 +167,11 @@ public class HttpConnection {
                         }
                     } else if (frame.getStreamIdentifier() == 0) {
                         if (frame.getType() == Constants.Http20.FrameType.SETTINGS) {
+                            if(frame.getLength() % 6 != 0) {
+                                terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                            }
                             SettingsFrame settingsFrame = SettingsFrame.from(frame);
-                            if (settingsFrame.isAck() && settingsFrame.getLength() != 0) {
+                            if (settingsFrame.isAck() && frame.getLength() != 0) {
                                 terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
                             } else if (settingsFrame.isAck()) {
                                 long diff = System.currentTimeMillis() - updateTime.getAndSet(-1);
@@ -174,7 +179,12 @@ public class HttpConnection {
                                     log.warn("Settings ack took some time...");
                                 }
                             } else {
-                                remoteSettings.apply(settingsFrame);
+                                try {
+                                    remoteSettings.apply(settingsFrame);
+                                } catch (Http20Exception e) {
+                                    log.warn("Invalid settings", e);
+                                    terminate(e.getErrorCode());
+                                }
                                 SettingsFrame sFrame = new SettingsFrame(remoteSettings);
                                 sFrame.setAck(true);
                                 enqueueFrame(sFrame, null);
@@ -197,6 +207,7 @@ public class HttpConnection {
                             }
                         } else {
                             terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                            break;
                         }
                     } else if (httpStreams.containsKey(frame.getStreamIdentifier())) {
                         httpStreams.get(frame.getStreamIdentifier()).handleFrame(frame);
@@ -205,7 +216,16 @@ public class HttpConnection {
                             log.info("Connection is shutting down, dropping new incoming stream with id " + frame.getStreamIdentifier());
                         } else if (frame.getType() == Constants.Http20.FrameType.RST_STREAM) {
                             terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR, "Protocol violation! A stream cannot be closed in IDLE state. Shutting down connection!");
+                        } else if (frame.getType() == Constants.Http20.FrameType.DATA ||
+                                frame.getType() == Constants.Http20.FrameType.WINDOW_UPDATE ||
+                                frame.getType() == Constants.Http20.FrameType.CONTINUATION) {
+                            terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
                         } else {
+                            if(remoteSettings.getEndpointType() == HttpSettings.EndpointType.CLIENT || remoteSettings.isInitiator()) {
+                                if(frame.getStreamIdentifier() % 2 == 0) {
+                                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                }
+                            }
                             HttpStream httpStream = new HttpStream(this, frame.getStreamIdentifier());
                             lastRemote.set(frame.getStreamIdentifier());
                             httpStreams.put(frame.getStreamIdentifier(), httpStream);
@@ -220,6 +240,9 @@ public class HttpConnection {
                 log.warn("Error during connection handling", e);
                 run = false;
             }
+            if(state == State.CLOSE || state == State.FORCE_CLOSED) {
+                run = false;
+            }
         }
     }
 
@@ -231,24 +254,29 @@ public class HttpConnection {
         }
     }
 
-    public void terminate(int errorCode) throws IOException {
+    public void terminate(int errorCode) {
         terminate(errorCode, (byte[]) null);
     }
 
-    public void terminate(int errorCode, String debugData) throws IOException {
+    public void terminate(int errorCode, String debugData) {
         terminate(errorCode, debugData.getBytes());
     }
 
-    public void terminate(int errorCode, byte[] debugData) throws IOException {
+    public void terminate(int errorCode, byte[] debugData) {
         GoAwayFrame goAwayFrame = new GoAwayFrame(remoteSettings);
         goAwayFrame.setErrorCode(errorCode);
         goAwayFrame.setLastStreamId(lastRemote.get());
         goAwayFrame.setDebugData(debugData);
-        frameWriter.write(goAwayFrame);
+        try {
+            frameWriter.write(goAwayFrame);
+        } catch (IOException e) {
+            log.warn("Could not write GOAWAY frame");
+            this.state = State.FORCE_CLOSED;
+        }
         this.state = State.CLOSE_PENDING;
     }
 
     public enum State {
-        ACTIVE, CLOSE_PENDING, CLOSE
+        ACTIVE, CLOSE_PENDING, CLOSE, FORCE_CLOSED
     }
 }

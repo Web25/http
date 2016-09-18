@@ -39,7 +39,6 @@ public class HttpsServerThread extends HttpServerThread {
         super(httpHandlerStack);
         this.httpHandlerStack = httpHandlerStack;
         this.sslContext = sslContext;
-        ALPN.debug = true;
         setName("HTTPS-" + port);
     }
 

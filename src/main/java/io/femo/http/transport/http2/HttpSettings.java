@@ -49,6 +49,50 @@ public class HttpSettings {
         this.maxFrameSize = maxFrameSize;
     }
 
+    public static Logger getLog() {
+        return log;
+    }
+
+    public int getHeaderTableSize() {
+        return headerTableSize;
+    }
+
+    public void setHeaderTableSize(int headerTableSize) {
+        this.headerTableSize = headerTableSize;
+    }
+
+    public boolean isEnablePush() {
+        return enablePush;
+    }
+
+    public void setEnablePush(boolean enablePush) {
+        this.enablePush = enablePush;
+    }
+
+    public int getMaxConcurrentStreams() {
+        return maxConcurrentStreams;
+    }
+
+    public void setMaxConcurrentStreams(int maxConcurrentStreams) {
+        this.maxConcurrentStreams = maxConcurrentStreams;
+    }
+
+    public int getInitialWindowSize() {
+        return initialWindowSize;
+    }
+
+    public void setInitialWindowSize(int initialWindowSize) {
+        this.initialWindowSize = initialWindowSize;
+    }
+
+    public int getMaxHeaderListSize() {
+        return maxHeaderListSize;
+    }
+
+    public void setMaxHeaderListSize(int maxHeaderListSize) {
+        this.maxHeaderListSize = maxHeaderListSize;
+    }
+
     public void apply(SettingsFrame frame) {
         frame.forEach(s -> {
             log.debug("Updating " + Constants.findSettingName(s.getIdentifier()) + " to " + s.getValue());
@@ -73,7 +117,7 @@ public class HttpSettings {
                 }
                 case Constants.Http20.SettingIdentifiers.SETTINGS_INITIAL_WINDOW_SIZE: {
                     if(s.getValue() < 0) {
-                        throw new Http20Exception("Invalid value for setting initial window size");
+                        throw new Http20Exception("Invalid value for setting initial window size", Constants.Http20.ErrorCodes.FLOW_CONTROL_ERROR);
                     }
                     this.initialWindowSize = s.getValue();
                     break;
@@ -106,5 +150,19 @@ public class HttpSettings {
          * responses and push requests.
          */
         PEER
+    }
+
+    @Override
+    public String toString() {
+        return "HttpSettings{" +
+                "headerTableSize=" + headerTableSize +
+                ", enablePush=" + enablePush +
+                ", maxConcurrentStreams=" + maxConcurrentStreams +
+                ", initialWindowSize=" + initialWindowSize +
+                ", maxFrameSize=" + maxFrameSize +
+                ", maxHeaderListSize=" + maxHeaderListSize +
+                ", endpointType=" + endpointType +
+                ", initiator=" + initiator +
+                '}';
     }
 }

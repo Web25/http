@@ -75,3 +75,6 @@ crashlytics-build.properties
 *.html
 
 *.keystore
+/test-result
+
+test-result.*
