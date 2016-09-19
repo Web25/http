@@ -66,7 +66,7 @@ public class DefaultHttpRequest extends HttpRequest {
 
     @Override
     public HttpRequest header(String name, String value) {
-        headers.put(name, new HttpHeader(name, value));
+        headers.put(name.toLowerCase(), new HttpHeader(name, value));
         return this;
     }
 
@@ -315,12 +315,12 @@ public class DefaultHttpRequest extends HttpRequest {
 
     @Override
     public HttpHeader header(String name) {
-        return headers.get(name);
+        return headers.get(name.toLowerCase());
     }
 
     @Override
     public boolean hasHeader(String name) {
-        return headers.containsKey(name);
+        return headers.containsKey(name.toLowerCase());
     }
 
     protected void response(HttpResponse response) {

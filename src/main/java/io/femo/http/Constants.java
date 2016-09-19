@@ -112,6 +112,9 @@ public final class Constants {
             case Http20.FrameType.PING: {
                 return "PING";
             }
+            case Http20.FrameType.PUSH_PROMISE: {
+                return "PUSH_PROMISE";
+            }
             default:
                 return "UNKNOWN [" + frameType + "]";
         }

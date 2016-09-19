@@ -43,4 +43,6 @@ public abstract class HttpResponse {
     public abstract String statusLine();
 
     public abstract Collection<HttpHeader> headers();
+
+    public abstract HttpResponse push(String method, String path);
 }

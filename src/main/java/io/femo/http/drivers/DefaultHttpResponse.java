@@ -114,6 +114,11 @@ public class DefaultHttpResponse extends HttpResponse {
     }
 
     @Override
+    public HttpResponse push(String method, String path) {
+        return this;
+    }
+
+    @Override
     public StatusCode status() {
         return statusCode;
     }

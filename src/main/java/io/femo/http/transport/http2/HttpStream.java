@@ -8,8 +8,11 @@ import io.femo.http.HttpResponse;
 import io.femo.http.drivers.DefaultHttpRequest;
 import io.femo.http.drivers.DefaultHttpResponse;
 import io.femo.http.drivers.IncomingHttpRequest;
+import io.femo.http.drivers.push.PushRequest;
+import io.femo.http.drivers.push.PushableHttpResponse;
 import io.femo.http.transport.http2.frames.DataFrame;
 import io.femo.http.transport.http2.frames.HeadersFrame;
+import io.femo.http.transport.http2.frames.PushPromiseFrame;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by felix on 9/3/16.
@@ -33,7 +37,7 @@ public class HttpStream {
     private boolean endStream;
 
     private IncomingHttpRequest httpRequest;
-    private HttpResponse httpResponse;
+    private PushableHttpResponse httpResponse;
 
     private State state;
 
@@ -276,44 +280,83 @@ public class HttpStream {
     }
 
     private void handle() {
-        this.httpResponse = new DefaultHttpResponse();
+        this.httpResponse = new PushableHttpResponse(httpRequest);
         httpConnection.deferHandling(httpRequest, httpResponse, this);
     }
 
     public void notfiyHandlingFinished() {
         Encoder encoder = httpConnection.getHpackEncoder();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            encoder.encodeHeader(byteArrayOutputStream, ":status".getBytes(), String.valueOf(httpResponse.statusCode()).getBytes(), false);
-            httpResponse.headers().forEach(httpHeader -> {
+        synchronized (encoder) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            try {
+                encoder.encodeHeader(byteArrayOutputStream, ":status".getBytes(), String.valueOf(httpResponse.statusCode()).getBytes(), false);
+                httpResponse.headers().forEach(httpHeader -> {
+                    try {
+                        encoder.encodeHeader(byteArrayOutputStream, httpHeader.name().toLowerCase().getBytes(), httpHeader.value().getBytes(), false);
+                    } catch (IOException e) {
+                        log.warn("Could not encode headers");
+                    }
+                });
+            } catch (IOException e) {
+                log.warn("Could not encode headers");
+            }
+            HeadersFrame headersFrame = new HeadersFrame(httpConnection.getRemoteSettings());
+            headersFrame.setEndHeaders(true);
+            headersFrame.setStreamIdentifier(this.getStreamIdentifier());
+            headersFrame.setHeaderBlockFragment(byteArrayOutputStream.toByteArray());
+            try {
+                httpConnection.enqueueFrame(headersFrame, this);
+            } catch (IOException e) {
+                log.warn("Could not respond to request", e);
+            }
+            byteArrayOutputStream.reset();
+            List<PushRequest> pushRequests = httpResponse.getPushRequests();
+            for (PushRequest pushRequest : pushRequests) {
+                PushPromiseFrame pushPromiseFrame = new PushPromiseFrame(httpConnection.getRemoteSettings());
+                HttpStream pushStream = httpConnection.allocatePushStream(pushRequest);
+                pushPromiseFrame.setPromisedStreamId(pushStream.getStreamIdentifier());
                 try {
-                    encoder.encodeHeader(byteArrayOutputStream, httpHeader.name().toLowerCase().getBytes(), httpHeader.value().getBytes(), false);
+                    encoder.encodeHeader(byteArrayOutputStream, ":method".getBytes(), pushRequest.method().getBytes(), false);
+                    encoder.encodeHeader(byteArrayOutputStream, ":path".getBytes(), pushRequest.path().getBytes(), false);
+                    pushRequest.headers().forEach(httpHeader -> {
+                        try {
+                            encoder.encodeHeader(byteArrayOutputStream, httpHeader.name().toLowerCase().getBytes(), httpHeader.value().getBytes(), false);
+                        } catch (IOException e) {
+                            log.warn("Could not encode headers");
+                        }
+                    });
                 } catch (IOException e) {
-                    log.warn("Could not encode headers");
+                    log.warn("Could not prepare push promise", e);
                 }
-            });
-        } catch (IOException e) {
-            log.warn("Could not encode headers");
+                pushPromiseFrame.setHeaderBlockFragment(byteArrayOutputStream.toByteArray());
+                pushPromiseFrame.setEndHeaders(true);
+                pushPromiseFrame.setStreamIdentifier(getStreamIdentifier());
+                try {
+                    httpConnection.enqueueFrame(pushPromiseFrame, this);
+                } catch (IOException e) {
+                    log.warn("Could not send push promise", e);
+                    continue;
+                }
+                httpConnection.deferHandling(pushRequest, pushStream.httpResponse, pushStream);
+                byteArrayOutputStream.reset();
+            }
+            DataFrame dataFrame = new DataFrame(httpConnection.getRemoteSettings());
+            dataFrame.setData(httpResponse.responseBytes());
+            dataFrame.setStreamIdentifier(this.getStreamIdentifier());
+            dataFrame.setFlags((short) 0x1);
+            try {
+                httpConnection.enqueueFrame(dataFrame, this);
+            } catch (IOException e) {
+                log.warn("Could not respond to request", e);
+            }
+            setState(State.CLOSED);
         }
-        HeadersFrame headersFrame = new HeadersFrame(httpConnection.getRemoteSettings());
-        headersFrame.setEndHeaders(true);
-        headersFrame.setStreamIdentifier(this.getStreamIdentifier());
-        headersFrame.setHeaderBlockFragment(byteArrayOutputStream.toByteArray());
-        try {
-            httpConnection.enqueueFrame(headersFrame, this);
-        } catch (IOException e) {
-            log.warn("Could not respond to request", e);
-        }
-        DataFrame dataFrame = new DataFrame(httpConnection.getRemoteSettings());
-        dataFrame.setData(httpResponse.responseBytes());
-        dataFrame.setStreamIdentifier(this.getStreamIdentifier());
-        dataFrame.setFlags((short) 0x1);
-        try {
-            httpConnection.enqueueFrame(dataFrame, this);
-        } catch (IOException e) {
-            log.warn("Could not respond to request", e);
-        }
-        setState(State.CLOSED);
+    }
+
+    public void preparePush(PushRequest pushRequest) {
+        setState(State.RESERVED_LOCAL);
+        this.httpRequest = pushRequest;
+        this.httpResponse = new PushableHttpResponse(pushRequest);
     }
 
     public enum State {

@@ -6,6 +6,7 @@ import io.femo.http.Constants;
 import io.femo.http.HttpRequest;
 import io.femo.http.HttpResponse;
 import io.femo.http.drivers.IncomingHttpRequest;
+import io.femo.http.drivers.push.PushRequest;
 import io.femo.http.drivers.server.ExecutorListener;
 import io.femo.http.drivers.server.HttpHandlerStack;
 import io.femo.http.transport.http2.frames.GoAwayFrame;
@@ -66,14 +67,14 @@ public class HttpConnection {
         this.remoteSettings = new HttpSettings(HttpSettings.EndpointType.CLIENT);
         this.executorListener = executorListener;
         if(httpSettings.getEndpointType() == HttpSettings.EndpointType.CLIENT) {
-            nextStreamIdentifier = new AtomicInteger(2);
-        } else if (httpSettings.getEndpointType() == HttpSettings.EndpointType.SERVER) {
             nextStreamIdentifier = new AtomicInteger(1);
+        } else if (httpSettings.getEndpointType() == HttpSettings.EndpointType.SERVER) {
+            nextStreamIdentifier = new AtomicInteger(2);
         } else {
             if(httpSettings.isInitiator()) {
-                nextStreamIdentifier = new AtomicInteger(2);
-            } else {
                 nextStreamIdentifier = new AtomicInteger(1);
+            } else {
+                nextStreamIdentifier = new AtomicInteger(2);
             }
         }
         this.frameWriter = new HttpFrameWriter(socket.getOutputStream(), this);
@@ -385,6 +386,15 @@ public class HttpConnection {
         return headerCompressionEncoder.get();
     }
 
+    public HttpStream allocatePushStream(PushRequest pushRequest) {
+        HttpStream httpStream = new HttpStream(this, nextStreamIdentifier.getAndAdd(2));
+        httpStream.preparePush(pushRequest);
+        synchronized (httpStreams) {
+            httpStreams.put(httpStream.getStreamIdentifier(), httpStream);
+        }
+        return httpStream;
+    }
+
     public class HttpConnectionReceiver implements Runnable {
 
         @Override
@@ -402,6 +412,11 @@ public class HttpConnection {
     }
 
     public void terminate(int errorCode, byte[] debugData) {
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         GoAwayFrame goAwayFrame = new GoAwayFrame(remoteSettings);
         goAwayFrame.setErrorCode(errorCode);
         goAwayFrame.setLastStreamId(lastRemote.get());
