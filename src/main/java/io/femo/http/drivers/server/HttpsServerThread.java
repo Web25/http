@@ -11,16 +11,16 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by felix on 9/14/16.
  */
-public class HttpsServerThread extends HttpServerThread {
+public class HttpsServerThread extends HttpServerThread implements ExecutorListener {
 
     private Logger log = LoggerFactory.getLogger("HTTP");
 
@@ -31,14 +31,19 @@ public class HttpsServerThread extends HttpServerThread {
     private boolean ready = false;
     private final Object lock = new Object();
 
-
+    private final List<Future> futures;
 
     private SSLContext sslContext;
+
+    private FutureWatchThread futureWatchThread = new FutureWatchThread();
+
+    private ExecutorService executorService;
 
     public HttpsServerThread(HttpHandlerStack httpHandlerStack, SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException {
         super(httpHandlerStack);
         this.httpHandlerStack = httpHandlerStack;
         this.sslContext = sslContext;
+        this.futures = new ArrayList<>();
         setName("HTTPS-" + port);
     }
 
@@ -51,7 +56,8 @@ public class HttpsServerThread extends HttpServerThread {
             log.error("Error while starting Secure HTTP server on port " + port, e);
         }
         log.debug("Starting Executor Service");
-        ExecutorService executorService = Executors.newCachedThreadPool(new HttpThreadFactory(port));
+        executorService = Executors.newCachedThreadPool(new HttpThreadFactory(port));
+        futureWatchThread.start();
         while (!isInterrupted()) {
             synchronized (lock) {
                 this.ready = true;
@@ -78,7 +84,9 @@ public class HttpsServerThread extends HttpServerThread {
                     }
                 });
                 socket.startHandshake();        //necessary for ALPN to be evaluated
-                executorService.submit(new SocketHandlerRunnable(socket, httpVersion.get()));
+                synchronized (futures) {
+                    futures.add(executorService.submit(new SocketHandlerRunnable(socket, httpVersion.get())));
+                }
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout");
             } catch (SocketException e) {
@@ -104,6 +112,7 @@ public class HttpsServerThread extends HttpServerThread {
         } catch (IOException e) {
             log.error("Exception while shutting down server", e);
         }
+        futureWatchThread.interrupt();
     }
 
     public int getPort() {
@@ -119,6 +128,14 @@ public class HttpsServerThread extends HttpServerThread {
     public void setPort(int port) {
         setName("HTTP-" + port);
         this.port = port;
+    }
+
+    @Override
+    public void submit(Runnable runnable) {
+        Future future = executorService.submit(runnable);
+        synchronized (futures) {
+            this.futures.add(future);
+        }
     }
 
     private class SocketHandlerRunnable implements Runnable {
@@ -142,9 +159,36 @@ public class HttpsServerThread extends HttpServerThread {
             if(httpVersion == HttpVersion.HTTP_11) {
                 socketHandler = new Http11SocketHandler(httpHandlerStack);
             } else if (httpVersion == HttpVersion.HTTP_20) {
-                socketHandler = new Http20SocketHandler(httpHandlerStack);
+                socketHandler = new Http20SocketHandler(httpHandlerStack, HttpsServerThread.this);
             }
             socketHandler.handle(socket);
+        }
+    }
+
+    public class FutureWatchThread extends Thread {
+
+        public void run() {
+            try {
+                while(!isInterrupted()) {
+                    Thread.sleep(1000);
+                    synchronized (futures) {
+                        Iterator<Future> iterator = futures.iterator();
+                        while (iterator.hasNext()) {
+                            Future future = iterator.next();
+                            if(future.isDone()) {
+                                iterator.remove();
+                                try {
+                                    future.get();
+                                } catch (InterruptedException | ExecutionException e) {
+                                    log.warn("Error while handling socket", e);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (InterruptedException e) {
+                log.warn("Future watch thread has been interrupted!", e);
+            }
         }
     }
 }

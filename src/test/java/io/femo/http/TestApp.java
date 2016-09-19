@@ -15,7 +15,7 @@ public class TestApp {
                 .keyPass("test1234")
                 .keystorePass("test1234")
                 .keystore("test.keystore")
-                .use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
+                //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", (request, response) -> {
                     response.entity("Hello World ${{iso_datetime}}");
                     response.header("X-Replace-Env", "true");

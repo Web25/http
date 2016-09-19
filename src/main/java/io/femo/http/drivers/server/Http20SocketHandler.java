@@ -9,18 +9,21 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by felix on 9/15/16.
  */
 public class Http20SocketHandler implements SocketHandler {
 
+    private final ExecutorListener executorListener;
     private Logger log = LoggerFactory.getLogger("HTTP");
 
     private HttpHandlerStack httpHandlerStack;
 
-    public Http20SocketHandler(HttpHandlerStack httpHandlerStack) {
+    public Http20SocketHandler(HttpHandlerStack httpHandlerStack, ExecutorListener executorListener) {
         this.httpHandlerStack = httpHandlerStack;
+        this.executorListener = executorListener;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class Http20SocketHandler implements SocketHandler {
                 socket.close();
                 return;
             }
-            HttpConnection httpConnection = new HttpConnection(socket, new HttpSettings(HttpSettings.EndpointType.SERVER));
+            HttpConnection httpConnection = new HttpConnection(socket, new HttpSettings(HttpSettings.EndpointType.SERVER), executorListener);
             httpConnection.handler(httpHandlerStack);
             SettingsFrame settingsFrame = new SettingsFrame(httpConnection.getRemoteSettings());
             httpConnection.enqueueFrame(settingsFrame, null);

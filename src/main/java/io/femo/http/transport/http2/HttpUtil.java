@@ -1,6 +1,8 @@
 package io.femo.http.transport.http2;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 
@@ -8,6 +10,8 @@ import java.nio.ByteBuffer;
  * Created by felix on 9/3/16.
  */
 public class HttpUtil {
+
+    private static final Logger log = LoggerFactory.getLogger("HTTP/2.0");
 
     @NotNull
     public static byte[] toByte(int data) {
@@ -28,6 +32,7 @@ public class HttpUtil {
     public static int toInt(byte[] bytes){
         ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
         if(bytes.length < Integer.BYTES) {
+            log.debug("Skipping {} byte(s)", Integer.BYTES - bytes.length);
             byteBuffer.position(Integer.BYTES - bytes.length);
         }
         byteBuffer.put(bytes);

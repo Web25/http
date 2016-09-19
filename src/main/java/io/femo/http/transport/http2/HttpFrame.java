@@ -118,7 +118,7 @@ public class HttpFrame {
         if(length < 0)
             throw new HttpFrameException("Length of frame (" + length + ") has to be positive");
         if(length > settings.getMaxFrameSize())
-            throw new HttpFrameException("Length of frame (" + length + ") cannot exceed maximum frame size of " + settings.getMaxFrameSize() + " defined in session settings");
+            throw new HttpFrameException("Length of frame (" + length + ") cannot exceed maximum frame size of " + settings.getMaxFrameSize() + " defined in session settings", Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
         if(length > Constants.Http20.MAX_FRAME_LENGTH)
             throw new HttpFrameException("Length of frame (" + length + ") exceeds maximum possible length of " + Constants.Http20.MAX_FRAME_LENGTH);
         this.length = length;

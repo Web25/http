@@ -13,7 +13,7 @@ import java.util.concurrent.*;
 /**
  * Created by Felix Resch on 25-Apr-16.
  */
-public class HttpServerThread extends Thread {
+public class HttpServerThread extends Thread implements ExecutorListener {
 
     private Logger log = LoggerFactory.getLogger("HTTP");
 
@@ -33,6 +33,8 @@ public class HttpServerThread extends Thread {
         setName("HTTP-" + port);
     }
 
+    private ExecutorService executorService;
+
     public void run() {
         log.debug("Starting HTTP Server on port {}", port);
         try {
@@ -46,7 +48,7 @@ public class HttpServerThread extends Thread {
             log.warn("Could not set timeout. Shutdown may lag a bit...", e);
         }*/
         log.debug("Starting Executor Service");
-        ExecutorService executorService = Executors.newCachedThreadPool(new HttpThreadFactory(port));
+        executorService = Executors.newCachedThreadPool(new HttpThreadFactory(port));
         while (!isInterrupted()) {
             synchronized (lock) {
                 this.ready = true;
@@ -93,6 +95,11 @@ public class HttpServerThread extends Thread {
         this.port = port;
     }
 
+    @Override
+    public void submit(Runnable runnable) {
+
+    }
+
     private class SocketHandlerRunnable implements Runnable {
 
         private Socket socket;
@@ -113,7 +120,7 @@ public class HttpServerThread extends Thread {
             if(httpVersion == HttpVersion.HTTP_11) {
                 socketHandler = new Http11SocketHandler(httpHandlerStack);
             } else if (httpVersion == HttpVersion.HTTP_20) {
-                socketHandler = new Http20SocketHandler(httpHandlerStack);
+                socketHandler = new Http20SocketHandler(httpHandlerStack, HttpServerThread.this);
             }
             socketHandler.handle(socket);
         }

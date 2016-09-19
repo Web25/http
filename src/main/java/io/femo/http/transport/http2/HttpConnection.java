@@ -3,6 +3,10 @@ package io.femo.http.transport.http2;
 import com.twitter.hpack.Decoder;
 import com.twitter.hpack.Encoder;
 import io.femo.http.Constants;
+import io.femo.http.HttpRequest;
+import io.femo.http.HttpResponse;
+import io.femo.http.drivers.IncomingHttpRequest;
+import io.femo.http.drivers.server.ExecutorListener;
 import io.femo.http.drivers.server.HttpHandlerStack;
 import io.femo.http.transport.http2.frames.GoAwayFrame;
 import io.femo.http.transport.http2.frames.SettingsFrame;
@@ -10,11 +14,15 @@ import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,9 +55,16 @@ public class HttpConnection {
 
     private final ConcurrentLinkedQueue<HttpFrame> frameQueue;
 
-    public HttpConnection(Socket socket, HttpSettings httpSettings) throws IOException {
+    private AtomicBoolean exclusiveHeaderLock = new AtomicBoolean(false);
+    private AtomicInteger lockHolder = new AtomicInteger(-1);
+
+    private ExecutorListener executorListener;
+    private HttpHandlerStack httpHandlerStack;
+
+    public HttpConnection(Socket socket, HttpSettings httpSettings, ExecutorListener executorListener) throws IOException {
         this.localSettings = httpSettings;
         this.remoteSettings = new HttpSettings(HttpSettings.EndpointType.CLIENT);
+        this.executorListener = executorListener;
         if(httpSettings.getEndpointType() == HttpSettings.EndpointType.CLIENT) {
             nextStreamIdentifier = new AtomicInteger(2);
         } else if (httpSettings.getEndpointType() == HttpSettings.EndpointType.SERVER) {
@@ -104,7 +119,7 @@ public class HttpConnection {
     }
 
     public void handler(HttpHandlerStack httpHandlerStack) {
-
+        this.httpHandlerStack = httpHandlerStack;
     }
 
     public Decoder getHpackDecoder() {
@@ -145,13 +160,27 @@ public class HttpConnection {
         }
         this.headerCompressionDecoder = new AtomicReference<>(new Decoder(localSettings.getMaxHeaderListSize(), localSettings.getHeaderTableSize()));
         this.headerCompressionEncoder = new AtomicReference<>(new Encoder(localSettings.getHeaderTableSize()));
+        this.flowControlWindow = new FlowControlWindow(this);
         boolean run = true;
         while (run) {
             try {
-                frame = frameReader.read();
+                try {
+                    frame = frameReader.read();
+                } catch (HttpFrameException e) {
+                    log.warn("Error while reading http frame", e);
+                    terminate(e.getErrorCode());
+                    break;
+                }
+                if(!performSanityChecks(frame)) {
+                    break;
+                }
                 synchronized (httpStreams) {
+                    if(exclusiveHeaderLock.get() && frame.getStreamIdentifier() != lockHolder.get()) {
+                        terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        break;
+                    }
                     if (frame.getLength() > localSettings.getMaxFrameSize()) {
-                        log.debug("Reveiced invalidly sized frame");
+                        log.debug("Received invalidly sized frame");
                         if (frame.getType() == Constants.Http20.FrameType.HEADERS ||
                                 frame.getType() == Constants.Http20.FrameType.PUSH_PROMISE ||
                                 frame.getType() == Constants.Http20.FrameType.CONTINUATION ||
@@ -246,6 +275,116 @@ public class HttpConnection {
         }
     }
 
+    private boolean performSanityChecks(HttpFrame httpFrame) {
+        switch (httpFrame.getType()) {
+            case Constants.Http20.FrameType.RST_STREAM : {
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                    return false;
+                }
+                if(httpFrame.getLength() != 4) {
+                    terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                    return false;
+                }
+                break;
+            }
+            case Constants.Http20.FrameType.PRIORITY: {
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                    return false;
+                }
+                if(httpFrame.getLength() != 5) {
+                    terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                    return false;
+                }
+                break;
+            }
+            case Constants.Http20.FrameType.DATA: {
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                    return false;
+                }
+                if((httpFrame.getFlags() & 0x8) == 0x8) {
+                    short padLength = (short) (httpFrame.getPayload()[0] & 0xff);
+                    if(padLength >= httpFrame.getLength()) {
+                        terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        return false;
+                    }
+                }
+                break;
+            }
+            case Constants.Http20.FrameType.HEADERS: {
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                    return false;
+                }
+                if((httpFrame.getFlags() & 0x8) == 0x8) {
+                    short padLength = (short) (httpFrame.getPayload()[0] & 0xff);
+                    int frameLength = httpFrame.getLength();
+                    if((httpFrame.getFlags() & 0x20) == 0x20) {
+                        frameLength -= 5;       //length of priority portion
+                    }
+                    if(padLength >= frameLength) {
+                        terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        return false;
+                    }
+                }
+                break;
+            }
+            case Constants.Http20.FrameType.WINDOW_UPDATE: {
+                if(httpFrame.getLength() != 4) {
+                    terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
+                    return false;
+                }
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    if(HttpUtil.toInt(httpFrame.getPayload()) <= 0) {
+                        terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        return false;
+                    }
+                }
+                break;
+            }
+            case Constants.Http20.FrameType.CONTINUATION: {
+                if(httpFrame.getStreamIdentifier() == 0) {
+                    terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void exclusiveHeaderLock(HttpStream httpStream) {
+        if(exclusiveHeaderLock.get()) {
+            terminate(Constants.Http20.ErrorCodes.INTERNAL_ERROR);
+            throw new Http20Exception("Invalid state! Error 0x01");
+        }
+        exclusiveHeaderLock.set(true);
+        lockHolder.set(httpStream.getStreamIdentifier());
+    }
+
+    public void releaseLock(HttpStream httpStream) {
+        if(!exclusiveHeaderLock.get()) {
+            terminate(Constants.Http20.ErrorCodes.INTERNAL_ERROR);
+            throw new Http20Exception("Invalid state! Error 0x02");
+        }
+        if(lockHolder.get() == httpStream.getStreamIdentifier()) {
+            exclusiveHeaderLock.set(false);
+        }
+    }
+
+    public FlowControlWindow getFlowControlWindow() {
+        return flowControlWindow;
+    }
+
+    public void deferHandling(IncomingHttpRequest httpRequest, HttpResponse httpResponse, HttpStream httpStream) {
+        executorListener.submit(new DeferredRequestHandler(httpStream, httpHandlerStack, httpRequest, httpResponse));
+    }
+
+    public Encoder getHpackEncoder() {
+        return headerCompressionEncoder.get();
+    }
+
     public class HttpConnectionReceiver implements Runnable {
 
         @Override
@@ -278,5 +417,35 @@ public class HttpConnection {
 
     public enum State {
         ACTIVE, CLOSE_PENDING, CLOSE, FORCE_CLOSED
+    }
+
+    private class DeferredRequestHandler implements Runnable {
+
+        private HttpStream httpStream;
+        private HttpHandlerStack handlerStack;
+        private HttpRequest httpRequest;
+        private HttpResponse httpResponse;
+
+        public DeferredRequestHandler(HttpStream httpStream, HttpHandlerStack handlerStack, HttpRequest httpRequest, HttpResponse httpResponse) {
+            this.httpStream = httpStream;
+            this.handlerStack = handlerStack;
+            this.httpRequest = httpRequest;
+            this.httpResponse = httpResponse;
+        }
+
+        @Override
+        public void run() {
+            try {
+                handlerStack.handle(httpRequest, httpResponse);
+            } catch (Throwable t) {
+                log.warn("Error while handling http request", t);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                t.printStackTrace(new PrintStream(byteArrayOutputStream));
+                httpResponse.status(500);
+                httpResponse.entity(byteArrayOutputStream.toByteArray());
+                httpResponse.header("Content-Type", "text/plain");
+            }
+            httpStream.notfiyHandlingFinished();
+        }
     }
 }

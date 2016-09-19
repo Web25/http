@@ -15,11 +15,13 @@ public class FlowControlWindow {
 
     public FlowControlWindow(HttpConnection connection) {
         this.connection = connection;
+        this.local = new AtomicInteger(connection.getLocalSettings().getInitialWindowSize());
+        this.remote = new AtomicInteger(connection.getRemoteSettings().getInitialWindowSize());
     }
 
     public FlowControlWindow(FlowControlWindow parent, HttpConnection connection) {
+        this(connection);
         this.parent = parent;
-        this.connection = connection;
     }
 
     public boolean checkIncoming(int length) {
