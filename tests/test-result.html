@@ -16,12 +16,12 @@
 </button>
 <button id="junit_info_suite_passed" class="suite--passed">
     <span>passed:</span>
-    <span id="junit_info_suite_passed_count">9</span><span>/9</span>
+    <span id="junit_info_suite_passed_count">15</span><span>/15</span>
 </button>
 
 <button id="junit_info_suite_failure" class="suite--failure">
     <span>failure:</span>
-    <span id="junit_info_suite_failure_count">18</span><span>/18</span>
+    <span id="junit_info_suite_failure_count">12</span><span>/12</span>
 </button>
 </div>
     <div class="junit_info">
@@ -31,17 +31,17 @@
 </button>
 <button id="junit_info_test_passed" class="test--passed">
     <span>passed:</span>
-    <span id="junit_info_test_passed_count">31</span><span>/31</span>
+    <span id="junit_info_test_passed_count">42</span><span>/42</span>
 </button>
 
 <button id="junit_info_test_failure" class="test--failure">
     <span>failure:</span>
-    <span id="junit_info_test_failure_count">41</span><span>/41</span>
+    <span id="junit_info_test_failure_count">29</span><span>/29</span>
 </button>
 
 <button id="junit_info_test_skipped" class="test--skipped">
     <span>skipped:</span>
-    <span id="junit_info_test_skipped_count">1</span><span>/1</span>
+    <span id="junit_info_test_skipped_count">2</span><span>/2</span>
 </button>
 </div>
     <div>
@@ -101,7 +101,7 @@
     </div>
 </div>
 </div>
-        <div id="suites_container" class="u-pull-right columns eleven container__suites"><div class="suite" id="suite_coKZI">
+        <div id="suites_container" class="u-pull-right columns eleven container__suites"><div class="suite" id="suite_nZBjw">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">3.5 HTTP/2 Connection Preface</span>
         <span class="label u-pull-right">package: 3.5 HTTP/2 Connection Preface</span>
@@ -112,10 +112,10 @@
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_hebIq">
+        <div class="test" id="test_kkZU2">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends invalid connection preface</span>
-        <span class="label u-pull-right">time: 154.200832ms</span>
+        <span class="label u-pull-right">time: 150.237778ms</span>
     </button>
     
 </div>
@@ -123,83 +123,75 @@
     </div>
 </div>
 
-<div class="suite" id="suite_1mva9">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_nSSZA">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">4.2 Frame Size</span>
         <span class="label u-pull-right">package: 4.2 Frame Size</span>
 <span class="label u-pull-right">tests: 1</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 1</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_hhpjB">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+        <div class="test" id="test_y649R">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends large size frame that exceeds the SETTINGS_MAX_FRAME_SIZE</span>
-        <span class="label u-pull-right">time: 2.089042254s</span>
+        <span class="label u-pull-right">time: 189.930763ms</span>
     </button>
-    <div id="message_EJJXN" class="test__message">Expected:
-GOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)
-RST_STREAM frame (ErrorCode: FRAME_SIZE_ERROR)
-Connection close
-Actual:
-SETTINGS frame (Length: 0, Flags: 1)</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_ChGHg">
+<div class="suite" id="suite_hwr1b">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">4.3 Header Compression and Decompression</span>
         <span class="label u-pull-right">package: 4.3 Header Compression and Decompression</span>
 <span class="label u-pull-right">tests: 3</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 3</span>
+<span class="label u-pull-right">failures: 2</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_9Yxv7">
+        <div class="test" id="test_95s0d">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends invalid header block fragment</span>
-        <span class="label u-pull-right">time: 2.069082296s</span>
+        <span class="label u-pull-right">time: 2.163247013s</span>
     </button>
-    <div id="message_iPzcz" class="test__message">Expected:
+    <div id="message_UARZa" class="test__message">Expected:
 GOAWAY frame (ErrorCode: COMPRESSION_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 632, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_1RIlo">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_GC7Lq">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends Dynamic Table Size Update (RFC 7541, 6.3)</span>
-        <span class="label u-pull-right">time: 2.076700775s</span>
+        <span class="label u-pull-right">time: 135.695422ms</span>
     </button>
-    <div id="message_CCXVy" class="test__message">Expected:
-Stream close
-Actual:
-Test timeout</div>
+    
 </div>
 
-<div class="test" id="test_SLzaK">
+<div class="test" id="test_m6iOX">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Encodes Dynamic Table Size Update (RFC 7541, 6.3) after common header fields</span>
-        <span class="label u-pull-right">time: 2.060047547s</span>
+        <span class="label u-pull-right">time: 2.107965979s</span>
     </button>
-    <div id="message_2thEG" class="test__message">Expected:
+    <div id="message_XjGmk" class="test__message">Expected:
 GOAWAY frame (ErrorCode: COMPRESSION_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_3yHVK">
+<div class="suite" id="suite_VBssD">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">5.1 Stream States</span>
         <span class="label u-pull-right">package: 5.1 Stream States</span>
@@ -210,77 +202,77 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_JSmcx">
+        <div class="test" id="test_QecDA">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">idle: Sends a DATA frame</span>
-        <span class="label u-pull-right">time: 76.376487ms</span>
+        <span class="label u-pull-right">time: 62.617086ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_p6dPA">
+<div class="test" id="test_zT6vn">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">idle: Sends a RST_STREAM frame</span>
-        <span class="label u-pull-right">time: 63.93134ms</span>
+        <span class="label u-pull-right">time: 67.658665ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_K0I3P">
+<div class="test" id="test_d181y">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">idle: Sends a WINDOW_UPDATE frame</span>
-        <span class="label u-pull-right">time: 64.138027ms</span>
+        <span class="label u-pull-right">time: 65.065296ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_cmS2J">
+<div class="test" id="test_Qa5Lz">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">idle: Sends a CONTINUATION frame</span>
-        <span class="label u-pull-right">time: 62.712119ms</span>
+        <span class="label u-pull-right">time: 71.77348ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_I32oi">
+<div class="test" id="test_lo70R">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">half closed (remote): Sends a DATA frame</span>
-        <span class="label u-pull-right">time: 66.26348ms</span>
+        <span class="label u-pull-right">time: 104.477862ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_QVBKL">
+<div class="test" id="test_JkjOA">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">half closed (remote): Sends a HEADERS frame</span>
-        <span class="label u-pull-right">time: 71.264983ms</span>
+        <span class="label u-pull-right">time: 73.555756ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_xMBea">
+<div class="test" id="test_sP5WU">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">half closed (remote): Sends a CONTINUATION frame</span>
-        <span class="label u-pull-right">time: 64.688427ms</span>
+        <span class="label u-pull-right">time: 65.173507ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_kB4Wl">
+<div class="test" id="test_kMDv5">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">closed: Sends a CONTINUATION frame</span>
-        <span class="label u-pull-right">time: 2.059335756s</span>
+        <span class="label u-pull-right">time: 2.083446575s</span>
     </button>
-    <div id="message_zSlHs" class="test__message">Expected:
+    <div id="message_xKbRi" class="test__message">Expected:
 Stream close
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_iAuxi">
+<div class="suite" id="suite_WbW9U">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">5.1.1 Stream Identifiers</span>
         <span class="label u-pull-right">package: 5.1.1 Stream Identifiers</span>
@@ -291,10 +283,10 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_4u1JE">
+        <div class="test" id="test_lOiny">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends even-numbered stream identifier</span>
-        <span class="label u-pull-right">time: 62.948476ms</span>
+        <span class="label u-pull-right">time: 71.286477ms</span>
     </button>
     
 </div>
@@ -302,7 +294,7 @@ Test timeout</div>
     </div>
 </div>
 
-<div class="suite" id="suite_5BSxQ">
+<div class="suite" id="suite_gtcmp">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">5.1.2 Stream Concurrency</span>
         <span class="label u-pull-right">package: 5.1.2 Stream Concurrency</span>
@@ -313,18 +305,18 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_9MXhg">
+        <div class="test" id="test_Qo2eA">
     <button class="test__name test--skipped u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends HEADERS frames that causes their advertised concurrent stream limit to be exceeded</span>
         <span class="label u-pull-right">time: 0</span>
     </button>
-    <div id="message_bkxb3" class="test__message"></div>
+    <div id="message_cTzxN" class="test__message"></div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_p8oAt">
+<div class="suite" id="suite_E09e2">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">5.3.1 Stream Dependencies</span>
         <span class="label u-pull-right">package: 5.3.1 Stream Dependencies</span>
@@ -335,23 +327,23 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_70dxI">
+        <div class="test" id="test_q2LCn">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends HEADERS frame that depend on itself</span>
-        <span class="label u-pull-right">time: 2.064277075s</span>
+        <span class="label u-pull-right">time: 2.102916729s</span>
     </button>
-    <div id="message_v9gAy" class="test__message">Expected:
+    <div id="message_8U4z5" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_7qS1J">
+<div class="test" id="test_a5awl">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends PRIORITY frame that depend on itself</span>
-        <span class="label u-pull-right">time: 64.936081ms</span>
+        <span class="label u-pull-right">time: 62.177451ms</span>
     </button>
     
 </div>
@@ -359,7 +351,7 @@ Test timeout</div>
     </div>
 </div>
 
-<div class="suite" id="suite_GhN0I">
+<div class="suite" id="suite_nLF56">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">5.5 Extending HTTP/2</span>
         <span class="label u-pull-right">package: 5.5 Extending HTTP/2</span>
@@ -370,207 +362,185 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_hMvs7">
+        <div class="test" id="test_nO1tb">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends an unknown extension frame</span>
-        <span class="label u-pull-right">time: 56.09429ms</span>
+        <span class="label u-pull-right">time: 68.521844ms</span>
     </button>
-    <div id="message_cONUQ" class="test__message">Expected:
+    <div id="message_U1wBy" class="test__message">Expected:
 PING frame (Flags: 1)
 Actual:
 GOAWAY frame (Length: 8, Flags: 0, ErrorCode: PROTOCOL_ERROR)</div>
 </div>
 
-<div class="test" id="test_gFNzS">
+<div class="test" id="test_B2NG7">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends an unknown extension frame in the middle of a header block</span>
-        <span class="label u-pull-right">time: 2.066039353s</span>
+        <span class="label u-pull-right">time: 106.359958ms</span>
     </button>
-    <div id="message_8rJFe" class="test__message">Expected:
+    <div id="message_TLlnk" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_i0R4b">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_NybCK">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.1 DATA</span>
         <span class="label u-pull-right">package: 6.1 DATA</span>
 <span class="label u-pull-right">tests: 3</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 1</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_Pq7ry">
+        <div class="test" id="test_qWiaA">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a DATA frame with 0x0 stream identifier</span>
-        <span class="label u-pull-right">time: 60.789387ms</span>
+        <span class="label u-pull-right">time: 66.123358ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_980bS">
+<div class="test" id="test_F8LEA">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a DATA frame on the stream that is not in 'open' or 'half-closed (local)' state</span>
-        <span class="label u-pull-right">time: 61.794061ms</span>
+        <span class="label u-pull-right">time: 66.733328ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_kjTSR">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_0t9X2">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a DATA frame with invalid pad length</span>
-        <span class="label u-pull-right">time: 2.066863434s</span>
+        <span class="label u-pull-right">time: 68.928541ms</span>
     </button>
-    <div id="message_MC67q" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-Test timeout</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_CQQdl">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_jeVN4">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.2 HEADERS</span>
         <span class="label u-pull-right">package: 6.2 HEADERS</span>
 <span class="label u-pull-right">tests: 4</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 2</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_7vCJX">
+        <div class="test" id="test_ynlkR">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame followed by any frame other than CONTINUATION</span>
-        <span class="label u-pull-right">time: 63.344832ms</span>
+        <span class="label u-pull-right">time: 62.778223ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_CGohP">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_YIza8">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame followed by a frame on a different stream</span>
-        <span class="label u-pull-right">time: 72.454321ms</span>
+        <span class="label u-pull-right">time: 61.322438ms</span>
     </button>
-    <div id="message_YokL4" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-GOAWAY frame (Length: 8, Flags: 0, ErrorCode: COMPRESSION_ERROR)</div>
+    
 </div>
 
-<div class="test" id="test_3sctc">
+<div class="test" id="test_IsqIi">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame with 0x0 stream identifier</span>
-        <span class="label u-pull-right">time: 67.518188ms</span>
+        <span class="label u-pull-right">time: 63.227366ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_v9YCn">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_j4Q4y">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame with invalid pad length</span>
-        <span class="label u-pull-right">time: 2.056470069s</span>
+        <span class="label u-pull-right">time: 59.748993ms</span>
     </button>
-    <div id="message_brlrk" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-Test timeout</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_IM7Mg">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_X3jS8">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.3 PRIORITY</span>
         <span class="label u-pull-right">package: 6.3 PRIORITY</span>
 <span class="label u-pull-right">tests: 2</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 1</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_a8MAt">
+        <div class="test" id="test_SlwNh">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PRIORITY frame with 0x0 stream identifier</span>
-        <span class="label u-pull-right">time: 64.352011ms</span>
+        <span class="label u-pull-right">time: 61.012805ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_OuWfZ">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_KpXmB">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PRIORITY frame with a length other than 5 octets</span>
-        <span class="label u-pull-right">time: 2.058978784s</span>
+        <span class="label u-pull-right">time: 96.247281ms</span>
     </button>
-    <div id="message_CzenH" class="test__message">Expected:
-GOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)
-RST_STREAM frame (ErrorCode: FRAME_SIZE_ERROR)
-Connection close
-Actual:
-SETTINGS frame (Length: 0, Flags: 1)</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_rTvrv">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_m0sCg">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.4 RST_STREAM</span>
         <span class="label u-pull-right">package: 6.4 RST_STREAM</span>
 <span class="label u-pull-right">tests: 3</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 1</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_a6Dkf">
+        <div class="test" id="test_QG5Vf">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a RST_STREAM frame with 0x0 stream identifier</span>
-        <span class="label u-pull-right">time: 72.021425ms</span>
+        <span class="label u-pull-right">time: 61.684295ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_hMRvA">
+<div class="test" id="test_8opNi">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a RST_STREAM frame on a idle stream</span>
-        <span class="label u-pull-right">time: 65.086127ms</span>
+        <span class="label u-pull-right">time: 70.148038ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_NHg03">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_ujR54">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a RST_STREAM frame with a length other than 4 octets</span>
-        <span class="label u-pull-right">time: 2.059267812s</span>
+        <span class="label u-pull-right">time: 100.029281ms</span>
     </button>
-    <div id="message_hzS4g" class="test__message">Expected:
-GOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)
-Connection close
-Actual:
-SETTINGS frame (Length: 0, Flags: 1)</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_246km">
+<div class="suite" id="suite_tTu3E">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.5 SETTINGS</span>
         <span class="label u-pull-right">package: 6.5 SETTINGS</span>
@@ -581,34 +551,34 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_P2Ndj">
+        <div class="test" id="test_FMwoE">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a SETTINGS frame</span>
-        <span class="label u-pull-right">time: 66.511728ms</span>
+        <span class="label u-pull-right">time: 61.614904ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_Ca76O">
+<div class="test" id="test_XOMom">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a SETTINGS frame that is not a zero-length with ACK flag</span>
-        <span class="label u-pull-right">time: 60.55376ms</span>
+        <span class="label u-pull-right">time: 60.119569ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_J0MEF">
+<div class="test" id="test_A1Nun">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a SETTINGS frame with the stream identifier that is not 0x0</span>
-        <span class="label u-pull-right">time: 64.661147ms</span>
+        <span class="label u-pull-right">time: 60.589542ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_Yu263">
+<div class="test" id="test_DoPZb">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a SETTINGS frame with a length other than a multiple of 6 octets</span>
-        <span class="label u-pull-right">time: 62.782074ms</span>
+        <span class="label u-pull-right">time: 60.120587ms</span>
     </button>
     
 </div>
@@ -616,7 +586,7 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </div>
 </div>
 
-<div class="suite" id="suite_F5ncn">
+<div class="suite" id="suite_FK73a">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.5.2 Defined SETTINGS Parameters</span>
         <span class="label u-pull-right">package: 6.5.2 Defined SETTINGS Parameters</span>
@@ -627,34 +597,34 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_9YfNB">
+        <div class="test" id="test_vP2m5">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">SETTINGS_ENABLE_PUSH (0x2): Sends the value other than 0 or 1</span>
-        <span class="label u-pull-right">time: 64.546699ms</span>
+        <span class="label u-pull-right">time: 62.73818ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_wToGB">
+<div class="test" id="test_fNcdN">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">SETTINGS_INITIAL_WINDOW_SIZE (0x4): Sends the value above the maximum flow control window size</span>
-        <span class="label u-pull-right">time: 62.091387ms</span>
+        <span class="label u-pull-right">time: 59.75645ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_5qOBa">
+<div class="test" id="test_4AYFC">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value below the initial value</span>
-        <span class="label u-pull-right">time: 53.381042ms</span>
+        <span class="label u-pull-right">time: 61.527205ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_CKJ4U">
+<div class="test" id="test_j9pdG">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value above the maximum allowed frame size</span>
-        <span class="label u-pull-right">time: 61.155658ms</span>
+        <span class="label u-pull-right">time: 63.444419ms</span>
     </button>
     
 </div>
@@ -662,7 +632,7 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </div>
 </div>
 
-<div class="suite" id="suite_jYbZ9">
+<div class="suite" id="suite_e6jpc">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.7 PING</span>
         <span class="label u-pull-right">package: 6.7 PING</span>
@@ -673,26 +643,26 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_Mi9OM">
+        <div class="test" id="test_taGuI">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PING frame</span>
-        <span class="label u-pull-right">time: 59.389336ms</span>
+        <span class="label u-pull-right">time: 61.396633ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_o2ww8">
+<div class="test" id="test_BFm3a">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PING frame with the stream identifier that is not 0x0</span>
-        <span class="label u-pull-right">time: 59.392942ms</span>
+        <span class="label u-pull-right">time: 58.886913ms</span>
     </button>
     
 </div>
 
-<div class="test" id="test_2AweW">
+<div class="test" id="test_X1QBo">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PING frame with a length field value other than 8</span>
-        <span class="label u-pull-right">time: 59.090015ms</span>
+        <span class="label u-pull-right">time: 63.863252ms</span>
     </button>
     
 </div>
@@ -700,7 +670,7 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </div>
 </div>
 
-<div class="suite" id="suite_dOIyI">
+<div class="suite" id="suite_QWqR8">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.8 GOAWAY</span>
         <span class="label u-pull-right">package: 6.8 GOAWAY</span>
@@ -711,10 +681,10 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_ZIgHv">
+        <div class="test" id="test_Ei6Zl">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a GOAWAY frame with the stream identifier that is not 0x0</span>
-        <span class="label u-pull-right">time: 56.23226ms</span>
+        <span class="label u-pull-right">time: 59.161778ms</span>
     </button>
     
 </div>
@@ -722,69 +692,53 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </div>
 </div>
 
-<div class="suite" id="suite_EoO49">
-    <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
+<div class="suite" id="suite_EWpII">
+    <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.9 WINDOW_UPDATE</span>
         <span class="label u-pull-right">package: 6.9 WINDOW_UPDATE</span>
 <span class="label u-pull-right">tests: 4</span>
-<span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 4</span>
+<span class="label u-pull-right">skipped: 1</span>
+<span class="label u-pull-right">failures: 0</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_tILc6">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+        <div class="test" id="test_gmv4t">
+    <button class="test__name test--skipped u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a WINDOW_UPDATE frame</span>
-        <span class="label u-pull-right">time: 2.060029908s</span>
+        <span class="label u-pull-right">time: 0</span>
     </button>
-    <div id="message_JQSXc" class="test__message">Expected:
-DATA frame
-Actual:
-Test timeout</div>
+    <div id="message_vc4Wd" class="test__message"></div>
 </div>
 
-<div class="test" id="test_npn3L">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_NaH9S">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a WINDOW_UPDATE frame with a flow control window increment of 0</span>
-        <span class="label u-pull-right">time: 2.068277094s</span>
+        <span class="label u-pull-right">time: 61.850574ms</span>
     </button>
-    <div id="message_CjcUO" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-Test timeout</div>
+    
 </div>
 
-<div class="test" id="test_4r2Lo">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_maNuc">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a WINDOW_UPDATE frame with a flow control window increment of 0 on a stream</span>
-        <span class="label u-pull-right">time: 2.063382314s</span>
+        <span class="label u-pull-right">time: 102.162959ms</span>
     </button>
-    <div id="message_csGlg" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-SETTINGS frame (Length: 0, Flags: 1)</div>
+    
 </div>
 
-<div class="test" id="test_Ly85y">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_xP4zY">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a WINDOW_UPDATE frame with a length other than a multiple of 4 octets</span>
-        <span class="label u-pull-right">time: 2.06394963s</span>
+        <span class="label u-pull-right">time: 63.740452ms</span>
     </button>
-    <div id="message_sXeOL" class="test__message">Expected:
-GOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)
-Connection close
-Actual:
-Test timeout</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_tHr1q">
+<div class="suite" id="suite_TiTIb">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.9.1 The Flow Control Window</span>
         <span class="label u-pull-right">package: 6.9.1 The Flow Control Window</span>
@@ -795,23 +749,23 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_smdUO">
+        <div class="test" id="test_OvOB7">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends multiple WINDOW_UPDATE frames on a connection increasing the flow control window to above 2^31-1</span>
-        <span class="label u-pull-right">time: 2.059853962s</span>
+        <span class="label u-pull-right">time: 2.062126191s</span>
     </button>
-    <div id="message_IRzhC" class="test__message">Expected:
+    <div id="message_h3tCA" class="test__message">Expected:
 GOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)
 Actual:
 Test timeout</div>
 </div>
 
-<div class="test" id="test_HW2C6">
+<div class="test" id="test_pqnmj">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends multiple WINDOW_UPDATE frames on a stream increasing the flow control window to above 2^31-1</span>
-        <span class="label u-pull-right">time: 2.055875113s</span>
+        <span class="label u-pull-right">time: 2.058950734s</span>
     </button>
-    <div id="message_Z0uBc" class="test__message">Expected:
+    <div id="message_AHjZR" class="test__message">Expected:
 RST_STREAM frame (ErrorCode: FLOW_CONTROL_ERROR)
 GOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)
 Actual:
@@ -821,7 +775,7 @@ Test timeout</div>
     </div>
 </div>
 
-<div class="suite" id="suite_RpTck">
+<div class="suite" id="suite_wfbDX">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.9.2 Initial Flow Control Window Size</span>
         <span class="label u-pull-right">package: 6.9.2 Initial Flow Control Window Size</span>
@@ -832,10 +786,10 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_PWvLg">
+        <div class="test" id="test_Lyx8b">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a SETTINGS_INITIAL_WINDOW_SIZE settings with an exceeded maximum window size value</span>
-        <span class="label u-pull-right">time: 62.047467ms</span>
+        <span class="label u-pull-right">time: 65.4187ms</span>
     </button>
     
 </div>
@@ -843,91 +797,87 @@ Test timeout</div>
     </div>
 </div>
 
-<div class="suite" id="suite_BSBCN">
+<div class="suite" id="suite_MVbrq">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">6.10 CONTINUATION</span>
         <span class="label u-pull-right">package: 6.10 CONTINUATION</span>
 <span class="label u-pull-right">tests: 6</span>
 <span class="label u-pull-right">skipped: 0</span>
-<span class="label u-pull-right">failures: 6</span>
+<span class="label u-pull-right">failures: 5</span>
 <span class="label u-pull-right">errors: 0</span>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_j0gJ3">
+        <div class="test" id="test_3zMGB">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a CONTINUATION frame</span>
-        <span class="label u-pull-right">time: 2.065726379s</span>
+        <span class="label u-pull-right">time: 2.076247639s</span>
     </button>
-    <div id="message_KR1f6" class="test__message">Expected:
+    <div id="message_uoFvz" class="test__message">Expected:
 HEADERS frame
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
-<div class="test" id="test_D8Op0">
+<div class="test" id="test_xt0xA">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends multiple CONTINUATION frames</span>
-        <span class="label u-pull-right">time: 2.0736965s</span>
+        <span class="label u-pull-right">time: 2.079962583s</span>
     </button>
-    <div id="message_sLPVk" class="test__message">Expected:
+    <div id="message_86PtD" class="test__message">Expected:
 HEADERS frame
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
-<div class="test" id="test_iJyht">
+<div class="test" id="test_eAnsY">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a CONTINUATION frame followed by any frame other than CONTINUATION</span>
-        <span class="label u-pull-right">time: 2.07001414s</span>
+        <span class="label u-pull-right">time: 80.935091ms</span>
     </button>
-    <div id="message_iFo0p" class="test__message">Expected:
+    <div id="message_ROHoX" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
-<div class="test" id="test_agarY">
+<div class="test" id="test_aK2H9">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a CONTINUATION frame followed by a frame on a different stream</span>
-        <span class="label u-pull-right">time: 2.070866149s</span>
+        <span class="label u-pull-right">time: 72.914296ms</span>
     </button>
-    <div id="message_iOwxr" class="test__message">Expected:
+    <div id="message_bFUe1" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
-<div class="test" id="test_SofHo">
+<div class="test" id="test_qP5ul">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a CONTINUATION frame with the stream identifier that is 0x0</span>
-        <span class="label u-pull-right">time: 2.066377316s</span>
+        <span class="label u-pull-right">time: 69.637458ms</span>
     </button>
-    <div id="message_MkSBZ" class="test__message">Expected:
+    <div id="message_82z5K" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+GOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)</div>
 </div>
 
-<div class="test" id="test_vO6xQ">
-    <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
+<div class="test" id="test_I3o7m">
+    <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a CONTINUATION frame after the frame other than HEADERS, PUSH_PROMISE or CONTINUATION</span>
-        <span class="label u-pull-right">time: 2.067024358s</span>
+        <span class="label u-pull-right">time: 97.400417ms</span>
     </button>
-    <div id="message_y7mdd" class="test__message">Expected:
-GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
-Connection close
-Actual:
-SETTINGS frame (Length: 0, Flags: 1)</div>
+    
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_IpEV1">
+<div class="suite" id="suite_wq3N7">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1 HTTP Request/Response Exchange</span>
         <span class="label u-pull-right">package: 8.1 HTTP Request/Response Exchange</span>
@@ -938,35 +888,35 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_ikE4Y">
+        <div class="test" id="test_K1YUT">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame as HEAD request</span>
-        <span class="label u-pull-right">time: 2.063274514s</span>
+        <span class="label u-pull-right">time: 2.103954403s</span>
     </button>
-    <div id="message_lvUXc" class="test__message">Expected:
+    <div id="message_4fETq" class="test__message">Expected:
 HEADERS frame (Flags: 1)
 DATA frame (Length: 0, Flags: 1)
 Actual:
-Test timeout</div>
+DATA frame (Length: 33, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_XQUro">
+<div class="test" id="test_QsFAR">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame containing trailer part</span>
-        <span class="label u-pull-right">time: 2.05161279s</span>
+        <span class="label u-pull-right">time: 2.061235935s</span>
     </button>
-    <div id="message_7T54Y" class="test__message">Expected:
+    <div id="message_EabRc" class="test__message">Expected:
 HEADERS frame (Flags: 1)
 Actual:
 Test timeout</div>
 </div>
 
-<div class="test" id="test_USQOm">
+<div class="test" id="test_GSBRG">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a second HEADERS frame without the END_STREAM flag</span>
-        <span class="label u-pull-right">time: 2.064190352s</span>
+        <span class="label u-pull-right">time: 2.056476514s</span>
     </button>
-    <div id="message_WrI24" class="test__message">Expected:
+    <div id="message_k152R" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
@@ -977,7 +927,7 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </div>
 </div>
 
-<div class="suite" id="suite_sbaPg">
+<div class="suite" id="suite_oFEY7">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1.2 HTTP Header Fields</span>
         <span class="label u-pull-right">package: 8.1.2 HTTP Header Fields</span>
@@ -988,23 +938,23 @@ SETTINGS frame (Length: 0, Flags: 1)</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_RIyeo">
+        <div class="test" id="test_pUVI9">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the header field name in uppercase letters</span>
-        <span class="label u-pull-right">time: 2.060351454s</span>
+        <span class="label u-pull-right">time: 2.105846976s</span>
     </button>
-    <div id="message_cf6DN" class="test__message">Expected:
+    <div id="message_3r4xW" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_TX4dA">
+<div class="suite" id="suite_Ezflp">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1.2.1 Pseudo-Header Fields</span>
         <span class="label u-pull-right">package: 8.1.2.1 Pseudo-Header Fields</span>
@@ -1015,49 +965,49 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_fVN6B">
+        <div class="test" id="test_kYmSk">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the pseudo-header field defined for response</span>
-        <span class="label u-pull-right">time: 2.063746085s</span>
+        <span class="label u-pull-right">time: 2.103927791s</span>
     </button>
-    <div id="message_xwVRN" class="test__message">Expected:
+    <div id="message_ZRlgV" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_T5XZm">
+<div class="test" id="test_NUKkh">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the invalid pseudo-header field</span>
-        <span class="label u-pull-right">time: 2.067686321s</span>
+        <span class="label u-pull-right">time: 2.100008177s</span>
     </button>
-    <div id="message_bA4Yu" class="test__message">Expected:
+    <div id="message_q2JOG" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_SA1dC">
+<div class="test" id="test_v4sRD">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains a pseudo-header field that appears in a header block after a regular header field</span>
-        <span class="label u-pull-right">time: 2.064492107s</span>
+        <span class="label u-pull-right">time: 2.103922729s</span>
     </button>
-    <div id="message_ZO5GI" class="test__message">Expected:
+    <div id="message_0i2wK" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 34, Flags: 1)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_K01Ck">
+<div class="suite" id="suite_2eRIz">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1.2.2 Connection-Specific Header Fields</span>
         <span class="label u-pull-right">package: 8.1.2.2 Connection-Specific Header Fields</span>
@@ -1068,36 +1018,36 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_B1gln">
+        <div class="test" id="test_HUBnt">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the connection-specific header field</span>
-        <span class="label u-pull-right">time: 2.059678613s</span>
+        <span class="label u-pull-right">time: 2.10372605s</span>
     </button>
-    <div id="message_PfHq5" class="test__message">Expected:
+    <div id="message_dGOLy" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_XXOlR">
+<div class="test" id="test_5KWEw">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the TE header field that contain any value other than 'trailers'</span>
-        <span class="label u-pull-right">time: 2.059774894s</span>
+        <span class="label u-pull-right">time: 2.096012761s</span>
     </button>
-    <div id="message_eBsyM" class="test__message">Expected:
+    <div id="message_mTc3A" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_EqudV">
+<div class="suite" id="suite_e9p0L">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1.2.3 Request Pseudo-Header Fields</span>
         <span class="label u-pull-right">package: 8.1.2.3 Request Pseudo-Header Fields</span>
@@ -1108,75 +1058,75 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_g06eB">
+        <div class="test" id="test_qg49Z">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that omits mandatory pseudo-header fields</span>
-        <span class="label u-pull-right">time: 2.059671823s</span>
+        <span class="label u-pull-right">time: 2.099797855s</span>
     </button>
-    <div id="message_man1g" class="test__message">Expected:
+    <div id="message_ZwXxi" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 632, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_e02SR">
+<div class="test" id="test_6N1DH">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that omits just ':method' pseudo-header field.</span>
-        <span class="label u-pull-right">time: 2.060219866s</span>
+        <span class="label u-pull-right">time: 2.10398549s</span>
     </button>
-    <div id="message_hRjsV" class="test__message">Expected:
+    <div id="message_EQfFu" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 632, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_C1yYf">
+<div class="test" id="test_bBJ72">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that omits just ':scheme' pseudo-header field.</span>
-        <span class="label u-pull-right">time: 2.055709528s</span>
+        <span class="label u-pull-right">time: 2.103980282s</span>
     </button>
-    <div id="message_E9XoU" class="test__message">Expected:
+    <div id="message_RBPhB" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_lgjdn">
+<div class="test" id="test_wqg3J">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that omits just ':path' pseudo-header field.</span>
-        <span class="label u-pull-right">time: 2.051994214s</span>
+        <span class="label u-pull-right">time: 2.099763356s</span>
     </button>
-    <div id="message_3U3W5" class="test__message">Expected:
+    <div id="message_oW45l" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 645, Flags: 1)</div>
 </div>
 
-<div class="test" id="test_pSj18">
+<div class="test" id="test_Mh3C5">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame containing more than one pseudo-header fields with the same name</span>
-        <span class="label u-pull-right">time: 2.0633976s</span>
+        <span class="label u-pull-right">time: 2.103752924s</span>
     </button>
-    <div id="message_nz9Mx" class="test__message">Expected:
+    <div id="message_b3CN3" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
 Actual:
-Test timeout</div>
+DATA frame (Length: 35, Flags: 1)</div>
 </div>
 
     </div>
 </div>
 
-<div class="suite" id="suite_lNB0l">
+<div class="suite" id="suite_QJm5Z">
     <button class="suite--failure u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.1.2.6 Malformed Requests and Responses</span>
         <span class="label u-pull-right">package: 8.1.2.6 Malformed Requests and Responses</span>
@@ -1187,12 +1137,12 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_NTMnx">
+        <div class="test" id="test_z1IKq">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the DATA frame payload lengths</span>
-        <span class="label u-pull-right">time: 2.064386331s</span>
+        <span class="label u-pull-right">time: 2.061092675s</span>
     </button>
-    <div id="message_eravd" class="test__message">Expected:
+    <div id="message_CYx4L" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
@@ -1200,12 +1150,12 @@ Actual:
 Test timeout</div>
 </div>
 
-<div class="test" id="test_CCQvi">
+<div class="test" id="test_UkoqF">
     <button class="test__name test--failure u-full-width flat" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the multiple DATA frame payload lengths</span>
-        <span class="label u-pull-right">time: 2.059927362s</span>
+        <span class="label u-pull-right">time: 2.063965912s</span>
     </button>
-    <div id="message_BQbLG" class="test__message">Expected:
+    <div id="message_os4f8" class="test__message">Expected:
 GOAWAY frame (ErrorCode: PROTOCOL_ERROR)
 RST_STREAM frame (ErrorCode: PROTOCOL_ERROR)
 Connection close
@@ -1216,7 +1166,7 @@ Test timeout</div>
     </div>
 </div>
 
-<div class="suite" id="suite_ndgif">
+<div class="suite" id="suite_tTWpH">
     <button class="suite--passed u-full-width round" onclick="toggleContraction(this.parentElement)" onload="setContracted()">
         <span class="suite__name u-pull-left">8.2 Server Push</span>
         <span class="label u-pull-right">package: 8.2 Server Push</span>
@@ -1227,10 +1177,10 @@ Test timeout</div>
     </button>
     <div class="suite__contents">
         
-        <div class="test" id="test_8wg86">
+        <div class="test" id="test_Zys0j">
     <button class="test__name test--passed u-full-width" onclick="toggleContraction(this.parentElement)">
         <span class="u-pull-left">Sends a PUSH_PROMISE frame</span>
-        <span class="label u-pull-right">time: 60.274554ms</span>
+        <span class="label u-pull-right">time: 64.449117ms</span>
     </button>
     
 </div>
@@ -1239,8 +1189,8 @@ Test timeout</div>
 </div>
 </div>
     </div>
-    <script type="text/javascript">function addClass(e,s){e&&(e.className=e.className+" "+s)}function removeClass(e,s){e&&(e.className=e.className.replace(" "+s,""))}function replaceClass(e,s,a){e&&(e.className=e.className.replace(s,a))}function toggleContraction(e){var s=e.children[0],a=e.children[1];if(a){var t=a.className.indexOf("contracted")!==-1;t?(replaceClass(s,"round","flat"),removeClass(a,"contracted")):(replaceClass(s,"flat","round"),addClass(a,"contracted"))}}function createVisibleInfo(e){var s={suites:{},tests:{}};return Object.keys(e).filter(function(e){var s=document.getElementById(e);return null!==s}).forEach(function(e,a){var t=document.getElementById(e);if(t.className.indexOf("not_in_search")===-1&&t.className.indexOf("hidden")===-1&&t.className.indexOf("no_visible_tests")===-1){var n=t.children[0].className.split(" ")[0].split("--")[1];s.suites.hasOwnProperty(n)||(s.suites[n]=0),s.suites[n]+=1;var i=t.children[1].children;Object.keys(i).filter(function(e){return null!==document.getElementById(e)&&i[e].className.indexOf("test")!==-1&&i[e].className.indexOf("not_in_search")===-1&&i[e].className.indexOf("hidden")===-1}).forEach(function(e){var a=document.getElementById(e),t=a.children[0].className.split(" ")[1].split("--")[1];s.tests.hasOwnProperty(t)||(s.tests[t]=0),s.tests[t]+=1})}}),s}function updateInfo(){var e=document.getElementsByClassName("suite"),s=createVisibleInfo(e),a=document.getElementsByClassName("suite hidden"),t=document.getElementsByClassName("suite not_in_search"),n=document.getElementsByClassName("suite no_visible_tests");s.suites.count=e.length-a.length-t.length-n.length;document.getElementsByClassName("test"),document.getElementsByClassName("test hidden"),document.getElementsByClassName("test not_in_search");s.tests.count=0,Object.keys(s.tests).filter(function(e){return"count"!==e}).forEach(function(e){s.tests.count+=s.tests[e]}),Object.keys(junit_info.suites).forEach(function(e){s.suites.hasOwnProperty(e)?document.getElementById("junit_info_suite_"+e+"_count").innerHTML=s.suites[e]:document.getElementById("junit_info_suite_"+e+"_count").innerHTML=0}),Object.keys(junit_info.tests).forEach(function(e){s.tests.hasOwnProperty(e)?document.getElementById("junit_info_test_"+e+"_count").innerHTML=s.tests[e]:document.getElementById("junit_info_test_"+e+"_count").innerHTML=0})}function contractSuites(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",suites.forEach(function(e){var a=document.getElementById(e.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function setContracted(e){"contracted"===e?document.getElementById("contractSuits").innerHTML="EXPAND ALL":document.getElementById("contractSuits").innerHTML="CONTRACT ALL",console.log("Log this"+e)}function hidePassingSuites(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE PASSING":"SHOW PASSING",suites.forEach(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):"passed"===e.type&&addClass(a,"hidden")}),updateInfo()}function globToRegex(e){var s,a,t,n,i=0,r=e.length||0;for(a="^";i<r;)if(t=e[i],i+=1,"*"===t)a+=".*";else if("?"===t)a+=".";else if("["===t){for(s=i,s<r&&"!"===e[s]&&(s+=1),s<r&&"]"===e[s]&&(s+=1);s<r&&"]"!==e[s];)s+=1;s>=r?a+="\\[":(n=e.slice(i,s).replace("\\","\\\\"),i=s+1,"!"===n[0]?n="^"+n.slice(1):"^"===n[0]&&(n="\\"+n),a=a+"["+n+"]")}else a+=escape(t);return a+"$"}function match(e,s){if(s=s.toUpperCase(),e=e.toUpperCase(),s.indexOf(e)!==-1)return!0;try{if(null!==s.match(new RegExp(e)))return!0}catch(a){}try{if(null!==s.match(new RegExp(globToRegex(e))))return!0}catch(a){}for(var t=-1,n=0;n<e.length;n++){var i=e[n];if(" "!=i&&(t=s.indexOf(i,t+1),t==-1))return!1}return!0}function searchSuites(e){e=e.toUpperCase(),suites.forEach(function(s){var a=document.getElementById(s.id);if(""===e)return void removeClass(a,"not_in_search");var t=match(e,s.name),n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")}),updateInfo()}function forEachTest(e){suites.forEach(function(s){s.testCases.forEach(e)})}function contractTests(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",forEachTest(function(e){var a=document.getElementById(e.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function hideTests(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE ALL":"SHOW ALL",forEachTest(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):addClass(a,"hidden")}),updateInfo()}function hidePassingTests(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE PASSING":"SHOW PASSING",forEachTest(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):"passed"===e.type&&addClass(a,"hidden")}),updateInfo()}function searchTests(e){e=e.toUpperCase(),forEachTest(function(s){var a=document.getElementById(s.id);if(""===e)return removeClass(a,"not_in_search"),void suites.forEach(function(e){var s=document.getElementById(e.id);s.className=s.className.replace(" no_visible_tests","")});var t=match(e,s.name);s.messages.values.forEach(function(s){var a=match(e,s.value);a&&(t=!0)});var n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")}),suites.forEach(function(e){var s=document.getElementById(e.id),a=s.children[1].children,t=Object.keys(a).filter(function(e){return null!==document.getElementById(e)&&(a[e].className.indexOf("not_in_search")!==-1||a[e].className.indexOf("properties")!==-1)}).length;a.length===t?s.className=s.className+" no_visible_tests":s.className=s.className.replace(" no_visible_tests","")}),updateInfo()}function contractProperties(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",suites.filter(function(e){return e.properties.values.length>0}).forEach(function(e){var a=document.getElementById(e.properties.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function hideProperties(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE ALL":"SHOW ALL",suites.filter(function(e){return e.properties.values.length>0}).forEach(function(e){var a=document.getElementById(e.properties.id);s?removeClass(a,"hidden"):addClass(a,"hidden")})}function searchProperties(e){e=e.toUpperCase(),suites.forEach(function(s){s.properties.values.forEach(function(s){var a=document.getElementById(s.id);if(""===e)return void removeClass(a,"not_in_search");var t=match(e,s.name)||match(e,s.value),n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")})})}function showOptions(){var e=document.getElementById("optionsCollapsed");e.style.display="none";var s=document.getElementById("optionsExpanded");s.style.display="block";var a=document.getElementById("options_container");a.className=a.className.replace("one","one-third");var t=document.getElementById("suites_container");t.className=t.className.replace("eleven ","two-thirds "),t.className=t.className.replace("columns ","column ")}function hideOptions(){var e=document.getElementById("optionsCollapsed");e.style.display="block";var s=document.getElementById("optionsExpanded");s.style.display="none";var a=document.getElementById("options_container");a.className=a.className.replace("one-third","one");var t=document.getElementById("suites_container");t.className=t.className.replace("two-thirds ","eleven "),t.className=t.className.replace("column ","columns ")}var junit_info={suites:{count:27,passed:9,failure:18},tests:{count:73,passed:31,failure:41,skipped:1}},suites=[{name:"3.5 HTTP/2 Connection Preface",type:"passed","package":"3.5 HTTP/2 Connection Preface",id:"suite_coKZI",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends invalid connection preface",messages:{values:[],id:"messages_HbJ8D"},type:"passed",classname:"3.5 HTTP/2 Connection Preface",time:"154.200832ms",id:"test_hebIq"}],properties:{values:[],id:"properties_E83gI"},contracted:""},{name:"4.2 Frame Size",type:"failure","package":"4.2 Frame Size",id:"suite_1mva9",tests:"1",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends large size frame that exceeds the SETTINGS_MAX_FRAME_SIZE",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)\nRST_STREAM frame (ErrorCode: FRAME_SIZE_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_EJJXN"}],id:"messages_AlDX4"},type:"failure",classname:"4.2 Frame Size",time:"2.089042254s",id:"test_hhpjB"}],properties:{values:[],id:"properties_fzBp4"},contracted:""},{name:"4.3 Header Compression and Decompression",type:"failure","package":"4.3 Header Compression and Decompression",id:"suite_ChGHg",tests:"3",skipped:"0",failures:"3",errors:"0",testCases:[{name:"Sends invalid header block fragment",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: COMPRESSION_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_iPzcz"}],id:"messages_WufYX"},type:"failure",classname:"4.3 Header Compression and Decompression",time:"2.069082296s",id:"test_9Yxv7"},{name:"Sends Dynamic Table Size Update (RFC 7541, 6.3)",messages:{values:[{value:"Expected:\nStream close\nActual:\nTest timeout",id:"message_CCXVy"}],id:"messages_9xpPp"},type:"failure",classname:"4.3 Header Compression and Decompression",time:"2.076700775s",id:"test_1RIlo"},{name:"Encodes Dynamic Table Size Update (RFC 7541, 6.3) after common header fields",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: COMPRESSION_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_2thEG"}],id:"messages_6tgtw"},type:"failure",classname:"4.3 Header Compression and Decompression",time:"2.060047547s",id:"test_SLzaK"}],properties:{values:[],id:"properties_TEADb"},contracted:""},{name:"5.1 Stream States",type:"failure","package":"5.1 Stream States",id:"suite_3yHVK",tests:"8",skipped:"0",failures:"1",errors:"0",testCases:[{name:"idle: Sends a DATA frame",messages:{values:[],id:"messages_XI9kp"},type:"passed",classname:"5.1 Stream States",time:"76.376487ms",id:"test_JSmcx"},{name:"idle: Sends a RST_STREAM frame",messages:{values:[],id:"messages_ktis1"},type:"passed",classname:"5.1 Stream States",time:"63.93134ms",id:"test_p6dPA"},{name:"idle: Sends a WINDOW_UPDATE frame",messages:{values:[],id:"messages_kFR7W"},type:"passed",classname:"5.1 Stream States",time:"64.138027ms",id:"test_K0I3P"},{name:"idle: Sends a CONTINUATION frame",messages:{values:[],id:"messages_HCRQG"},type:"passed",classname:"5.1 Stream States",time:"62.712119ms",id:"test_cmS2J"},{name:"half closed (remote): Sends a DATA frame",messages:{values:[],id:"messages_NvqXC"},type:"passed",classname:"5.1 Stream States",time:"66.26348ms",id:"test_I32oi"},{name:"half closed (remote): Sends a HEADERS frame",messages:{values:[],id:"messages_ePp6Q"},type:"passed",classname:"5.1 Stream States",time:"71.264983ms",id:"test_QVBKL"},{name:"half closed (remote): Sends a CONTINUATION frame",messages:{values:[],id:"messages_N9aoO"},type:"passed",classname:"5.1 Stream States",time:"64.688427ms",id:"test_xMBea"},{name:"closed: Sends a CONTINUATION frame",messages:{values:[{value:"Expected:\nStream close\nActual:\nTest timeout",id:"message_zSlHs"}],id:"messages_Xar5E"},type:"failure",classname:"5.1 Stream States",time:"2.059335756s",id:"test_kB4Wl"}],properties:{values:[],id:"properties_2TN3w"},contracted:""},{name:"5.1.1 Stream Identifiers",type:"passed","package":"5.1.1 Stream Identifiers",id:"suite_iAuxi",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends even-numbered stream identifier",messages:{values:[],id:"messages_6kzPl"},type:"passed",classname:"5.1.1 Stream Identifiers",time:"62.948476ms",id:"test_4u1JE"}],properties:{values:[],id:"properties_EA0IW"},contracted:""},{name:"5.1.2 Stream Concurrency",type:"passed","package":"5.1.2 Stream Concurrency",id:"suite_5BSxQ",tests:"1",skipped:"1",failures:"0",errors:"0",testCases:[{name:"Sends HEADERS frames that causes their advertised concurrent stream limit to be exceeded",messages:{values:[{value:"",id:"message_bkxb3"}],id:"messages_ufYEr"},type:"skipped",classname:"5.1.2 Stream Concurrency",time:"0",id:"test_9MXhg"}],properties:{values:[],id:"properties_0jybt"},contracted:""},{name:"5.3.1 Stream Dependencies",type:"failure","package":"5.3.1 Stream Dependencies",id:"suite_p8oAt",tests:"2",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends HEADERS frame that depend on itself",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_v9gAy"}],id:"messages_MmI8X"},type:"failure",classname:"5.3.1 Stream Dependencies",time:"2.064277075s",id:"test_70dxI"},{name:"Sends PRIORITY frame that depend on itself",messages:{values:[],id:"messages_k249E"},type:"passed",classname:"5.3.1 Stream Dependencies",time:"64.936081ms",id:"test_7qS1J"}],properties:{values:[],id:"properties_mKmzK"},contracted:""},{name:"5.5 Extending HTTP/2",type:"failure","package":"5.5 Extending HTTP/2",id:"suite_GhN0I",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends an unknown extension frame",messages:{values:[{value:"Expected:\nPING frame (Flags: 1)\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: PROTOCOL_ERROR)",id:"message_cONUQ"}],id:"messages_59YBQ"},type:"failure",classname:"5.5 Extending HTTP/2",time:"56.09429ms",id:"test_hMvs7"},{name:"Sends an unknown extension frame in the middle of a header block",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_8rJFe"}],id:"messages_3alz2"},type:"failure",classname:"5.5 Extending HTTP/2",time:"2.066039353s",id:"test_gFNzS"}],properties:{values:[],id:"properties_G5Hic"},contracted:""},{name:"6.1 DATA",type:"failure","package":"6.1 DATA",id:"suite_i0R4b",tests:"3",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends a DATA frame with 0x0 stream identifier",messages:{values:[],id:"messages_Zztx9"},type:"passed",classname:"6.1 DATA",time:"60.789387ms",id:"test_Pq7ry"},{name:"Sends a DATA frame on the stream that is not in 'open' or 'half-closed (local)' state",messages:{values:[],id:"messages_ohYgX"},type:"passed",classname:"6.1 DATA",time:"61.794061ms",id:"test_980bS"},{name:"Sends a DATA frame with invalid pad length",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_MC67q"}],id:"messages_H2j6T"},type:"failure",classname:"6.1 DATA",time:"2.066863434s",id:"test_kjTSR"}],properties:{values:[],id:"properties_4Ypjx"},contracted:""},{name:"6.2 HEADERS",type:"failure","package":"6.2 HEADERS",id:"suite_CQQdl",tests:"4",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends a HEADERS frame followed by any frame other than CONTINUATION",messages:{values:[],id:"messages_mhtqO"},type:"passed",classname:"6.2 HEADERS",time:"63.344832ms",id:"test_7vCJX"},{name:"Sends a HEADERS frame followed by a frame on a different stream",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: COMPRESSION_ERROR)",id:"message_YokL4"}],id:"messages_HzLrn"},type:"failure",classname:"6.2 HEADERS",time:"72.454321ms",id:"test_CGohP"},{name:"Sends a HEADERS frame with 0x0 stream identifier",messages:{values:[],id:"messages_BUaQQ"},type:"passed",classname:"6.2 HEADERS",time:"67.518188ms",id:"test_3sctc"},{name:"Sends a HEADERS frame with invalid pad length",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_brlrk"}],id:"messages_2A6PQ"},type:"failure",classname:"6.2 HEADERS",time:"2.056470069s",id:"test_v9YCn"}],properties:{values:[],id:"properties_OqE1p"},contracted:""},{name:"6.3 PRIORITY",type:"failure","package":"6.3 PRIORITY",id:"suite_IM7Mg",tests:"2",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends a PRIORITY frame with 0x0 stream identifier",messages:{values:[],id:"messages_JGwhx"},type:"passed",classname:"6.3 PRIORITY",time:"64.352011ms",id:"test_a8MAt"},{name:"Sends a PRIORITY frame with a length other than 5 octets",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)\nRST_STREAM frame (ErrorCode: FRAME_SIZE_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_CzenH"}],id:"messages_5YGoU"},type:"failure",classname:"6.3 PRIORITY",time:"2.058978784s",id:"test_OuWfZ"}],properties:{values:[],id:"properties_7QoOf"},contracted:""},{name:"6.4 RST_STREAM",type:"failure","package":"6.4 RST_STREAM",id:"suite_rTvrv",tests:"3",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends a RST_STREAM frame with 0x0 stream identifier",messages:{values:[],id:"messages_avcsN"},type:"passed",classname:"6.4 RST_STREAM",time:"72.021425ms",id:"test_a6Dkf"},{name:"Sends a RST_STREAM frame on a idle stream",messages:{values:[],id:"messages_JZ0xn"},type:"passed",classname:"6.4 RST_STREAM",time:"65.086127ms",id:"test_hMRvA"},{name:"Sends a RST_STREAM frame with a length other than 4 octets",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_hzS4g"}],id:"messages_dkZmP"},type:"failure",classname:"6.4 RST_STREAM",time:"2.059267812s",id:"test_NHg03"}],properties:{values:[],id:"properties_mL36a"},contracted:""},{name:"6.5 SETTINGS",type:"passed","package":"6.5 SETTINGS",id:"suite_246km",tests:"4",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a SETTINGS frame",messages:{values:[],id:"messages_Rslu3"},type:"passed",classname:"6.5 SETTINGS",time:"66.511728ms",id:"test_P2Ndj"},{name:"Sends a SETTINGS frame that is not a zero-length with ACK flag",messages:{values:[],id:"messages_vg6Id"},type:"passed",classname:"6.5 SETTINGS",time:"60.55376ms",id:"test_Ca76O"},{name:"Sends a SETTINGS frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_4irYV"},type:"passed",classname:"6.5 SETTINGS",time:"64.661147ms",id:"test_J0MEF"},{name:"Sends a SETTINGS frame with a length other than a multiple of 6 octets",messages:{values:[],id:"messages_wgofR"},type:"passed",classname:"6.5 SETTINGS",time:"62.782074ms",id:"test_Yu263"}],properties:{values:[],id:"properties_SxFeA"},contracted:""},{name:"6.5.2 Defined SETTINGS Parameters",type:"passed","package":"6.5.2 Defined SETTINGS Parameters",id:"suite_F5ncn",tests:"4",skipped:"0",failures:"0",errors:"0",testCases:[{name:"SETTINGS_ENABLE_PUSH (0x2): Sends the value other than 0 or 1",messages:{values:[],id:"messages_7NdgN"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"64.546699ms",id:"test_9YfNB"},{name:"SETTINGS_INITIAL_WINDOW_SIZE (0x4): Sends the value above the maximum flow control window size",messages:{values:[],id:"messages_pLeCE"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"62.091387ms",id:"test_wToGB"},{name:"SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value below the initial value",messages:{values:[],id:"messages_dLz2N"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"53.381042ms",id:"test_5qOBa"},{name:"SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value above the maximum allowed frame size",messages:{values:[],id:"messages_oNKqm"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"61.155658ms",id:"test_CKJ4U"}],properties:{values:[],id:"properties_JOv0Z"},contracted:""},{name:"6.7 PING",type:"passed","package":"6.7 PING",id:"suite_jYbZ9",tests:"3",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a PING frame",messages:{values:[],id:"messages_p1Qj8"},type:"passed",classname:"6.7 PING",time:"59.389336ms",id:"test_Mi9OM"},{name:"Sends a PING frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_EY1SA"},type:"passed",classname:"6.7 PING",time:"59.392942ms",id:"test_o2ww8"},{name:"Sends a PING frame with a length field value other than 8",messages:{values:[],id:"messages_WkcNU"},type:"passed",classname:"6.7 PING",time:"59.090015ms",id:"test_2AweW"}],properties:{values:[],id:"properties_DYZVC"},contracted:""},{name:"6.8 GOAWAY",type:"passed","package":"6.8 GOAWAY",id:"suite_dOIyI",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a GOAWAY frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_jGI9p"},type:"passed",classname:"6.8 GOAWAY",time:"56.23226ms",id:"test_ZIgHv"}],properties:{values:[],id:"properties_Zaak0"},contracted:""},{name:"6.9 WINDOW_UPDATE",type:"failure","package":"6.9 WINDOW_UPDATE",id:"suite_EoO49",tests:"4",skipped:"0",failures:"4",errors:"0",testCases:[{name:"Sends a WINDOW_UPDATE frame",messages:{values:[{value:"Expected:\nDATA frame\nActual:\nTest timeout",id:"message_JQSXc"}],id:"messages_y6UZL"},type:"failure",classname:"6.9 WINDOW_UPDATE",time:"2.060029908s",id:"test_tILc6"},{name:"Sends a WINDOW_UPDATE frame with a flow control window increment of 0",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_CjcUO"}],id:"messages_74cia"},type:"failure",classname:"6.9 WINDOW_UPDATE",time:"2.068277094s",id:"test_npn3L"},{name:"Sends a WINDOW_UPDATE frame with a flow control window increment of 0 on a stream",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_csGlg"}],id:"messages_VYzPG"},type:"failure",classname:"6.9 WINDOW_UPDATE",time:"2.063382314s",id:"test_4r2Lo"},{name:"Sends a WINDOW_UPDATE frame with a length other than a multiple of 4 octets",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FRAME_SIZE_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_sXeOL"}],id:"messages_Nep12"},type:"failure",classname:"6.9 WINDOW_UPDATE",time:"2.06394963s",id:"test_Ly85y"}],properties:{values:[],id:"properties_Zl6C9"},contracted:""},{name:"6.9.1 The Flow Control Window",type:"failure","package":"6.9.1 The Flow Control Window",id:"suite_tHr1q",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends multiple WINDOW_UPDATE frames on a connection increasing the flow control window to above 2^31-1",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)\nActual:\nTest timeout",id:"message_IRzhC"}],id:"messages_5iD7I"},type:"failure",classname:"6.9.1 The Flow Control Window",time:"2.059853962s",id:"test_smdUO"},{name:"Sends multiple WINDOW_UPDATE frames on a stream increasing the flow control window to above 2^31-1",messages:{values:[{value:"Expected:\nRST_STREAM frame (ErrorCode: FLOW_CONTROL_ERROR)\nGOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)\nActual:\nTest timeout",id:"message_Z0uBc"}],id:"messages_XnrsP"},type:"failure",classname:"6.9.1 The Flow Control Window",time:"2.055875113s",id:"test_HW2C6"}],properties:{values:[],id:"properties_LxjYV"},contracted:""},{name:"6.9.2 Initial Flow Control Window Size",type:"passed","package":"6.9.2 Initial Flow Control Window Size",id:"suite_RpTck",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a SETTINGS_INITIAL_WINDOW_SIZE settings with an exceeded maximum window size value",messages:{values:[],id:"messages_w36J4"},type:"passed",classname:"6.9.2 Initial Flow Control Window Size",time:"62.047467ms",id:"test_PWvLg"}],properties:{values:[],id:"properties_ay9ql"},contracted:""},{name:"6.10 CONTINUATION",type:"failure","package":"6.10 CONTINUATION",id:"suite_BSBCN",tests:"6",skipped:"0",failures:"6",errors:"0",testCases:[{name:"Sends a CONTINUATION frame",messages:{values:[{value:"Expected:\nHEADERS frame\nActual:\nTest timeout",id:"message_KR1f6"}],id:"messages_mGfin"},type:"failure",classname:"6.10 CONTINUATION",time:"2.065726379s",id:"test_j0gJ3"},{name:"Sends multiple CONTINUATION frames",messages:{values:[{value:"Expected:\nHEADERS frame\nActual:\nTest timeout",id:"message_sLPVk"}],id:"messages_VTwp3"},type:"failure",classname:"6.10 CONTINUATION",time:"2.0736965s",id:"test_D8Op0"},{name:"Sends a CONTINUATION frame followed by any frame other than CONTINUATION",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_iFo0p"}],id:"messages_2Swob"},type:"failure",classname:"6.10 CONTINUATION",time:"2.07001414s",id:"test_iJyht"},{name:"Sends a CONTINUATION frame followed by a frame on a different stream",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_iOwxr"}],id:"messages_eQ0bP"},type:"failure",classname:"6.10 CONTINUATION",time:"2.070866149s",id:"test_agarY"},{name:"Sends a CONTINUATION frame with the stream identifier that is 0x0",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_MkSBZ"}],id:"messages_C0Ahq"},type:"failure",classname:"6.10 CONTINUATION",time:"2.066377316s",id:"test_SofHo"},{name:"Sends a CONTINUATION frame after the frame other than HEADERS, PUSH_PROMISE or CONTINUATION",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_y7mdd"}],id:"messages_jfzqh"},type:"failure",classname:"6.10 CONTINUATION",time:"2.067024358s",id:"test_vO6xQ"}],properties:{values:[],id:"properties_VgH0c"},contracted:""},{name:"8.1 HTTP Request/Response Exchange",type:"failure","package":"8.1 HTTP Request/Response Exchange",id:"suite_IpEV1",tests:"3",skipped:"0",failures:"3",errors:"0",testCases:[{name:"Sends a HEADERS frame as HEAD request",messages:{values:[{value:"Expected:\nHEADERS frame (Flags: 1)\nDATA frame (Length: 0, Flags: 1)\nActual:\nTest timeout",id:"message_lvUXc"}],id:"messages_QbMKL"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.063274514s",id:"test_ikE4Y"},{name:"Sends a HEADERS frame containing trailer part",messages:{values:[{value:"Expected:\nHEADERS frame (Flags: 1)\nActual:\nTest timeout",id:"message_7T54Y"}],id:"messages_3txrd"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.05161279s",id:"test_XQUro"},{name:"Sends a second HEADERS frame without the END_STREAM flag",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_WrI24"}],id:"messages_fhBAh"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.064190352s",id:"test_USQOm"}],properties:{values:[],id:"properties_OCmzu"},contracted:""},{name:"8.1.2 HTTP Header Fields",type:"failure","package":"8.1.2 HTTP Header Fields",id:"suite_sbaPg",tests:"1",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the header field name in uppercase letters",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_cf6DN"}],id:"messages_Rs5Dx"},type:"failure",classname:"8.1.2 HTTP Header Fields",time:"2.060351454s",id:"test_RIyeo"}],properties:{values:[],id:"properties_Pg4lG"},contracted:""},{name:"8.1.2.1 Pseudo-Header Fields",type:"failure","package":"8.1.2.1 Pseudo-Header Fields",id:"suite_TX4dA",tests:"3",skipped:"0",failures:"3",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the pseudo-header field defined for response",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_xwVRN"}],id:"messages_VHm6T"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.063746085s",id:"test_fVN6B"},{name:"Sends a HEADERS frame that contains the invalid pseudo-header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_bA4Yu"}],id:"messages_8mphB"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.067686321s",id:"test_T5XZm"},{name:"Sends a HEADERS frame that contains a pseudo-header field that appears in a header block after a regular header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_ZO5GI"}],id:"messages_JNEFC"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.064492107s",id:"test_SA1dC"}],properties:{values:[],id:"properties_e90UP"},contracted:""},{name:"8.1.2.2 Connection-Specific Header Fields",type:"failure","package":"8.1.2.2 Connection-Specific Header Fields",id:"suite_K01Ck",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the connection-specific header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_PfHq5"}],id:"messages_Fh92w"},type:"failure",classname:"8.1.2.2 Connection-Specific Header Fields",time:"2.059678613s",id:"test_B1gln"},{name:"Sends a HEADERS frame that contains the TE header field that contain any value other than 'trailers'",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_eBsyM"}],id:"messages_B0DSU"},type:"failure",classname:"8.1.2.2 Connection-Specific Header Fields",time:"2.059774894s",id:"test_XXOlR"}],properties:{values:[],id:"properties_ZJmGh"},contracted:""},{name:"8.1.2.3 Request Pseudo-Header Fields",type:"failure","package":"8.1.2.3 Request Pseudo-Header Fields",id:"suite_EqudV",tests:"5",skipped:"0",failures:"5",errors:"0",testCases:[{name:"Sends a HEADERS frame that omits mandatory pseudo-header fields",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_man1g"}],id:"messages_T5MpR"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.059671823s",id:"test_g06eB"},{name:"Sends a HEADERS frame that omits just ':method' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_hRjsV"}],id:"messages_JPZ4t"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.060219866s",id:"test_e02SR"},{name:"Sends a HEADERS frame that omits just ':scheme' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_E9XoU"}],id:"messages_fncUq"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.055709528s",id:"test_C1yYf"},{name:"Sends a HEADERS frame that omits just ':path' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_3U3W5"}],id:"messages_RHsvj"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.051994214s",id:"test_lgjdn"},{name:"Sends a HEADERS frame containing more than one pseudo-header fields with the same name",
-messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_nz9Mx"}],id:"messages_LXzyB"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.0633976s",id:"test_pSj18"}],properties:{values:[],id:"properties_dp4H8"},contracted:""},{name:"8.1.2.6 Malformed Requests and Responses",type:"failure","package":"8.1.2.6 Malformed Requests and Responses",id:"suite_lNB0l",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the DATA frame payload lengths",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_eravd"}],id:"messages_IyBRf"},type:"failure",classname:"8.1.2.6 Malformed Requests and Responses",time:"2.064386331s",id:"test_NTMnx"},{name:"Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the multiple DATA frame payload lengths",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_BQbLG"}],id:"messages_xH5yp"},type:"failure",classname:"8.1.2.6 Malformed Requests and Responses",time:"2.059927362s",id:"test_CCQvi"}],properties:{values:[],id:"properties_e45cZ"},contracted:""},{name:"8.2 Server Push",type:"passed","package":"8.2 Server Push",id:"suite_ndgif",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a PUSH_PROMISE frame",messages:{values:[],id:"messages_OKTbo"},type:"passed",classname:"8.2 Server Push",time:"60.274554ms",id:"test_8wg86"}],properties:{values:[],id:"properties_ab2vf"},contracted:""}],height=window.innerHeight||document.documentElement.clientHeight||document.getElementsByTagName("body")[0].clientHeight;document.getElementById("suites_container").style.height=height+"px",document.getElementById("options").style.height=height-76+"px",window.onresize=function(e){var s=window.innerHeight||document.documentElement.clientHeight||document.getElementsByTagName("body")[0].clientHeight;document.getElementById("suites_container").style.height=s+"px",document.getElementById("options").style.height=s-76+"px"};</script>
+    <script type="text/javascript">function addClass(e,s){e&&(e.className=e.className+" "+s)}function removeClass(e,s){e&&(e.className=e.className.replace(" "+s,""))}function replaceClass(e,s,a){e&&(e.className=e.className.replace(s,a))}function toggleContraction(e){var s=e.children[0],a=e.children[1];if(a){var t=a.className.indexOf("contracted")!==-1;t?(replaceClass(s,"round","flat"),removeClass(a,"contracted")):(replaceClass(s,"flat","round"),addClass(a,"contracted"))}}function createVisibleInfo(e){var s={suites:{},tests:{}};return Object.keys(e).filter(function(e){var s=document.getElementById(e);return null!==s}).forEach(function(e,a){var t=document.getElementById(e);if(t.className.indexOf("not_in_search")===-1&&t.className.indexOf("hidden")===-1&&t.className.indexOf("no_visible_tests")===-1){var n=t.children[0].className.split(" ")[0].split("--")[1];s.suites.hasOwnProperty(n)||(s.suites[n]=0),s.suites[n]+=1;var i=t.children[1].children;Object.keys(i).filter(function(e){return null!==document.getElementById(e)&&i[e].className.indexOf("test")!==-1&&i[e].className.indexOf("not_in_search")===-1&&i[e].className.indexOf("hidden")===-1}).forEach(function(e){var a=document.getElementById(e),t=a.children[0].className.split(" ")[1].split("--")[1];s.tests.hasOwnProperty(t)||(s.tests[t]=0),s.tests[t]+=1})}}),s}function updateInfo(){var e=document.getElementsByClassName("suite"),s=createVisibleInfo(e),a=document.getElementsByClassName("suite hidden"),t=document.getElementsByClassName("suite not_in_search"),n=document.getElementsByClassName("suite no_visible_tests");s.suites.count=e.length-a.length-t.length-n.length;document.getElementsByClassName("test"),document.getElementsByClassName("test hidden"),document.getElementsByClassName("test not_in_search");s.tests.count=0,Object.keys(s.tests).filter(function(e){return"count"!==e}).forEach(function(e){s.tests.count+=s.tests[e]}),Object.keys(junit_info.suites).forEach(function(e){s.suites.hasOwnProperty(e)?document.getElementById("junit_info_suite_"+e+"_count").innerHTML=s.suites[e]:document.getElementById("junit_info_suite_"+e+"_count").innerHTML=0}),Object.keys(junit_info.tests).forEach(function(e){s.tests.hasOwnProperty(e)?document.getElementById("junit_info_test_"+e+"_count").innerHTML=s.tests[e]:document.getElementById("junit_info_test_"+e+"_count").innerHTML=0})}function contractSuites(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",suites.forEach(function(e){var a=document.getElementById(e.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function setContracted(e){"contracted"===e?document.getElementById("contractSuits").innerHTML="EXPAND ALL":document.getElementById("contractSuits").innerHTML="CONTRACT ALL",console.log("Log this"+e)}function hidePassingSuites(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE PASSING":"SHOW PASSING",suites.forEach(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):"passed"===e.type&&addClass(a,"hidden")}),updateInfo()}function globToRegex(e){var s,a,t,n,i=0,r=e.length||0;for(a="^";i<r;)if(t=e[i],i+=1,"*"===t)a+=".*";else if("?"===t)a+=".";else if("["===t){for(s=i,s<r&&"!"===e[s]&&(s+=1),s<r&&"]"===e[s]&&(s+=1);s<r&&"]"!==e[s];)s+=1;s>=r?a+="\\[":(n=e.slice(i,s).replace("\\","\\\\"),i=s+1,"!"===n[0]?n="^"+n.slice(1):"^"===n[0]&&(n="\\"+n),a=a+"["+n+"]")}else a+=escape(t);return a+"$"}function match(e,s){if(s=s.toUpperCase(),e=e.toUpperCase(),s.indexOf(e)!==-1)return!0;try{if(null!==s.match(new RegExp(e)))return!0}catch(a){}try{if(null!==s.match(new RegExp(globToRegex(e))))return!0}catch(a){}for(var t=-1,n=0;n<e.length;n++){var i=e[n];if(" "!=i&&(t=s.indexOf(i,t+1),t==-1))return!1}return!0}function searchSuites(e){e=e.toUpperCase(),suites.forEach(function(s){var a=document.getElementById(s.id);if(""===e)return void removeClass(a,"not_in_search");var t=match(e,s.name),n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")}),updateInfo()}function forEachTest(e){suites.forEach(function(s){s.testCases.forEach(e)})}function contractTests(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",forEachTest(function(e){var a=document.getElementById(e.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function hideTests(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE ALL":"SHOW ALL",forEachTest(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):addClass(a,"hidden")}),updateInfo()}function hidePassingTests(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE PASSING":"SHOW PASSING",forEachTest(function(e){var a=document.getElementById(e.id);s?removeClass(a,"hidden"):"passed"===e.type&&addClass(a,"hidden")}),updateInfo()}function searchTests(e){e=e.toUpperCase(),forEachTest(function(s){var a=document.getElementById(s.id);if(""===e)return removeClass(a,"not_in_search"),void suites.forEach(function(e){var s=document.getElementById(e.id);s.className=s.className.replace(" no_visible_tests","")});var t=match(e,s.name);s.messages.values.forEach(function(s){var a=match(e,s.value);a&&(t=!0)});var n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")}),suites.forEach(function(e){var s=document.getElementById(e.id),a=s.children[1].children,t=Object.keys(a).filter(function(e){return null!==document.getElementById(e)&&(a[e].className.indexOf("not_in_search")!==-1||a[e].className.indexOf("properties")!==-1)}).length;a.length===t?s.className=s.className+" no_visible_tests":s.className=s.className.replace(" no_visible_tests","")}),updateInfo()}function contractProperties(e){var s=e.innerHTML.indexOf("EXPAND")!==-1;e.innerHTML=s?"CONTRACT ALL":"EXPAND ALL",suites.filter(function(e){return e.properties.values.length>0}).forEach(function(e){var a=document.getElementById(e.properties.id),t=a.children[0],n=a.children[1];s?(replaceClass(t,"round","flat"),removeClass(n,"contracted")):(replaceClass(t,"flat","round"),addClass(n,"contracted"))})}function hideProperties(e){var s=e.innerHTML.indexOf("SHOW")!==-1;e.innerHTML=s?"HIDE ALL":"SHOW ALL",suites.filter(function(e){return e.properties.values.length>0}).forEach(function(e){var a=document.getElementById(e.properties.id);s?removeClass(a,"hidden"):addClass(a,"hidden")})}function searchProperties(e){e=e.toUpperCase(),suites.forEach(function(s){s.properties.values.forEach(function(s){var a=document.getElementById(s.id);if(""===e)return void removeClass(a,"not_in_search");var t=match(e,s.name)||match(e,s.value),n=a.className.indexOf("not_in_search")===-1;!t&&n&&addClass(a,"not_in_search"),t&&removeClass(a,"not_in_search")})})}function showOptions(){var e=document.getElementById("optionsCollapsed");e.style.display="none";var s=document.getElementById("optionsExpanded");s.style.display="block";var a=document.getElementById("options_container");a.className=a.className.replace("one","one-third");var t=document.getElementById("suites_container");t.className=t.className.replace("eleven ","two-thirds "),t.className=t.className.replace("columns ","column ")}function hideOptions(){var e=document.getElementById("optionsCollapsed");e.style.display="block";var s=document.getElementById("optionsExpanded");s.style.display="none";var a=document.getElementById("options_container");a.className=a.className.replace("one-third","one");var t=document.getElementById("suites_container");t.className=t.className.replace("two-thirds ","eleven "),t.className=t.className.replace("column ","columns ")}var junit_info={suites:{count:27,passed:15,failure:12},tests:{count:73,passed:42,failure:29,skipped:2}},suites=[{name:"3.5 HTTP/2 Connection Preface",type:"passed","package":"3.5 HTTP/2 Connection Preface",id:"suite_nZBjw",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends invalid connection preface",messages:{values:[],id:"messages_1mXao"},type:"passed",classname:"3.5 HTTP/2 Connection Preface",time:"150.237778ms",id:"test_kkZU2"}],properties:{values:[],id:"properties_apeCK"},contracted:""},{name:"4.2 Frame Size",type:"passed","package":"4.2 Frame Size",id:"suite_nSSZA",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends large size frame that exceeds the SETTINGS_MAX_FRAME_SIZE",messages:{values:[],id:"messages_oeHcR"},type:"passed",classname:"4.2 Frame Size",time:"189.930763ms",id:"test_y649R"}],properties:{values:[],id:"properties_U5EJb"},contracted:""},{name:"4.3 Header Compression and Decompression",type:"failure","package":"4.3 Header Compression and Decompression",id:"suite_hwr1b",tests:"3",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends invalid header block fragment",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: COMPRESSION_ERROR)\nConnection close\nActual:\nDATA frame (Length: 632, Flags: 1)",id:"message_UARZa"}],id:"messages_DCLPR"},type:"failure",classname:"4.3 Header Compression and Decompression",time:"2.163247013s",id:"test_95s0d"},{name:"Sends Dynamic Table Size Update (RFC 7541, 6.3)",messages:{values:[],id:"messages_E6qzH"},type:"passed",classname:"4.3 Header Compression and Decompression",time:"135.695422ms",id:"test_GC7Lq"},{name:"Encodes Dynamic Table Size Update (RFC 7541, 6.3) after common header fields",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: COMPRESSION_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_XjGmk"}],id:"messages_Fnk06"},type:"failure",classname:"4.3 Header Compression and Decompression",time:"2.107965979s",id:"test_m6iOX"}],properties:{values:[],id:"properties_Us4yA"},contracted:""},{name:"5.1 Stream States",type:"failure","package":"5.1 Stream States",id:"suite_VBssD",tests:"8",skipped:"0",failures:"1",errors:"0",testCases:[{name:"idle: Sends a DATA frame",messages:{values:[],id:"messages_xWalO"},type:"passed",classname:"5.1 Stream States",time:"62.617086ms",id:"test_QecDA"},{name:"idle: Sends a RST_STREAM frame",messages:{values:[],id:"messages_1kpZY"},type:"passed",classname:"5.1 Stream States",time:"67.658665ms",id:"test_zT6vn"},{name:"idle: Sends a WINDOW_UPDATE frame",messages:{values:[],id:"messages_f3OSs"},type:"passed",classname:"5.1 Stream States",time:"65.065296ms",id:"test_d181y"},{name:"idle: Sends a CONTINUATION frame",messages:{values:[],id:"messages_dEhvW"},type:"passed",classname:"5.1 Stream States",time:"71.77348ms",id:"test_Qa5Lz"},{name:"half closed (remote): Sends a DATA frame",messages:{values:[],id:"messages_nCDxT"},type:"passed",classname:"5.1 Stream States",time:"104.477862ms",id:"test_lo70R"},{name:"half closed (remote): Sends a HEADERS frame",messages:{values:[],id:"messages_foovv"},type:"passed",classname:"5.1 Stream States",time:"73.555756ms",id:"test_JkjOA"},{name:"half closed (remote): Sends a CONTINUATION frame",messages:{values:[],id:"messages_zorQr"},type:"passed",classname:"5.1 Stream States",time:"65.173507ms",id:"test_sP5WU"},{name:"closed: Sends a CONTINUATION frame",messages:{values:[{value:"Expected:\nStream close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_xKbRi"}],id:"messages_wVsFU"},type:"failure",classname:"5.1 Stream States",time:"2.083446575s",id:"test_kMDv5"}],properties:{values:[],id:"properties_uncXu"},contracted:""},{name:"5.1.1 Stream Identifiers",type:"passed","package":"5.1.1 Stream Identifiers",id:"suite_WbW9U",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends even-numbered stream identifier",messages:{values:[],id:"messages_xKGC5"},type:"passed",classname:"5.1.1 Stream Identifiers",time:"71.286477ms",id:"test_lOiny"}],properties:{values:[],id:"properties_Lyd37"},contracted:""},{name:"5.1.2 Stream Concurrency",type:"passed","package":"5.1.2 Stream Concurrency",id:"suite_gtcmp",tests:"1",skipped:"1",failures:"0",errors:"0",testCases:[{name:"Sends HEADERS frames that causes their advertised concurrent stream limit to be exceeded",messages:{values:[{value:"",id:"message_cTzxN"}],id:"messages_pRDaw"},type:"skipped",classname:"5.1.2 Stream Concurrency",time:"0",id:"test_Qo2eA"}],properties:{values:[],id:"properties_7iQCl"},contracted:""},{name:"5.3.1 Stream Dependencies",type:"failure","package":"5.3.1 Stream Dependencies",id:"suite_E09e2",tests:"2",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends HEADERS frame that depend on itself",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_8U4z5"}],id:"messages_FIt03"},type:"failure",classname:"5.3.1 Stream Dependencies",time:"2.102916729s",id:"test_q2LCn"},{name:"Sends PRIORITY frame that depend on itself",messages:{values:[],id:"messages_bnvFL"},type:"passed",classname:"5.3.1 Stream Dependencies",time:"62.177451ms",id:"test_a5awl"}],properties:{values:[],id:"properties_X2R3i"},contracted:""},{name:"5.5 Extending HTTP/2",type:"failure","package":"5.5 Extending HTTP/2",id:"suite_nLF56",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends an unknown extension frame",messages:{values:[{value:"Expected:\nPING frame (Flags: 1)\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: PROTOCOL_ERROR)",id:"message_U1wBy"}],id:"messages_h3Wct"},type:"failure",classname:"5.5 Extending HTTP/2",time:"68.521844ms",id:"test_nO1tb"},{name:"Sends an unknown extension frame in the middle of a header block",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_TLlnk"}],id:"messages_Xuvdm"},type:"failure",classname:"5.5 Extending HTTP/2",time:"106.359958ms",id:"test_B2NG7"}],properties:{values:[],id:"properties_3goyv"},contracted:""},{name:"6.1 DATA",type:"passed","package":"6.1 DATA",id:"suite_NybCK",tests:"3",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a DATA frame with 0x0 stream identifier",messages:{values:[],id:"messages_rnw7S"},type:"passed",classname:"6.1 DATA",time:"66.123358ms",id:"test_qWiaA"},{name:"Sends a DATA frame on the stream that is not in 'open' or 'half-closed (local)' state",messages:{values:[],id:"messages_f6UC2"},type:"passed",classname:"6.1 DATA",time:"66.733328ms",id:"test_F8LEA"},{name:"Sends a DATA frame with invalid pad length",messages:{values:[],id:"messages_DzaVs"},type:"passed",classname:"6.1 DATA",time:"68.928541ms",id:"test_0t9X2"}],properties:{values:[],id:"properties_TYpD2"},contracted:""},{name:"6.2 HEADERS",type:"passed","package":"6.2 HEADERS",id:"suite_jeVN4",tests:"4",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a HEADERS frame followed by any frame other than CONTINUATION",messages:{values:[],id:"messages_mRyrS"},type:"passed",classname:"6.2 HEADERS",time:"62.778223ms",id:"test_ynlkR"},{name:"Sends a HEADERS frame followed by a frame on a different stream",messages:{values:[],id:"messages_sEVYz"},type:"passed",classname:"6.2 HEADERS",time:"61.322438ms",id:"test_YIza8"},{name:"Sends a HEADERS frame with 0x0 stream identifier",messages:{values:[],id:"messages_ICDFx"},type:"passed",classname:"6.2 HEADERS",time:"63.227366ms",id:"test_IsqIi"},{name:"Sends a HEADERS frame with invalid pad length",messages:{values:[],id:"messages_yTkQK"},type:"passed",classname:"6.2 HEADERS",time:"59.748993ms",id:"test_j4Q4y"}],properties:{values:[],id:"properties_M3b8U"},contracted:""},{name:"6.3 PRIORITY",type:"passed","package":"6.3 PRIORITY",id:"suite_X3jS8",tests:"2",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a PRIORITY frame with 0x0 stream identifier",messages:{values:[],id:"messages_PyJLC"},type:"passed",classname:"6.3 PRIORITY",time:"61.012805ms",id:"test_SlwNh"},{name:"Sends a PRIORITY frame with a length other than 5 octets",messages:{values:[],id:"messages_grYOr"},type:"passed",classname:"6.3 PRIORITY",time:"96.247281ms",id:"test_KpXmB"}],properties:{values:[],id:"properties_qL86B"},contracted:""},{name:"6.4 RST_STREAM",type:"passed","package":"6.4 RST_STREAM",id:"suite_m0sCg",tests:"3",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a RST_STREAM frame with 0x0 stream identifier",messages:{values:[],id:"messages_TRNXZ"},type:"passed",classname:"6.4 RST_STREAM",time:"61.684295ms",id:"test_QG5Vf"},{name:"Sends a RST_STREAM frame on a idle stream",messages:{values:[],id:"messages_y9Ol4"},type:"passed",classname:"6.4 RST_STREAM",time:"70.148038ms",id:"test_8opNi"},{name:"Sends a RST_STREAM frame with a length other than 4 octets",messages:{values:[],id:"messages_2aGWt"},type:"passed",classname:"6.4 RST_STREAM",time:"100.029281ms",id:"test_ujR54"}],properties:{values:[],id:"properties_lqdSC"},contracted:""},{name:"6.5 SETTINGS",type:"passed","package":"6.5 SETTINGS",id:"suite_tTu3E",tests:"4",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a SETTINGS frame",messages:{values:[],id:"messages_BdIu0"},type:"passed",classname:"6.5 SETTINGS",time:"61.614904ms",id:"test_FMwoE"},{name:"Sends a SETTINGS frame that is not a zero-length with ACK flag",messages:{values:[],id:"messages_LxGIO"},type:"passed",classname:"6.5 SETTINGS",time:"60.119569ms",id:"test_XOMom"},{name:"Sends a SETTINGS frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_T0MRC"},type:"passed",classname:"6.5 SETTINGS",time:"60.589542ms",id:"test_A1Nun"},{name:"Sends a SETTINGS frame with a length other than a multiple of 6 octets",messages:{values:[],id:"messages_mJ9hJ"},type:"passed",classname:"6.5 SETTINGS",time:"60.120587ms",id:"test_DoPZb"}],properties:{values:[],id:"properties_3xSbD"},contracted:""},{name:"6.5.2 Defined SETTINGS Parameters",type:"passed","package":"6.5.2 Defined SETTINGS Parameters",id:"suite_FK73a",tests:"4",skipped:"0",failures:"0",errors:"0",testCases:[{name:"SETTINGS_ENABLE_PUSH (0x2): Sends the value other than 0 or 1",messages:{values:[],id:"messages_yVhKi"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"62.73818ms",id:"test_vP2m5"},{name:"SETTINGS_INITIAL_WINDOW_SIZE (0x4): Sends the value above the maximum flow control window size",messages:{values:[],id:"messages_5KWVe"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"59.75645ms",id:"test_fNcdN"},{name:"SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value below the initial value",messages:{values:[],id:"messages_nF4In"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"61.527205ms",id:"test_4AYFC"},{name:"SETTINGS_MAX_FRAME_SIZE (0x5): Sends the value above the maximum allowed frame size",messages:{values:[],id:"messages_wBp30"},type:"passed",classname:"6.5.2 Defined SETTINGS Parameters",time:"63.444419ms",id:"test_j9pdG"}],properties:{values:[],id:"properties_QXKCP"},contracted:""},{name:"6.7 PING",type:"passed","package":"6.7 PING",id:"suite_e6jpc",tests:"3",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a PING frame",messages:{values:[],id:"messages_qUsBT"},type:"passed",classname:"6.7 PING",time:"61.396633ms",id:"test_taGuI"},{name:"Sends a PING frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_YKrjE"},type:"passed",classname:"6.7 PING",time:"58.886913ms",id:"test_BFm3a"},{name:"Sends a PING frame with a length field value other than 8",messages:{values:[],id:"messages_fumlq"},type:"passed",classname:"6.7 PING",time:"63.863252ms",id:"test_X1QBo"}],properties:{values:[],id:"properties_kYJWf"},contracted:""},{name:"6.8 GOAWAY",type:"passed","package":"6.8 GOAWAY",id:"suite_QWqR8",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a GOAWAY frame with the stream identifier that is not 0x0",messages:{values:[],id:"messages_DakC5"},type:"passed",classname:"6.8 GOAWAY",time:"59.161778ms",id:"test_Ei6Zl"}],properties:{values:[],id:"properties_kV1RX"},contracted:""},{name:"6.9 WINDOW_UPDATE",type:"passed","package":"6.9 WINDOW_UPDATE",id:"suite_EWpII",tests:"4",skipped:"1",failures:"0",errors:"0",testCases:[{name:"Sends a WINDOW_UPDATE frame",messages:{values:[{value:"",id:"message_vc4Wd"}],id:"messages_8cmf7"},type:"skipped",classname:"6.9 WINDOW_UPDATE",time:"0",id:"test_gmv4t"},{name:"Sends a WINDOW_UPDATE frame with a flow control window increment of 0",messages:{values:[],id:"messages_kGRdq"},type:"passed",classname:"6.9 WINDOW_UPDATE",time:"61.850574ms",id:"test_NaH9S"},{name:"Sends a WINDOW_UPDATE frame with a flow control window increment of 0 on a stream",messages:{values:[],id:"messages_4enY0"},type:"passed",classname:"6.9 WINDOW_UPDATE",time:"102.162959ms",id:"test_maNuc"},{name:"Sends a WINDOW_UPDATE frame with a length other than a multiple of 4 octets",messages:{values:[],id:"messages_DfA6W"},type:"passed",classname:"6.9 WINDOW_UPDATE",time:"63.740452ms",id:"test_xP4zY"}],properties:{values:[],id:"properties_XHs2n"},contracted:""},{name:"6.9.1 The Flow Control Window",type:"failure","package":"6.9.1 The Flow Control Window",id:"suite_TiTIb",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends multiple WINDOW_UPDATE frames on a connection increasing the flow control window to above 2^31-1",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)\nActual:\nTest timeout",id:"message_h3tCA"}],id:"messages_LPCIy"},type:"failure",classname:"6.9.1 The Flow Control Window",time:"2.062126191s",id:"test_OvOB7"},{name:"Sends multiple WINDOW_UPDATE frames on a stream increasing the flow control window to above 2^31-1",messages:{values:[{value:"Expected:\nRST_STREAM frame (ErrorCode: FLOW_CONTROL_ERROR)\nGOAWAY frame (ErrorCode: FLOW_CONTROL_ERROR)\nActual:\nTest timeout",id:"message_AHjZR"}],id:"messages_Kowbj"},type:"failure",classname:"6.9.1 The Flow Control Window",time:"2.058950734s",id:"test_pqnmj"}],properties:{values:[],id:"properties_oSWVN"},contracted:""},{name:"6.9.2 Initial Flow Control Window Size",type:"passed","package":"6.9.2 Initial Flow Control Window Size",id:"suite_wfbDX",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a SETTINGS_INITIAL_WINDOW_SIZE settings with an exceeded maximum window size value",messages:{values:[],id:"messages_wKCei"},type:"passed",classname:"6.9.2 Initial Flow Control Window Size",time:"65.4187ms",id:"test_Lyx8b"}],properties:{values:[],id:"properties_YXUGF"},contracted:""},{name:"6.10 CONTINUATION",type:"failure","package":"6.10 CONTINUATION",id:"suite_MVbrq",tests:"6",skipped:"0",failures:"5",errors:"0",testCases:[{name:"Sends a CONTINUATION frame",messages:{values:[{value:"Expected:\nHEADERS frame\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_uoFvz"}],id:"messages_dD6BH"},type:"failure",classname:"6.10 CONTINUATION",time:"2.076247639s",id:"test_3zMGB"},{name:"Sends multiple CONTINUATION frames",messages:{values:[{value:"Expected:\nHEADERS frame\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_86PtD"}],id:"messages_NlNXI"},type:"failure",classname:"6.10 CONTINUATION",time:"2.079962583s",id:"test_xt0xA"},{name:"Sends a CONTINUATION frame followed by any frame other than CONTINUATION",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_ROHoX"}],id:"messages_t5WHj"},type:"failure",classname:"6.10 CONTINUATION",time:"80.935091ms",id:"test_eAnsY"},{name:"Sends a CONTINUATION frame followed by a frame on a different stream",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_bFUe1"}],id:"messages_KbVNO"},type:"failure",classname:"6.10 CONTINUATION",time:"72.914296ms",id:"test_aK2H9"},{name:"Sends a CONTINUATION frame with the stream identifier that is 0x0",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nGOAWAY frame (Length: 8, Flags: 0, ErrorCode: FRAME_SIZE_ERROR)",id:"message_82z5K"}],id:"messages_qSeHm"},type:"failure",classname:"6.10 CONTINUATION",time:"69.637458ms",id:"test_qP5ul"},{name:"Sends a CONTINUATION frame after the frame other than HEADERS, PUSH_PROMISE or CONTINUATION",messages:{values:[],id:"messages_qdRT3"},type:"passed",classname:"6.10 CONTINUATION",time:"97.400417ms",id:"test_I3o7m"}],properties:{values:[],id:"properties_P9zsJ"},contracted:""},{name:"8.1 HTTP Request/Response Exchange",type:"failure","package":"8.1 HTTP Request/Response Exchange",id:"suite_wq3N7",tests:"3",skipped:"0",failures:"3",errors:"0",testCases:[{name:"Sends a HEADERS frame as HEAD request",messages:{values:[{value:"Expected:\nHEADERS frame (Flags: 1)\nDATA frame (Length: 0, Flags: 1)\nActual:\nDATA frame (Length: 33, Flags: 1)",id:"message_4fETq"}],id:"messages_Se3pQ"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.103954403s",id:"test_K1YUT"},{name:"Sends a HEADERS frame containing trailer part",messages:{values:[{value:"Expected:\nHEADERS frame (Flags: 1)\nActual:\nTest timeout",id:"message_EabRc"}],id:"messages_5x5xV"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.061235935s",id:"test_QsFAR"},{name:"Sends a second HEADERS frame without the END_STREAM flag",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nSETTINGS frame (Length: 0, Flags: 1)",id:"message_k152R"}],id:"messages_4CGAD"},type:"failure",classname:"8.1 HTTP Request/Response Exchange",time:"2.056476514s",id:"test_GSBRG"}],properties:{values:[],id:"properties_soXdm"},contracted:""},{name:"8.1.2 HTTP Header Fields",type:"failure","package":"8.1.2 HTTP Header Fields",id:"suite_oFEY7",tests:"1",skipped:"0",failures:"1",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the header field name in uppercase letters",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_3r4xW"}],id:"messages_Gt5iz"},type:"failure",classname:"8.1.2 HTTP Header Fields",time:"2.105846976s",id:"test_pUVI9"}],properties:{values:[],id:"properties_r8dUI"},contracted:""},{name:"8.1.2.1 Pseudo-Header Fields",type:"failure","package":"8.1.2.1 Pseudo-Header Fields",id:"suite_Ezflp",tests:"3",skipped:"0",failures:"3",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the pseudo-header field defined for response",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_ZRlgV"}],id:"messages_mBW1B"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.103927791s",id:"test_kYmSk"},{name:"Sends a HEADERS frame that contains the invalid pseudo-header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_q2JOG"}],id:"messages_WnN0t"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.100008177s",id:"test_NUKkh"},{name:"Sends a HEADERS frame that contains a pseudo-header field that appears in a header block after a regular header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 34, Flags: 1)",id:"message_0i2wK"}],id:"messages_PsZpa"},type:"failure",classname:"8.1.2.1 Pseudo-Header Fields",time:"2.103922729s",id:"test_v4sRD"}],properties:{values:[],id:"properties_edrfT"},contracted:""},{name:"8.1.2.2 Connection-Specific Header Fields",type:"failure","package":"8.1.2.2 Connection-Specific Header Fields",id:"suite_2eRIz",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the connection-specific header field",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_dGOLy"}],id:"messages_GvT50"},type:"failure",classname:"8.1.2.2 Connection-Specific Header Fields",time:"2.10372605s",id:"test_HUBnt"},{name:"Sends a HEADERS frame that contains the TE header field that contain any value other than 'trailers'",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_mTc3A"}],id:"messages_MIgGy"},type:"failure",classname:"8.1.2.2 Connection-Specific Header Fields",time:"2.096012761s",id:"test_5KWEw"}],properties:{values:[],id:"properties_aCQyD"},contracted:""},{name:"8.1.2.3 Request Pseudo-Header Fields",type:"failure","package":"8.1.2.3 Request Pseudo-Header Fields",id:"suite_e9p0L",tests:"5",skipped:"0",failures:"5",errors:"0",testCases:[{name:"Sends a HEADERS frame that omits mandatory pseudo-header fields",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 632, Flags: 1)",id:"message_ZwXxi"}],id:"messages_XhOue"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.099797855s",id:"test_qg49Z"},{name:"Sends a HEADERS frame that omits just ':method' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 632, Flags: 1)",id:"message_EQfFu"}],id:"messages_Xr1Am"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.10398549s",id:"test_6N1DH"},{name:"Sends a HEADERS frame that omits just ':scheme' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_RBPhB"}],id:"messages_K1j5c"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.103980282s",id:"test_bBJ72"},{name:"Sends a HEADERS frame that omits just ':path' pseudo-header field.",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 645, Flags: 1)",id:"message_oW45l"}],id:"messages_kdZmY"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.099763356s",id:"test_wqg3J"},{name:"Sends a HEADERS frame containing more than one pseudo-header fields with the same name",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nDATA frame (Length: 35, Flags: 1)",id:"message_b3CN3"}],id:"messages_U66bm"},type:"failure",classname:"8.1.2.3 Request Pseudo-Header Fields",time:"2.103752924s",id:"test_Mh3C5"}],properties:{values:[],id:"properties_W0myG"},contracted:""},{name:"8.1.2.6 Malformed Requests and Responses",type:"failure","package":"8.1.2.6 Malformed Requests and Responses",id:"suite_QJm5Z",tests:"2",skipped:"0",failures:"2",errors:"0",testCases:[{name:"Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the DATA frame payload lengths",messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_CYx4L"}],id:"messages_fAH91"},type:"failure",classname:"8.1.2.6 Malformed Requests and Responses",time:"2.061092675s",id:"test_z1IKq"},{name:"Sends a HEADERS frame that contains the 'content-length' header field which does not equal the sum of the multiple DATA frame payload lengths",
+messages:{values:[{value:"Expected:\nGOAWAY frame (ErrorCode: PROTOCOL_ERROR)\nRST_STREAM frame (ErrorCode: PROTOCOL_ERROR)\nConnection close\nActual:\nTest timeout",id:"message_os4f8"}],id:"messages_NWfrQ"},type:"failure",classname:"8.1.2.6 Malformed Requests and Responses",time:"2.063965912s",id:"test_UkoqF"}],properties:{values:[],id:"properties_9jlli"},contracted:""},{name:"8.2 Server Push",type:"passed","package":"8.2 Server Push",id:"suite_tTWpH",tests:"1",skipped:"0",failures:"0",errors:"0",testCases:[{name:"Sends a PUSH_PROMISE frame",messages:{values:[],id:"messages_Fcbeu"},type:"passed",classname:"8.2 Server Push",time:"64.449117ms",id:"test_Zys0j"}],properties:{values:[],id:"properties_6ibLH"},contracted:""}],height=window.innerHeight||document.documentElement.clientHeight||document.getElementsByTagName("body")[0].clientHeight;document.getElementById("suites_container").style.height=height+"px",document.getElementById("options").style.height=height-76+"px",window.onresize=function(e){var s=window.innerHeight||document.documentElement.clientHeight||document.getElementsByTagName("body")[0].clientHeight;document.getElementById("suites_container").style.height=s+"px",document.getElementById("options").style.height=s-76+"px"};</script>
 </body>
 
 </html>
