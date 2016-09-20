@@ -17,8 +17,19 @@ public class TestApp {
                 .keystore("test.keystore")
                 //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", (request, response) -> {
-                    response.entity("Hello World ${{iso_datetime}}");
-                    response.header("X-Replace-Env", "true");
+                    response.entity("<html>" +
+                            "<head>" +
+                            "<title>Web 2.5 HTTP Server/title>" +
+                            "</head>" +
+                            "<body>" +
+                            "<h1>Web 2.5 HTTP Server</h1>" +
+                            "<strong>Test pages</strong>" +
+                            "<ul>" +
+                            "<li><a href=\"/webpage\">Page with PUSH_REQUEST</a></li>" +
+                            "<li><a href=\"/secure/\">Page with HTTP Authentication</a></li>" +
+                            "</ul>" +
+                            "</body>")
+                            .header("Content-Type", "text/html");
                     return true;
                 })
                 .get("/webpage", (request, response) -> {
@@ -30,8 +41,9 @@ public class TestApp {
                             "</head>" +
                             "<body>" +
                             "<h1>Hello World</h1>" +
-                            "<p>This is some webpage</p>" +
+                            "<p>This site's stylesheet has been served using HTTP/2.0 PUSH REQUEST</p>" +
                             "<p>It is ${{iso_datetime}}</p>" +
+                            "<p><a href=\"/\">Back</a></p>" +
                             "</body>" +
                             "</html>")
                             .header("Content-Type", "text/html")
@@ -45,7 +57,10 @@ public class TestApp {
                 }).use("/secure", Http.router()
                         .use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                         .get("/", (request, response) -> {
-                            response.entity("<body>This is a secure site!</body>")
+                            response.entity("<body>" +
+                                    "<p>This is a secure site!</p>" +
+                                    "<p><a href=\"/\">Back</a></p>" +
+                                    "</body>")
                                     .header("Content-Type", "text/html");
                             return true;
                         })
