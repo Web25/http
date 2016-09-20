@@ -32,7 +32,6 @@ public class HttpUtil {
     public static int toInt(byte[] bytes){
         ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
         if(bytes.length < Integer.BYTES) {
-            log.debug("Skipping {} byte(s)", Integer.BYTES - bytes.length);
             byteBuffer.position(Integer.BYTES - bytes.length);
         }
         byteBuffer.put(bytes);
@@ -48,5 +47,14 @@ public class HttpUtil {
         byteBuffer.put(bytes);
         byteBuffer.flip();
         return byteBuffer.getShort();
+    }
+
+    public static boolean containsUppercase(String text) {
+        for(char c : text.toCharArray()) {
+            if(Character.isUpperCase(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

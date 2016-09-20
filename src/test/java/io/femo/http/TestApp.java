@@ -42,7 +42,14 @@ public class TestApp {
                     response.entity("body { background-color: black; color: white }")
                             .header("Content-Type", "text/css");
                     return true;
-                })
+                }).use("/secure", Http.router()
+                        .use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
+                        .get("/", (request, response) -> {
+                            response.entity("<body>This is a secure site!</body>")
+                                    .header("Content-Type", "text/html");
+                            return true;
+                        })
+                )
                 .after(Handlers.environment())
                 .after(Handlers.log())
                 .start();

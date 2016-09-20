@@ -195,6 +195,8 @@ public class HttpConnection {
                             rstFrame.setPayload(HttpUtil.toByte(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR));
                             enqueueFrame(rstFrame, httpStreams.get(frame.getStreamIdentifier()));
                         }
+                    } else if (frame.getType() >= 0xa) {
+                        log.debug("Dropping unknown frame " + frame.toString());
                     } else if (frame.getStreamIdentifier() == 0) {
                         if (frame.getType() == Constants.Http20.FrameType.SETTINGS) {
                             if(frame.getLength() % 6 != 0) {
@@ -220,7 +222,12 @@ public class HttpConnection {
                                 enqueueFrame(sFrame, null);
                             }
                         } else if (frame.getType() == Constants.Http20.FrameType.WINDOW_UPDATE) {
-                            flowControlWindow.incremetRemote(HttpUtil.toInt(frame.getPayload()));
+                            try {
+                                flowControlWindow.incremetRemote(HttpUtil.toInt(frame.getPayload()));
+                            } catch (Http20Exception e) {
+                                log.warn(e.getMessage());
+                                terminate(e.getErrorCode());
+                            }
                         } else if (frame.getType() == Constants.Http20.FrameType.PING) {
                             if(frame.getFlags() == 1) {
                                 log.debug("Ping acknowledged.");
@@ -240,7 +247,13 @@ public class HttpConnection {
                             break;
                         }
                     } else if (httpStreams.containsKey(frame.getStreamIdentifier())) {
-                        httpStreams.get(frame.getStreamIdentifier()).handleFrame(frame);
+                        try {
+                            httpStreams.get(frame.getStreamIdentifier()).handleFrame(frame);
+                        } catch (Http20Exception e) {
+                            log.warn(e.getMessage());
+                            terminate(e.getErrorCode());
+                            break;
+                        }
                     } else {
                         if (HttpConnection.this.state == State.CLOSE_PENDING) {
                             log.info("Connection is shutting down, dropping new incoming stream with id " + frame.getStreamIdentifier());
@@ -259,7 +272,13 @@ public class HttpConnection {
                             HttpStream httpStream = new HttpStream(this, frame.getStreamIdentifier());
                             lastRemote.set(frame.getStreamIdentifier());
                             httpStreams.put(frame.getStreamIdentifier(), httpStream);
-                            httpStream.handleFrame(frame);
+                            try {
+                                httpStream.handleFrame(frame);
+                            } catch (Http20Exception e) {
+                                log.warn(e.getMessage());
+                                terminate(e.getErrorCode());
+                                break;
+                            }
                         }
                     }
                 }
@@ -412,11 +431,11 @@ public class HttpConnection {
     }
 
     public void terminate(int errorCode, byte[] debugData) {
-        try {
+        /*try {
             throw new Exception();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         GoAwayFrame goAwayFrame = new GoAwayFrame(remoteSettings);
         goAwayFrame.setErrorCode(errorCode);
         goAwayFrame.setLastStreamId(lastRemote.get());

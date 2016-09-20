@@ -12,18 +12,16 @@ import java.util.List;
  */
 public class PushableHttpResponse extends DefaultHttpResponse {
 
-    private HttpRequest httpRequest;
-
     private List<PushRequest> pushRequests;
 
     public PushableHttpResponse(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
+        this.request(httpRequest);
         this.pushRequests = new ArrayList<>();
     }
 
     @Override
     public HttpResponse push(String method, String path) {
-        PushRequest pushRequest = new PushRequest(httpRequest);
+        PushRequest pushRequest = new PushRequest(request());
         pushRequest.method(method);
         pushRequest.path(path);
         pushRequests.add(pushRequest);

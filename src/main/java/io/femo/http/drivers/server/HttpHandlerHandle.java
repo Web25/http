@@ -41,7 +41,7 @@ public class HttpHandlerHandle implements HttpHandle {
 
     public boolean matches(HttpRequest request) {
         if(method != null) {
-            if(!request.method().equalsIgnoreCase(method)) {
+            if(!request.method().equalsIgnoreCase(method) && !(request.method().equalsIgnoreCase("HEAD") && method.equalsIgnoreCase("GET"))) {
                 return false;
             }
         }

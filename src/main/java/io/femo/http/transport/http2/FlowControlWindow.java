@@ -1,5 +1,7 @@
 package io.femo.http.transport.http2;
 
+import io.femo.http.Constants;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,10 +63,14 @@ public class FlowControlWindow {
     }
 
     public void incrementLocal(int length) {
+        if(local.get() + length < 0)
+            throw new Http20Exception("Invalid size for flow control window", Constants.Http20.ErrorCodes.FLOW_CONTROL_ERROR);
         local.updateAndGet(i -> i + length);
     }
 
     public void incremetRemote(int length) {
+        if(local.get() + length < 0)
+            throw new Http20Exception("Invalid size for flow control window", Constants.Http20.ErrorCodes.FLOW_CONTROL_ERROR);
         remote.updateAndGet(i -> i + length);
     }
 }

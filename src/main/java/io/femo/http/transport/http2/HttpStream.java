@@ -32,9 +32,11 @@ public class HttpStream {
     private int streamIdentifier;
     private HttpConnection httpConnection;
     private FlowControlWindow flowControlWindow;
+
     private boolean terminated;
     private boolean waitingForHeaders;
     private boolean endStream;
+    private boolean regularHeaders;
 
     private IncomingHttpRequest httpRequest;
     private PushableHttpResponse httpResponse;
@@ -97,14 +99,25 @@ public class HttpStream {
                 log.warn("Stream error. WINDOW_UPDATE requires a value between 0 and 2^31. Terminating stream.");
                 terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
             } else {
-                flowControlWindow.incremetRemote(HttpUtil.toInt(httpFrame.getPayload()));
+                try {
+                    flowControlWindow.incremetRemote(HttpUtil.toInt(httpFrame.getPayload()));
+                } catch (Http20Exception e) {
+                    log.warn(e.getMessage());
+                    terminate(e.getErrorCode());
+                }
             }
             return;
         }
         if(state == State.IDLE) {
+            if(waitingForHeaders && httpFrame.getType() != Constants.Http20.FrameType.CONTINUATION) {
+                throw new Http20Exception("During header transmission no other frames than CONTINUATION are allowed", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            }
             if(httpFrame.getType() == Constants.Http20.FrameType.HEADERS) {
                 this.httpRequest = new IncomingHttpRequest();
                 HeadersFrame headersFrame = HeadersFrame.from(httpFrame);
+                if(headersFrame.isPriority() && headersFrame.getStreamDependency() == getStreamIdentifier()) {
+                    throw new Http20Exception("Circular stream dependency detected " + getStreamIdentifier() + " -> " + getStreamIdentifier(), Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                }
                 try {
                     httpConnection.getHpackDecoder().decode(new ByteArrayInputStream(headersFrame.getHeaderBlockFragment()), new HeaderListener() {
                         @Override
@@ -112,8 +125,16 @@ public class HttpStream {
                             String name = new String(bytes);
                             String value = new String(bytes1);
                             log.debug("{} -> {}", name, value);
-                            httpRequest.header(name, value);
+                            if(HttpUtil.containsUppercase(name)) {
+                                throw new Http20Exception("Invalid header. Has uppercase characters", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                            }
                             if(name.startsWith(":")) {
+                                if(regularHeaders) {
+                                    throw new Http20Exception("Pseudo headers need to be sent before regular headers", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                }
+                                if(httpRequest.hasHeader(name)) {
+                                    throw new Http20Exception("Duplicate definition of pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                }
                                 if(name.equals(":method")) {
                                     httpRequest.method(value);
                                 } else if (name.equals(":path")) {
@@ -122,8 +143,20 @@ public class HttpStream {
                                     if(!httpRequest.hasHeader("host")) {
                                         httpRequest.header("host", value);
                                     }
+                                } else if (name.equals(":status")) {
+                                    throw new Http20Exception("Header status not allowed for requests!", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                } else if (!name.equals(":scheme")) {
+                                    throw new Http20Exception("Invalid pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
                                 }
+                            } else {
+                                if(name.equals("connection")) {
+                                    throw new Http20Exception("Header connection is not applicable for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                } else if (name.equals("te") && !value.equals("trailers")) {
+                                    throw new Http20Exception("Transfer encodings other than trailers are not allowed for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                                }
+                                regularHeaders = true;
                             }
+                            httpRequest.header(name, value);
                         }
                     });
                 } catch (IOException e) {
@@ -193,12 +226,10 @@ public class HttpStream {
             }
         } else if (state == State.OPEN) {
             if(httpFrame.hasEndStreamFlag()) {
-                if((httpFrame.getFlags() & 0x1) == 0x1) {
-                    this.setState(State.HALF_CLOSED_REMOTE);
-                }
                 if(httpFrame.getType() == Constants.Http20.FrameType.DATA) {
                     try {
                         DataFrame dataFrame = DataFrame.from(httpFrame);
+                        httpRequest.appendBytes(dataFrame.getData());
                     } catch (HttpFrameException e) {
                         terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
                     }
@@ -206,9 +237,19 @@ public class HttpStream {
                 } else if (httpFrame.getType() == Constants.Http20.FrameType.HEADERS) {
                     try {
                         HeadersFrame headersFrame = HeadersFrame.from(httpFrame);
+                        if(headersFrame.isPriority() && headersFrame.getStreamDependency() == getStreamIdentifier()) {
+                            throw new Http20Exception("Circular stream dependency detected " + getStreamIdentifier() + " -> " + getStreamIdentifier(), Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        }
+                        if(!headersFrame.isEndStream()) {
+                            throw new Http20Exception("Invalid header frame in state OPEN", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                        }
                     } catch (HttpFrameException e) {
                         httpConnection.terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR);
                     }
+                }
+                if((httpFrame.getFlags() & 0x1) == 0x1) {
+                    this.setState(State.HALF_CLOSED_REMOTE);
+                    handle();
                 }
             } else if(httpFrame.getType() == Constants.Http20.FrameType.RST_STREAM) {
                 setState(State.CLOSED);
@@ -280,6 +321,15 @@ public class HttpStream {
     }
 
     private void handle() {
+        if(!(httpRequest.hasHeader(":method") && httpRequest.hasHeader(":scheme") && httpRequest.hasHeader(":path"))) {
+            throw new Http20Exception("Missing pseudo header field(s)", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+        }
+        if(this.httpRequest.entityBytes() != null && this.httpRequest.hasHeader("Content-Length")) {
+            log.debug("Received {} byte(s), headers stated {} byte(s)",  this.httpRequest.entityBytes().length, this.httpRequest.header("Content-Length").asInt());
+            if (this.httpRequest.entityBytes().length != this.httpRequest.header("Content-Length").asInt()) {
+                throw new Http20Exception("Invalid content length", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            }
+        }
         this.httpResponse = new PushableHttpResponse(httpRequest);
         httpConnection.deferHandling(httpRequest, httpResponse, this);
     }

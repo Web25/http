@@ -125,11 +125,14 @@ public class DefaultHttpResponse extends HttpResponse {
 
     @Override
     public String responseString() {
-        return new String(entity);
+        return new String(responseBytes());
     }
 
     @Override
     public byte[] responseBytes() {
+        if(request() != null && request().method().equalsIgnoreCase("HEAD")) {
+            return new byte[]{};
+        }
         return entity;
     }
 
