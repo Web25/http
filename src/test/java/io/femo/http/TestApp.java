@@ -19,7 +19,7 @@ public class TestApp {
                 .get("/", (request, response) -> {
                     response.entity("<html>" +
                             "<head>" +
-                            "<title>Web 2.5 HTTP Server/title>" +
+                            "<title>Web 2.5 HTTP Server</title>" +
                             "</head>" +
                             "<body>" +
                             "<h1>Web 2.5 HTTP Server</h1>" +
