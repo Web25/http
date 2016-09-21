@@ -78,3 +78,6 @@ crashlytics-build.properties
 /test-result
 
 test-result.*
+
+*.dump
+/temp/

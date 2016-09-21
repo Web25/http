@@ -1,7 +1,6 @@
 package io.femo.http.drivers;
 
 import io.femo.http.*;
-import io.femo.http.HttpCookie;
 import io.femo.http.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -329,6 +331,11 @@ public class DefaultHttpRequest extends HttpRequest {
 
     public URL url() {
         return url;
+    }
+
+    @Override
+    public boolean hasCookie(String name) {
+        return cookies.containsKey(name);
     }
 
 

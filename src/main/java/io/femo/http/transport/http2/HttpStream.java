@@ -1,12 +1,7 @@
 package io.femo.http.transport.http2;
 
 import com.twitter.hpack.Encoder;
-import com.twitter.hpack.HeaderListener;
 import io.femo.http.Constants;
-import io.femo.http.HttpRequest;
-import io.femo.http.HttpResponse;
-import io.femo.http.drivers.DefaultHttpRequest;
-import io.femo.http.drivers.DefaultHttpResponse;
 import io.femo.http.drivers.IncomingHttpRequest;
 import io.femo.http.drivers.push.PushRequest;
 import io.femo.http.drivers.push.PushableHttpResponse;
@@ -20,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +38,8 @@ public class HttpStream {
     private PushableHttpResponse httpResponse;
 
     private State state;
+
+    private ByteArrayOutputStream headerBuffer;
 
     public HttpStream(HttpConnection httpConnection, int streamIdentifier) {
         this.httpConnection = httpConnection;
@@ -118,52 +116,13 @@ public class HttpStream {
                 if(headersFrame.isPriority() && headersFrame.getStreamDependency() == getStreamIdentifier()) {
                     throw new Http20Exception("Circular stream dependency detected " + getStreamIdentifier() + " -> " + getStreamIdentifier(), Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
                 }
-                try {
-                    httpConnection.getHpackDecoder().decode(new ByteArrayInputStream(headersFrame.getHeaderBlockFragment()), new HeaderListener() {
-                        @Override
-                        public void addHeader(byte[] bytes, byte[] bytes1, boolean b) {
-                            String name = new String(bytes);
-                            String value = new String(bytes1);
-                            log.debug("{} -> {}", name, value);
-                            if(HttpUtil.containsUppercase(name)) {
-                                throw new Http20Exception("Invalid header. Has uppercase characters", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                            }
-                            if(name.startsWith(":")) {
-                                if(regularHeaders) {
-                                    throw new Http20Exception("Pseudo headers need to be sent before regular headers", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                }
-                                if(httpRequest.hasHeader(name)) {
-                                    throw new Http20Exception("Duplicate definition of pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                }
-                                if(name.equals(":method")) {
-                                    httpRequest.method(value);
-                                } else if (name.equals(":path")) {
-                                    httpRequest.path(value);
-                                } else if (name.equals(":authority")) {
-                                    if(!httpRequest.hasHeader("host")) {
-                                        httpRequest.header("host", value);
-                                    }
-                                } else if (name.equals(":status")) {
-                                    throw new Http20Exception("Header status not allowed for requests!", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                } else if (!name.equals(":scheme")) {
-                                    throw new Http20Exception("Invalid pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                }
-                            } else {
-                                if(name.equals("connection")) {
-                                    throw new Http20Exception("Header connection is not applicable for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                } else if (name.equals("te") && !value.equals("trailers")) {
-                                    throw new Http20Exception("Transfer encodings other than trailers are not allowed for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
-                                }
-                                regularHeaders = true;
-                            }
-                            httpRequest.header(name, value);
-                        }
-                    });
-                } catch (IOException e) {
-                    log.warn("Error while decoding headers", e);
-                    httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR);
-                }
                 if (headersFrame.isEndHeaders()) {
+                    try {
+                        httpConnection.getHpackDecoder().decode(new ByteArrayInputStream(headersFrame.getHeaderBlockFragment()), this::addHeader);
+                    } catch (IOException e) {
+                        log.warn("Error while decoding headers", e);
+                        httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR);
+                    }
                     if (headersFrame.isEndStream()) {
                         setState(State.HALF_CLOSED_REMOTE);
                         handle();
@@ -171,6 +130,12 @@ public class HttpStream {
                         setState(State.OPEN);
                     }
                 } else {
+                    headerBuffer = new ByteArrayOutputStream();
+                    try {
+                        headerBuffer.write(headersFrame.getHeaderBlockFragment());
+                    } catch (IOException e) {
+                        log.warn("Could not buffer header fragment", e);
+                    }
                     if(headersFrame.isEndStream())
                         endStream = true;
                     this.waitingForHeaders = true;
@@ -181,22 +146,26 @@ public class HttpStream {
                     httpConnection.terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
                     return;
                 }
-                try {
-                    httpConnection.getHpackDecoder().decode(new ByteArrayInputStream(httpFrame.getPayload()), new HeaderListener() {
-                        @Override
-                        public void addHeader(byte[] bytes, byte[] bytes1, boolean b) {
-                            log.debug("{} -> {}", new String(bytes), new String(bytes1));
-                        }
-                    });
-                } catch (IOException e) {
-                    log.warn("Error while decoding headers", e);
-                    httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR);
+                if(headerBuffer == null) {
+                    httpConnection.terminate(Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+                } else {
+                    try {
+                        headerBuffer.write(httpFrame.getPayload());
+                    } catch (IOException e) {
+                        log.warn("Could not buffer header fragment", e);
+                    }
                 }
                 if((httpFrame.getFlags() & 0x4) == 0x4) {
+                    try {
+                        httpConnection.getHpackDecoder().decode(new ByteArrayInputStream(headerBuffer.toByteArray()), this::addHeader);
+                    } catch (IOException e) {
+                        log.warn("Error while decoding headers", e);
+                        httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR);
+                    }
                     httpConnection.releaseLock(this);
-                    log.debug(httpConnection.getHpackDecoder().endHeaderBlock() + "");
                     if(endStream) {
                         setState(State.HALF_CLOSED_REMOTE);
+                        handle();
                     } else {
                         setState(State.OPEN);
                     }
@@ -320,6 +289,53 @@ public class HttpStream {
         }*/
     }
 
+    private void addHeader(byte[] nameBytes, byte[] valueBytes, boolean sensitive) {
+        String name = new String(nameBytes);
+        String value = new String(valueBytes);
+        log.debug("{} -> {}", name, value);
+        if(HttpUtil.containsUppercase(name)) {
+            throw new Http20Exception("Invalid header. Has uppercase characters", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+        }
+        if(name.startsWith(":")) {
+            if(regularHeaders) {
+                throw new Http20Exception("Pseudo headers need to be sent before regular headers", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            }
+            if(httpRequest.hasHeader(name)) {
+                throw new Http20Exception("Duplicate definition of pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            }
+            if(name.equals(":method")) {
+                httpRequest.method(value);
+            } else if (name.equals(":path")) {
+                httpRequest.path(value);
+            } else if (name.equals(":authority")) {
+                if(!httpRequest.hasHeader("host")) {
+                    httpRequest.header("host", value);
+                }
+            } else if (name.equals(":status")) {
+                throw new Http20Exception("Header status not allowed for requests!", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            } else if (!name.equals(":scheme")) {
+                throw new Http20Exception("Invalid pseudo header " + name, Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            }
+        } else {
+            if(name.equals("connection")) {
+                throw new Http20Exception("Header connection is not applicable for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            } else if (name.equals("te") && !value.equals("trailers")) {
+                throw new Http20Exception("Transfer encodings other than trailers are not allowed for an HTTP/2.0 connection", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
+            } else if (name.equals("cookie")) {
+                if(value.contains(";")) {
+                    String[] cookies = value.split(";");
+                    for(String cookie : cookies) {
+                        httpRequest.cookie(cookie.substring(0, cookie.indexOf("=")), cookie.substring(cookie.indexOf("=") + 1));
+                    }
+                } else {
+                    httpRequest.cookie(value.substring(0, value.indexOf("=")), value.substring(value.indexOf("=") + 1));
+                }
+            }
+            regularHeaders = true;
+        }
+        httpRequest.header(name, value);
+    }
+
     private void handle() {
         if(!(httpRequest.hasHeader(":method") && httpRequest.hasHeader(":scheme") && httpRequest.hasHeader(":path"))) {
             throw new Http20Exception("Missing pseudo header field(s)", Constants.Http20.ErrorCodes.PROTOCOL_ERROR);
@@ -345,6 +361,13 @@ public class HttpStream {
                         encoder.encodeHeader(byteArrayOutputStream, httpHeader.name().toLowerCase().getBytes(), httpHeader.value().getBytes(), false);
                     } catch (IOException e) {
                         log.warn("Could not encode headers");
+                    }
+                });
+                httpResponse.cookies().forEach(httpCookie -> {
+                    try {
+                        encoder.encodeHeader(byteArrayOutputStream, "set-cookie".getBytes(), (httpCookie.name() + "=" + httpCookie.value()).getBytes(), false);
+                    } catch (IOException e) {
+                        log.warn("Could not encode cookie");
                     }
                 });
             } catch (IOException e) {
@@ -375,6 +398,7 @@ public class HttpStream {
                             log.warn("Could not encode headers");
                         }
                     });
+
                 } catch (IOException e) {
                     log.warn("Could not prepare push promise", e);
                 }
@@ -390,14 +414,35 @@ public class HttpStream {
                 httpConnection.deferHandling(pushRequest, pushStream.httpResponse, pushStream);
                 byteArrayOutputStream.reset();
             }
-            DataFrame dataFrame = new DataFrame(httpConnection.getRemoteSettings());
-            dataFrame.setData(httpResponse.responseBytes());
-            dataFrame.setStreamIdentifier(this.getStreamIdentifier());
-            dataFrame.setFlags((short) 0x1);
-            try {
-                httpConnection.enqueueFrame(dataFrame, this);
-            } catch (IOException e) {
-                log.warn("Could not respond to request", e);
+            byte[] response = httpResponse.responseBytes();
+            if(response.length > httpConnection.getRemoteSettings().getMaxFrameSize()) {
+                int begin = 0;
+                int frameSize = httpConnection.getRemoteSettings().getMaxFrameSize();
+                for (int i = 1; i <= Math.ceil((double) response.length / frameSize); i++) {
+                    byte[] chunk = Arrays.copyOfRange(response, begin, frameSize * i);
+                    DataFrame dataFrame = new DataFrame(httpConnection.getRemoteSettings());
+                    dataFrame.setData(chunk);
+                    dataFrame.setStreamIdentifier(this.getStreamIdentifier());
+                    if (begin + frameSize >= response.length) {
+                        dataFrame.setFlags((short) 0x1);
+                    }
+                    try {
+                        httpConnection.enqueueFrame(dataFrame, this);
+                    } catch (IOException e) {
+                        log.warn("Could not respond to request", e);
+                    }
+                    begin = frameSize * i;
+                }
+            } else {
+                DataFrame dataFrame = new DataFrame(httpConnection.getRemoteSettings());
+                dataFrame.setData(httpResponse.responseBytes());
+                dataFrame.setStreamIdentifier(this.getStreamIdentifier());
+                dataFrame.setFlags((short) 0x1);
+                try {
+                    httpConnection.enqueueFrame(dataFrame, this);
+                } catch (IOException e) {
+                    log.warn("Could not respond to request", e);
+                }
             }
             setState(State.CLOSED);
         }

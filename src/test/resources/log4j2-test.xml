@@ -6,10 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="HTTP" level="debug" additivity="false">
+        <Logger name="HTTP" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="HTTP/2.0" level="debug" additivity="false">
+        <Logger name="HTTP/2.0" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">

@@ -35,7 +35,11 @@ public class HttpFrameWriter {
         outputBuffer.write(HttpUtil.toByte(httpFrame.getType()), 1, 1);
         outputBuffer.write(HttpUtil.toByte(httpFrame.getFlags()), 1, 1);
         outputBuffer.write(HttpUtil.toByte(httpFrame.getStreamIdentifier()));
-        outputBuffer.write(httpFrame.getPayload());
+        if(httpFrame.getPayload() == null && httpFrame.getLength() == 0) {
+            log.debug("Frame with null payload has been written as frame with payload length 0");
+        } else {
+            outputBuffer.write(httpFrame.getPayload());
+        }
         outputBuffer.writeTo(this.outputStream);
     }
 }

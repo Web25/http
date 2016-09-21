@@ -81,4 +81,6 @@ public abstract class HttpRequest {
     public abstract String path();
 
     public abstract URL url();
+
+    public abstract boolean hasCookie(String name);
 }

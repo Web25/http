@@ -73,10 +73,12 @@ public class HttpServerThread extends Thread implements ExecutorListener {
     public void interrupt() {
         log.debug("Stopping HTTP Server on port {}", port);
         super.interrupt();
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            log.error("Exception while shutting down server", e);
+        if(serverSocket != null) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                log.error("Exception while shutting down server", e);
+            }
         }
     }
 
