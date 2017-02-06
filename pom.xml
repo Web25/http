@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.femo</groupId>
+    <groupId>org.web25</groupId>
     <artifactId>http</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>jar</packaging>
 
     <name>FeMoIO Http</name>
@@ -18,17 +18,17 @@
     <url>http://femo.io/libs/http</url>
 
     <scm>
-        <connection>scm:git@github.com:femoio/http.git</connection>
-        <developerConnection>scm:git@github.com:femoio/http.git</developerConnection>
-        <url>https://github.com/femoio/http</url>
+        <connection>scm:git@github.com:Web25/http.git</connection>
+        <developerConnection>scm:git@github.com:fWeb25/http.git</developerConnection>
+        <url>https://github.com/Web25/http</url>
     </scm>
 
     <developers>
         <developer>
             <name>Felix Resch</name>
             <email>felix.resch@femo.io</email>
-            <organization>FeMo.IO</organization>
-            <organizationUrl>http://femo.io</organizationUrl>
+            <organization>Web 2.5 Workgroup</organization>
+            <organizationUrl>https://web25.org</organizationUrl>
             <roles>
                 <role>Lead Developer</role>
             </roles>
@@ -39,7 +39,7 @@
         <license>
             <name>MIT License</name>
             <distribution>manual</distribution>
-            <url>https://raw.githubusercontent.com/femoio/http/master/LICENSE</url>
+            <url>https://raw.githubusercontent.com/Web25/http/master/LICENSE</url>
         </license>
     </licenses>
 
@@ -220,14 +220,6 @@
         </dependency>
 
     </dependencies>
-
-    <distributionManagement>
-        <site>
-            <id>femoio-ftpserver</id>
-            <name>FeMo.IO FTP Server</name>
-            <url>ftp://alfa3026.alfahosting-server.de/html/femoio/libs/http/</url>
-        </site>
-    </distributionManagement>
 
     <profiles>
         <profile>
