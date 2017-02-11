@@ -41,8 +41,9 @@ class DefaultMimeServiceTest {
             val printStream = PrintStream("test/test.html")
             printStream.println("<!DOCTYPE html><html><head><title>Hello</title></head><body>Hello</body></html>")
             printStream.close()
-            Http["http://www.schaik.com/pngsuite/basn6a08.png"].pipe(FileOutputStream("test/test.png")).execute()
-            Http["http://www.schaik.com/pngsuite/basn6a08.gif"].pipe(FileOutputStream("test/test.gif")).execute()
+            val http = Http()
+            http.get("http://www.schaik.com/pngsuite/basn6a08.png").pipe(FileOutputStream("test/test.png")).execute()
+            http.get("http://www.schaik.com/pngsuite/basn6a08.gif").pipe(FileOutputStream("test/test.gif")).execute()
             FileUtils.copyFile(File("test/test.png"), File("test/test_wrong.gif"))
         }
 

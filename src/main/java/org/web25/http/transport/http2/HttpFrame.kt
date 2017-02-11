@@ -30,8 +30,8 @@ open class HttpFrame
                 throw HttpFrameException("Length of frame ($length) has to be positive")
             if (length > settings.maxFrameSize)
                 throw HttpFrameException("Length of frame (" + length + ") cannot exceed maximum frame size of " + settings.maxFrameSize + " defined in session settings", Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR)
-            if (length > Constants.Http20.Companion.MAX_FRAME_LENGTH)
-                throw HttpFrameException("Length of frame (" + length + ") exceeds maximum possible length of " + Constants.Http20.Companion.MAX_FRAME_LENGTH)
+            if (length > Constants.Http20.MAX_FRAME_LENGTH)
+                throw HttpFrameException("Length of frame (" + length + ") exceeds maximum possible length of " + Constants.Http20.MAX_FRAME_LENGTH)
             field = length
         }
 
@@ -156,7 +156,7 @@ open class HttpFrame
     override fun toString(): String {
         return "HttpFrame{" +
                 "length=" + this.length +
-                ", type=" + Constants.findFrameTypeName(this.type) +
+                ", type=" + Constants.Http20.findFrameTypeName(this.type) +
                 ", flags=" + this.flags +
                 ", streamIdentifier=" + this.streamIdentifier +
                 ", payload=" + Arrays.toString(this.payload) +

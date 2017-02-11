@@ -1,9 +1,10 @@
 package org.web25.http.drivers.server
 
 import org.slf4j.LoggerFactory
+import org.web25.http.HttpContext
 import org.web25.http.HttpTransport
 import org.web25.http.StatusCode
-import org.web25.http.drivers.DefaultHttpResponse
+import org.web25.http.drivers.push.PushableHttpResponse
 import org.web25.http.helper.HttpHelper
 import org.web25.http.helper.HttpSocketOptions
 import java.io.ByteArrayOutputStream
@@ -17,9 +18,12 @@ import javax.net.ssl.SSLHandshakeException
 /**
  * Created by felix on 9/15/16.
  */
-class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack) : SocketHandler {
+class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val context : HttpContext) : SocketHandler {
 
     private val log = LoggerFactory.getLogger("HTTP")
+    private val transport by lazy {
+        HttpTransport.version11(context)
+    }
 
     override fun handle(socket: Socket) {
         var run = true
@@ -33,20 +37,23 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack) : Sock
             try {
                 run = false
                 HttpHelper.get().add(HttpSocketOptions())
-                val response = DefaultHttpResponse()
-                val httpRequest = HttpTransport.def().readRequest(socket.inputStream)
+                log.debug("Reading request")
+                val httpRequest = transport.readRequest(socket.inputStream)
+                val response = PushableHttpResponse(httpRequest, context)
                 val start = System.currentTimeMillis()
                 HttpHelper.remote(socket.remoteSocketAddress)
                 HttpHelper.request(httpRequest)
                 HttpHelper.response(response)
                 HttpHelper.get().add(socket)
+                log.debug("Handling request")
                 httpHandlerStack.handle(httpRequest, response)
+                log.debug("Request handled!")
                 if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.header("Connection").value == "keep-alive") {
                     response.header("Connection", "keep-alive")
                     run = true
                 }
                 val byteArrayOutputStream = ByteArrayOutputStream()
-                response.print(byteArrayOutputStream)
+                transport.write(response, byteArrayOutputStream, response.entityStream())
                 log.debug("Writing {} bytes to {}", byteArrayOutputStream.size(), socket.remoteSocketAddress.toString())
                 byteArrayOutputStream.writeTo(socket.outputStream)
                 socket.outputStream.flush()
@@ -63,11 +70,11 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack) : Sock
             } catch (e: SSLException) {
                 log.warn("SSL Error", e)
                 if (e.message!!.contains("plaintext")) {
-                    val httpResponse = DefaultHttpResponse()
+                    val httpResponse = HttpErrorResponse(context)
                     httpResponse.status(StatusCode.BAD_REQUEST)
                             .entity("You attempted a non secure connection on an secure port!")
                     try {
-                        httpResponse.print(socket.outputStream)
+                        transport.write(httpResponse, socket.outputStream)
                         socket.close()
                     } catch (e1: IOException) {
                         log.warn("Could not send error message", e1)
@@ -95,3 +102,4 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack) : Sock
         private val CONNECTION_TIMEOUT = 10000
     }
 }
+

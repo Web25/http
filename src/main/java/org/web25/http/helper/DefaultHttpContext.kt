@@ -1,17 +1,23 @@
 package org.web25.http.helper
 
-import org.web25.http.Base64Driver
-import org.web25.http.Driver
 import org.web25.http.HttpContext
-import org.web25.http.MimeService
-import org.web25.http.drivers.DefaultBase64Driver
-import org.web25.http.drivers.DefaultMimeService
+import org.web25.http.HttpResponse
+import org.web25.http.auth.Authentication
+import org.web25.http.drivers.*
 import java.util.*
 
 /**
  * Created by felix on 6/8/16.
  */
 class DefaultHttpContext : HttpContext {
+
+    private val authentications = mutableListOf<Authentication>()
+
+    override fun addAuthentication(authentication: Authentication) {
+        authentications.add(authentication)
+    }
+
+    override fun findAuthentications(httpResponse: HttpResponse): Collection<Authentication> = authentications.filter { it.supports(httpResponse) }
 
     private val drivers: MutableList<Driver>
 

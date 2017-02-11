@@ -1,9 +1,10 @@
 package org.web25.http.auth
 
 import org.slf4j.LoggerFactory
-import org.web25.http.*
-import org.web25.http.drivers.DefaultBase64Driver
-import java.util.function.Supplier
+import org.web25.http.HttpRequest
+import org.web25.http.HttpResponse
+import org.web25.http.client.OutgoingHttpRequest
+import org.web25.http.exceptions.HttpException
 import java.util.regex.Pattern
 
 /**
@@ -11,8 +12,8 @@ import java.util.regex.Pattern
  */
 class DefaultBasicStrategy : Authentication {
 
-    private var username: Supplier<String>
-    private var password: Supplier<String>
+    private var username: () -> String
+    private var password: () -> String
 
     private var realm: String? = null
     private val pattern = Pattern.compile("realm=\"(.*)\"")
@@ -20,14 +21,14 @@ class DefaultBasicStrategy : Authentication {
     private var basePath: String? = null
 
 
-    constructor(username: Supplier<String>, password: Supplier<String>) {
+    constructor(username: () -> String, password: () -> String) {
         this.username = username
         this.password = password
     }
 
     constructor(username: String, password: String) {
-        this.username = Supplier{ username }
-        this.password = Supplier{ password }
+        this.username = { username }
+        this.password = { password }
     }
 
     override val isInitialized: Boolean
@@ -47,7 +48,7 @@ class DefaultBasicStrategy : Authentication {
 
     override fun init(response: HttpResponse) {
         if (response.hasHeader("WWW-Authenticate")) {
-            val matcher = pattern.matcher(response.header("WWW-Authenticate")!!.value)
+            val matcher = pattern.matcher(response.header("WWW-Authenticate").value)
             if (matcher.find()) {
                 this.realm = matcher.group(1)
                 this.host = response.request().header("Host").value
@@ -63,15 +64,9 @@ class DefaultBasicStrategy : Authentication {
         return "Basic"
     }
 
-    override fun authenticate(request: HttpRequest) {
-        val auth = username.get() + ":" + password.get()
-        val drivers = request.drivers(Base64Driver::class.java)
-        val driver: Base64Driver
-        if (drivers.isEmpty()) {
-            driver = DefaultBase64Driver()
-        } else {
-            driver = drivers[0]
-        }
+    override fun authenticate(request: OutgoingHttpRequest) {
+        val auth = username() + ":" + password()
+        val driver = request.context.base64()
         request.header("Authorization", "Basic " + driver.encodeToString(auth.toByteArray()))
     }
 

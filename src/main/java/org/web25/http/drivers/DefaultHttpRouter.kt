@@ -1,11 +1,13 @@
 package org.web25.http.drivers
 
 import org.slf4j.LoggerFactory
-import org.web25.http.*
+import org.web25.http.HttpRequest
 import org.web25.http.drivers.server.HttpHandlerHandle
 import org.web25.http.drivers.server.HttpHandlerStack
 import org.web25.http.drivers.server.HttpMiddlewareHandle
 import org.web25.http.drivers.server.HttpRouterHandle
+import org.web25.http.exceptions.HttpHandleException
+import org.web25.http.server.*
 
 /**
  * Created by Felix Resch on 29-Apr-16.
@@ -26,8 +28,8 @@ class DefaultHttpRouter : HttpRouter {
     }
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse): Boolean {
-        return httpHandlerStack.handle(request, response)
+    override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse): Boolean {
+        return httpHandlerStack.handle(req, res)
     }
 
     override fun use(handler: HttpMiddleware): HttpRouter {

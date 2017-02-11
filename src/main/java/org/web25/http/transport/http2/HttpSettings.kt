@@ -34,7 +34,7 @@ class HttpSettings {
 
     fun apply(frame: SettingsFrame) {
         frame.forEach { setting ->
-            log.debug("Updating " + Constants.findSettingName(setting.identifier) + " to " + setting.value)
+            log.debug("Updating " + Constants.Http20.findSettingName(setting.identifier) + " to " + setting.value)
             when (setting.identifier) {
                 Constants.Http20.SettingIdentifiers.SETTINGS_HEADER_TABLE_SIZE -> {
                     this.headerTableSize = setting.value

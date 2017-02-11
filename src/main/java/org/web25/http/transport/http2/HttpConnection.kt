@@ -5,12 +5,12 @@ import com.twitter.hpack.Encoder
 import org.apache.commons.lang3.RandomUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.Constants
-import org.web25.http.HttpRequest
-import org.web25.http.HttpResponse
-import org.web25.http.drivers.IncomingHttpRequest
+import org.web25.http.HttpContext
 import org.web25.http.drivers.push.PushRequest
 import org.web25.http.drivers.server.ExecutorListener
 import org.web25.http.drivers.server.HttpHandlerStack
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 import org.web25.http.transport.http2.frames.GoAwayFrame
 import org.web25.http.transport.http2.frames.SettingsFrame
 import java.io.ByteArrayOutputStream
@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference
  * Created by felix on 9/3/16.
  */
 class HttpConnection @Throws(IOException::class)
-constructor(socket: Socket, val localSettings: HttpSettings, private val executorListener: ExecutorListener) {
+constructor(socket: Socket, val localSettings: HttpSettings, private val executorListener: ExecutorListener, val context: HttpContext) {
 
     val remoteSettings: HttpSettings
     private val frameWriter: HttpFrameWriter
@@ -382,7 +382,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         }
     }
 
-    fun deferHandling(httpRequest: IncomingHttpRequest, httpResponse: HttpResponse, httpStream: HttpStream) {
+    fun deferHandling(httpRequest: IncomingHttpRequest, httpResponse: OutgoingHttpResponse, httpStream: HttpStream) {
         executorListener.submit(DeferredRequestHandler(httpStream, httpHandlerStack, httpRequest, httpResponse))
     }
 
@@ -409,7 +409,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         terminate(errorCode, debugData.toByteArray())
     }
 
-    @JvmOverloads fun terminate(errorCode: Int, debugData: ByteArray = null as ByteArray) {
+    @JvmOverloads fun terminate(errorCode: Int, debugData: ByteArray? = null) {
         /*try {
             throw new Exception();
         } catch (Exception e) {
@@ -433,7 +433,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         ACTIVE, CLOSE_PENDING, CLOSE, FORCE_CLOSED
     }
 
-    private inner class DeferredRequestHandler(private val httpStream: HttpStream, private val handlerStack: HttpHandlerStack, private val httpRequest: HttpRequest, private val httpResponse: HttpResponse) : Runnable {
+    private inner class DeferredRequestHandler(private val httpStream: HttpStream, private val handlerStack: HttpHandlerStack, private val httpRequest: IncomingHttpRequest, private val httpResponse: OutgoingHttpResponse) : Runnable {
 
         override fun run() {
             try {

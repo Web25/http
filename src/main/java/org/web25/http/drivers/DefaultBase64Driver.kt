@@ -1,7 +1,5 @@
 package org.web25.http.drivers
 
-import org.web25.http.Base64Driver
-
 import javax.xml.bind.DatatypeConverter
 
 /**

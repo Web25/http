@@ -8,16 +8,16 @@ import org.web25.http.drivers.DefaultDriver
  */
 object HttpDrivers {
 
-    fun defaultDriver(): HttpDriver {
-        return DefaultDriver()
+    fun defaultDriver(context : HttpContext): HttpDriver {
+        return DefaultDriver(context)
     }
 
-    fun asyncDriver(): HttpDriver {
-        return AsynchronousDriver()
+    fun asyncDriver(context : HttpContext): HttpDriver {
+        return AsynchronousDriver(context)
     }
 
-    fun asyncDriver(threads: Int): HttpDriver {
-        return AsynchronousDriver(threads)
+    fun asyncDriver(threads: Int, context : HttpContext): HttpDriver {
+        return AsynchronousDriver(threads, context)
     }
 
 }

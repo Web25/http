@@ -1,10 +1,10 @@
 package org.web25.http.helper
 
 import org.jetbrains.annotations.Contract
-import org.web25.http.Driver
 import org.web25.http.HttpContext
 import org.web25.http.HttpRequest
 import org.web25.http.HttpResponse
+import org.web25.http.drivers.Driver
 import org.web25.http.drivers.server.HttpThread
 import org.xjs.dynamic.Pluggable
 import java.net.SocketAddress

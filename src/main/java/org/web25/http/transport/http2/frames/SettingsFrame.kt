@@ -60,7 +60,7 @@ class SettingsFrame
 
         fun from(frame: HttpFrame): SettingsFrame {
             if (frame.type != Constants.Http20.FrameType.SETTINGS) {
-                throw HttpFrameException("Invalid type for frame conversion. Expected SETTINGS_FRAME, got " + Constants.findFrameTypeName(frame.type))
+                throw HttpFrameException("Invalid type for frame conversion. Expected SETTINGS_FRAME, got " + Constants.Http20.findFrameTypeName(frame.type))
             }
             val settingsFrame = SettingsFrame(frame.settings)
             settingsFrame.type = frame.type

@@ -1,22 +1,12 @@
 package org.web25.http
 
-import java.io.InputStream
-import java.io.OutputStream
+import org.web25.http.exceptions.CookieNotFoundException
+import org.web25.http.exceptions.HeaderNotFoundException
 
 /**
  * Created by felix on 9/10/15.
  */
-abstract class HttpResponse {
-
-    abstract fun status(statusCode: StatusCode): HttpResponse
-
-    fun status(status: Int): HttpResponse {
-        return status(StatusCode.find(status))
-    }
-
-    abstract fun entity(entity: String): HttpResponse
-    abstract fun entity(entity: ByteArray): HttpResponse
-    abstract fun entity(inputStream: InputStream): HttpResponse
+abstract class HttpResponse(val context : HttpContext) {
 
     abstract fun status(): StatusCode
     abstract fun responseString(): String
@@ -25,23 +15,22 @@ abstract class HttpResponse {
     abstract fun request(request: HttpRequest)
     abstract fun request(): HttpRequest
 
-    abstract fun header(name: String): HttpHeader?
-    abstract fun hasHeader(name: String): Boolean
-    abstract fun header(name: String, value: String): HttpResponse
+    @Throws(HeaderNotFoundException::class)
+    abstract fun header(name: String): HttpHeader
 
-    abstract fun cookie(name: String): HttpCookie?
-    abstract fun hasCookie(name: String): Boolean
-    abstract fun cookie(name: String, value: String): HttpResponse
-    abstract fun cookies(): Collection<HttpCookie>
+    fun hasHeader(name: String): Boolean = headers.containsKey(name)
+
+    @Throws(CookieNotFoundException::class)
+    abstract fun cookie(name: String): HttpCookie
+
+    fun hasCookie(name: String): Boolean = cookies.containsKey(name)
 
     fun statusCode(): Int {
         return status().status()
     }
 
-    abstract fun print(outputStream: OutputStream)
     abstract fun statusLine(): String
 
-    abstract fun headers(): Collection<HttpHeader>
-
-    abstract fun push(method: String, path: String): HttpResponse
+    abstract val headers: MutableMap<String, HttpHeader>
+    abstract val cookies: MutableMap<String, HttpCookie>
 }

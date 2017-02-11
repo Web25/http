@@ -5,7 +5,6 @@ import eu.medsea.mimeutil.detector.ExtensionMimeDetector
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector
 import eu.medsea.mimeutil.detector.MimeDetector
 import org.jetbrains.annotations.Contract
-import org.web25.http.MimeService
 import java.io.File
 
 /**

@@ -1,4 +1,6 @@
-package org.web25.http
+package org.web25.http.exceptions
+
+import org.web25.http.HttpRequest
 
 /**
  * Created by felix on 1/19/16.

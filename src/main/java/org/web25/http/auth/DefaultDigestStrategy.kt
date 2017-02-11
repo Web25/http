@@ -1,25 +1,24 @@
 package org.web25.http.auth
 
-import org.web25.http.Authentication
-import org.web25.http.HttpException
 import org.web25.http.HttpRequest
 import org.web25.http.HttpResponse
+import org.web25.http.client.OutgoingHttpRequest
+import org.web25.http.exceptions.HttpException
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Supplier
 import javax.xml.bind.DatatypeConverter
 
 /**
  * Created by felix on 6/21/16.
  */
-class DefaultDigestStrategy(private val username: Supplier<String>, private val password: Supplier<String>) : Authentication {
+class DefaultDigestStrategy(private val username: () -> String, private val password: () -> String) : Authentication {
 
 
-    constructor(username: String, password: String) : this(Supplier{ username }, Supplier{ password })
+    constructor(username: String, password: String) : this({ username }, { password })
 
     private val digest = object : ThreadLocal<MessageDigest>() {
         override fun initialValue(): MessageDigest {
@@ -56,7 +55,7 @@ class DefaultDigestStrategy(private val username: Supplier<String>, private val 
     }
 
     override fun init(response: HttpResponse) {
-        val data = readData(response.header("WWW-Authenticate")!!.value.substring("Digest".length))
+        val data = readData(response.header("WWW-Authenticate").value.substring("Digest".length))
         if (!data.containsKey("nonce") && !data.containsKey("opaque") && !data.containsKey("realm")) {
             throw HttpException(response.request(), "Not all required fields for HTTP Digest Authentication are present.")
         }
@@ -71,14 +70,14 @@ class DefaultDigestStrategy(private val username: Supplier<String>, private val 
         return "Digest"
     }
 
-    override fun authenticate(request: HttpRequest) {
+    override fun authenticate(request: OutgoingHttpRequest) {
         val stringBuilder = StringBuilder()
 
         val nc = this.nc.andIncrement
         val cnonce = "0a4f113b" //UUID.randomUUID().toString();
 
         stringBuilder.append("Digest username=\"")
-                .append(username.get())
+                .append(username())
                 .append("\", realm=\"")
                 .append(realm)
                 .append("\", nonce=\"")
@@ -91,7 +90,7 @@ class DefaultDigestStrategy(private val username: Supplier<String>, private val 
                 .append(cnonce)
                 .append("\", response=\"")
 
-        val ha1 = md5(username.get() + ":" + realm + ":" + password.get())
+        val ha1 = md5(username() + ":" + realm + ":" + password())
         val ha2 = md5(request.method() + ":" + request.path())
         val response = md5(ha1 + ":" + nonce
                 + ":" + String.format("%08x", nc) + ":" + cnonce +

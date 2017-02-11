@@ -5,9 +5,9 @@ import org.jetbrains.annotations.Contract
 /**
  * Created by felix on 7/2/16.
  */
-class Constants {
+object Constants {
 
-    class Http20 {
+    object Http20 {
 
         object FrameType {
 
@@ -55,34 +55,28 @@ class Constants {
             val SETTINGS_MAX_HEADER_LIST_SIZE = 0x6
         }
 
-        companion object {
 
-            /**
-             * Max frame length is limited by the 24 bit width of the length field in a frame
+        /**
+         * Max frame length is limited by the 24 bit width of the length field in a frame
 
-             * RFC 7540, Section 4.1
-             */
-            val MAX_FRAME_LENGTH = 16777216
+         * RFC 7540, Section 4.1
+         */
+        val MAX_FRAME_LENGTH = 16777216
 
-            /**
-             * Max stream identifier, limited by the 31 bit width of the stream identifier field in a frame
+        /**
+         * Max stream identifier, limited by the 31 bit width of the stream identifier field in a frame
 
-             * RFC 7540, Section 4.1
-             */
-            val MAX_STREAM_IDENTIFIER: Long = 0x80000000
+         * RFC 7540, Section 4.1
+         */
+        val MAX_STREAM_IDENTIFIER: Long = 0x80000000
 
-            /**
-             * The length of the header of an HTTP/2.0 frame
+        /**
+         * The length of the header of an HTTP/2.0 frame
 
-             * RFC 7540, Section 4.1
-             */
-            val FRAME_HEADER_LENGTH = 9
-        }
-    }
+         * RFC 7540, Section 4.1
+         */
+        val FRAME_HEADER_LENGTH = 9
 
-    companion object {
-
-        val VERSION = "0.1.0"
 
         @Contract(pure = true)
         fun findFrameTypeName(frameType: Short): String {
@@ -146,4 +140,9 @@ class Constants {
             }
         }
     }
+
+
+    val VERSION = "0.1.0"
+
+
 }

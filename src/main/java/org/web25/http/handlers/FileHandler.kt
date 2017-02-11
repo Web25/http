@@ -3,9 +3,14 @@ package org.web25.http.handlers
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.jetbrains.annotations.Contract
-import org.web25.http.*
+import org.web25.http.Http
+import org.web25.http.StatusCode
+import org.web25.http.exceptions.HttpHandleException
 import org.web25.http.helper.HttpCacheControl
 import org.web25.http.helper.HttpHelper
+import org.web25.http.server.HttpHandler
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 import java.io.File
 import java.io.IOException
 import java.security.DigestInputStream
@@ -18,16 +23,16 @@ import java.security.NoSuchAlgorithmException
 abstract class FileHandler private constructor(private val caching: Boolean, private val mimeType: String) : HttpHandler {
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse): Boolean {
-        if (request.method() == Http.GET) {
-            if (!(caching && HttpCacheControl.cacheControl(request, response, 3600, etag()))) {
-                response.header("Content-Type", mimeType).entity(fileContent())
+    override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse): Boolean {
+        if (req.method() == Http.Methods.GET) {
+            if (!(caching && HttpCacheControl.cacheControl(req, res, 3600, etag()))) {
+                res.header("Content-Type", mimeType).entity(fileContent())
             }
             return true
         } else {
-            response.status(StatusCode.METHOD_NOT_ALLOWED)
-                    .entity("Method " + request.method().toUpperCase() + " not allowed")
-                    .header("Accept", Http.GET)
+            res.status(StatusCode.METHOD_NOT_ALLOWED)
+                    .entity("Method " + req.method().toUpperCase() + " not allowed")
+                    .header("Accept", Http.Methods.GET)
             return false
         }
     }

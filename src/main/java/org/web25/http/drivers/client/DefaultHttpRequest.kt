@@ -1,7 +1,13 @@
-package org.web25.http.drivers
+package org.web25.http.drivers.client
 
 import org.web25.http.*
+import org.web25.http.auth.Authentication
+import org.web25.http.client.HttpResponseCallback
+import org.web25.http.client.OutgoingHttpRequest
+import org.web25.http.drivers.Driver
 import org.web25.http.events.*
+import org.web25.http.exceptions.CookieNotFoundException
+import org.web25.http.exceptions.HttpException
 import java.io.IOException
 import java.io.OutputStream
 import java.io.UnsupportedEncodingException
@@ -9,16 +15,17 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
 import java.util.*
-import java.util.function.Supplier
 
 /**
  * Created by felix on 9/11/15.
  */
-open class DefaultHttpRequest : HttpRequest() {
+open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(context) {
+
+    override val cookies: MutableMap<String, HttpCookie> = TreeMap()
+    override val headers: MutableMap<String, HttpHeader> = TreeMap()
+
 
     lateinit var method: String
-    private val cookies: MutableMap<String, HttpCookie> = mutableMapOf()
-    private val headers: MutableMap<String, HttpHeader> = mutableMapOf()
     private var entity: ByteArray? = null
     private var response: HttpResponse? = null
     private var data: MutableMap<String, ByteArray>? = null
@@ -26,6 +33,8 @@ open class DefaultHttpRequest : HttpRequest() {
     var manager: HttpEventManager = HttpEventManager()
     private var pipe: OutputStream? = null
     private var httpTransport: HttpTransport? = null
+
+    private var authentication: Authentication? = null
 
     var port = 80
     lateinit var path: String
@@ -35,22 +44,22 @@ open class DefaultHttpRequest : HttpRequest() {
 
     private var reauth = false
 
-    override fun method(method: String): HttpRequest {
+    override fun method(method: String): OutgoingHttpRequest {
         this.method = method
         return this
     }
 
-    override fun cookie(name: String, value: String): HttpRequest {
+    override fun cookie(name: String, value: String): OutgoingHttpRequest {
         cookies.put(name, HttpCookie(name, value))
         return this
     }
 
-    final override fun header(name: String, value: String): HttpRequest {
+    final override fun header(name: String, value: String): OutgoingHttpRequest {
         headers.put(name.toLowerCase(), HttpHeader(name, value))
         return this
     }
 
-    override fun entity(entity: ByteArray): HttpRequest {
+    override fun entity(entity: ByteArray): OutgoingHttpRequest {
         header("Content-Length", entity.size.toString() + "")
         if (!hasHeader("Content-Type")) {
             header("Content-Type", "text/plain")
@@ -59,25 +68,25 @@ open class DefaultHttpRequest : HttpRequest() {
         return this
     }
 
-    override fun entity(entity: String): HttpRequest {
+    override fun entity(entity: String): OutgoingHttpRequest {
         return entity(entity.toByteArray())
     }
 
-    override fun entity(entity: Any): HttpRequest {
+    override fun entity(entity: Any): OutgoingHttpRequest {
         return entity(entity.toString())
     }
 
-    override fun port(port: Int): HttpRequest {
+    override fun port(port: Int): OutgoingHttpRequest {
         this.port = port
         return this
     }
 
-    override fun path(path: String): HttpRequest {
+    override fun path(path: String): OutgoingHttpRequest {
         this.path = path
         return this
     }
 
-    override fun host(host: String): HttpRequest {
+    override fun host(host: String): OutgoingHttpRequest {
         this.host = host
         return this
     }
@@ -86,12 +95,7 @@ open class DefaultHttpRequest : HttpRequest() {
         return method
     }
 
-    override fun basicAuth(username: Supplier<String>, password: Supplier<String>): HttpRequest {
-        Authentication.basic(username, password).authenticate(this)
-        return this
-    }
-
-    override fun execute(callback: HttpResponseCallback?): HttpRequest {
+    override fun execute(callback: HttpResponseCallback?): OutgoingHttpRequest {
         val response: HttpResponse
         try {
             val socket = transport.openSocket(host, port)
@@ -123,10 +127,13 @@ open class DefaultHttpRequest : HttpRequest() {
         this.response = response
         if (response.status().status() == StatusCode.FOUND.status()) {
             try {
-                val url = URL(response.header("Location")!!.value)
+                if(!response.hasHeader("Location")) {
+                    throw HttpException(this, "No location header provided by remote server. Redirect not possible")
+                }
+                val url = URL(response.header("Location").value)
                 this.host = url.host
                 this.port = url.port
-                response.cookies().forEach { httpCookie -> cookie(httpCookie.name, httpCookie.value) }
+                response.cookies.values.forEach { httpCookie -> cookie(httpCookie.name, httpCookie.value) }
                 execute(callback)
             } catch (e: MalformedURLException) {
                 throw HttpException(this, e)
@@ -134,10 +141,9 @@ open class DefaultHttpRequest : HttpRequest() {
 
         } else if (!reauth && response.status().status() == StatusCode.UNAUTHORIZED.status()) {
             reauth = true
-            var authentications = drivers(Authentication::class.java)
-            authentications = authentications.filter({ a -> a.supports(response) })
+            val authentications = context.findAuthentications(response)
             if (authentications.isNotEmpty()) {
-                val authentication = authentications[0]
+                val authentication = authentications.first()
                 if (authentication.isInitialized && authentication.matches(this)) {
                     authentication.authenticate(this)
                     execute(callback)
@@ -155,20 +161,12 @@ open class DefaultHttpRequest : HttpRequest() {
         return this
     }
 
-    override fun transport(transport: Transport): HttpRequest {
+    override fun transport(transport: Transport): OutgoingHttpRequest {
         this.transport = transport
         return this
     }
 
-    override fun version(version: HttpVersion): HttpRequest {
-        return this
-    }
-
-    override fun print(outputStream: OutputStream): HttpRequest {
-        if (httpTransport == null) {
-            httpTransport = HttpTransport.version11()
-        }
-        httpTransport!!.write(this, outputStream)
+    override fun version(version: HttpVersion): OutgoingHttpRequest {
         return this
     }
 
@@ -192,23 +190,11 @@ open class DefaultHttpRequest : HttpRequest() {
         entity(stringBuilder.toString())
     }
 
-    override fun basicAuth(username: () -> String, password: () -> String): HttpRequest = basicAuth(Supplier { username() }, Supplier { password() })
 
-
-    override fun data(key: String, value: String): HttpRequest {
+    override fun data(key: String, value: String): OutgoingHttpRequest {
         if (data == null)
             data = HashMap<String, ByteArray>()
         data!!.put(key, value.toByteArray())
-        return this
-    }
-
-    override fun eventManager(manager: HttpEventManager): HttpRequest {
-        this.manager = manager
-        return this
-    }
-
-    override fun event(type: HttpEventType, handler: HttpEventHandler): HttpRequest {
-        this.manager.addEventHandler(type, handler)
         return this
     }
 
@@ -237,20 +223,6 @@ open class DefaultHttpRequest : HttpRequest() {
         return this
     }
 
-    override fun <T : Driver> drivers(type: Class<T>): List<T> {
-        val drivers = this.drivers
-                .filter { type.isAssignableFrom(it.javaClass) }
-                .mapTo(ArrayList<T>()) { it as T }
-        return drivers
-    }
-
-    override fun cookies(): Collection<HttpCookie> {
-        return cookies.values
-    }
-
-    override fun headers(): Collection<HttpHeader> {
-        return headers.values
-    }
 
     fun isHeader(name: String): Boolean {
         return headers.containsKey(name)
@@ -264,9 +236,6 @@ open class DefaultHttpRequest : HttpRequest() {
         return String(entity!!)
     }
 
-    override fun checkAuth(username: String, password: String): Boolean {
-        return false
-    }
 
     override fun response(): HttpResponse {
         if (response == null)
@@ -274,7 +243,7 @@ open class DefaultHttpRequest : HttpRequest() {
         return response!!
     }
 
-    override fun use(httpTransport: HttpTransport): HttpRequest {
+    override fun use(httpTransport: HttpTransport): OutgoingHttpRequest {
         this.httpTransport = httpTransport
         return this
     }
@@ -295,16 +264,16 @@ open class DefaultHttpRequest : HttpRequest() {
         return headers[name.toLowerCase()]!!
     }
 
-    override fun hasHeader(name: String): Boolean {
-        return headers.containsKey(name.toLowerCase())
-    }
-
     protected fun response(response: HttpResponse) {
         this.response = response
     }
 
-    override fun hasCookie(name: String): Boolean {
-        return cookies.containsKey(name)
+    override fun cookie(name: String): HttpCookie {
+        if(hasCookie(name)) {
+            return cookies[name]!!
+        } else {
+            throw CookieNotFoundException(name)
+        }
     }
 
     init {

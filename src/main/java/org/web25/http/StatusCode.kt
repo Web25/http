@@ -1,6 +1,7 @@
 package org.web25.http
 
 import org.jetbrains.annotations.Contract
+import org.web25.http.exceptions.UnknownStatusCodeException
 import java.util.*
 import kotlin.reflect.declaredMemberProperties
 

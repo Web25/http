@@ -1,8 +1,9 @@
 package org.web25.http.drivers
 
 import org.slf4j.LoggerFactory
-import org.web25.http.HttpsServer
+import org.web25.http.HttpContext
 import org.web25.http.drivers.server.HttpsServerThread
+import org.web25.http.server.HttpsServer
 import java.io.FileInputStream
 import java.io.IOException
 import java.security.*
@@ -20,9 +21,9 @@ class DefaultHttpsServer : DefaultHttpServer, HttpsServer {
     private var keystorePass: String? = null
     private var keyPass: String? = null
 
-    constructor(port: Int) : super(port, true) {}
+    constructor(port: Int, context: HttpContext) : super(port, true, context) {}
 
-    constructor(server: DefaultHttpServer) : super(server.port, true) {
+    constructor(server: DefaultHttpServer, context: HttpContext) : super(server.port, true, context) {
         this.httpHandlerStack = server.httpHandlerStack
     }
 
@@ -77,7 +78,7 @@ class DefaultHttpsServer : DefaultHttpServer, HttpsServer {
         }
 
         try {
-            this.serverThread = HttpsServerThread(httpHandlerStack, sslContext)
+            this.serverThread = HttpsServerThread(httpHandlerStack, sslContext, context)
         } catch (e: NoSuchAlgorithmException) {
             LOGGER.error("Could not start secure context", e)
             return this

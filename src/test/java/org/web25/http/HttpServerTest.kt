@@ -9,10 +9,14 @@ import org.junit.Test
 import org.junit.rules.DisableOnDebug
 import org.junit.rules.TestRule
 import org.junit.rules.Timeout
+import org.web25.http.auth.Authentication
 import org.web25.http.drivers.DefaultDriver
 import org.web25.http.handlers.DirectoryFileHandler
 import org.web25.http.handlers.FileHandler
 import org.web25.http.handlers.auth.CredentialProvider
+import org.web25.http.server.HttpHandler
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.HttpServer
 import java.io.File
 import java.io.PrintStream
 import java.util.concurrent.TimeUnit.SECONDS

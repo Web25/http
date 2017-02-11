@@ -1,4 +1,4 @@
-package org.web25.http
+package org.web25.http.drivers
 
 import java.io.File
 

@@ -2,7 +2,10 @@ package org.web25.http
 
 import org.web25.http.handlers.Handlers
 import org.web25.http.handlers.auth.CredentialProvider
-
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
+import org.web25.http.util.handler
+import org.web25.http.util.middleware
 import java.io.File
 
 /**
@@ -20,13 +23,14 @@ object TestApp {
         } catch (FileNotFoundException e) {
             System.err.println("Could not load jquery... Some parts of the website might not be working correctly...");
         }*/
-        val httpServer = Http.server(8080, true)
-                .secure()
+        val http = Http()
+        val httpServer = http.server(8080)
+                /*.secure()
                 .keyPass("test1234")
                 .keystorePass("test1234")
-                .keystore("test.keystore")
+                .keystore("test.keystore")*/
                 //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
-                .get("/", { request: HttpRequest, response: HttpResponse ->
+                .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
                             "<head>" +
                             "<title>Web 2.5 HTTP Server</title>" +
@@ -44,8 +48,8 @@ object TestApp {
                             "</body>")
                             .header("Content-Type", "text/html")
                     true
-                } as HttpHandler)
-                .get("/webpage", { request: HttpRequest, response: HttpResponse ->
+                })
+                .get("/webpage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<!DOCTYPE html>" +
                             "<html>" +
                             "<head>" +
@@ -62,8 +66,8 @@ object TestApp {
                             .header("Content-Type", "text/html")
                             .push("GET", "/style.css")
                     true
-                } as HttpHandler)
-                .get("/form", { request: HttpRequest, response: HttpResponse ->
+                })
+                .get("/form", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
                             "<head><title>POST Form Site</title></head>" +
                             "<body>" +
@@ -77,8 +81,8 @@ object TestApp {
                             "</html>")
                             .header("Content-Type", "text/html")
                     true
-                } as HttpHandler)
-                .post("/form", { request: HttpRequest, response: HttpResponse ->
+                })
+                .post("/form", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
                             "<head><title>POST Form Site</title></head>" +
                             "<body>" +
@@ -92,8 +96,8 @@ object TestApp {
                             "</html>")
                             .header("Content-Type", "text/html")
                     true
-                } as HttpHandler)
-                .get("/restpage", { request: HttpRequest, response: HttpResponse ->
+                })
+                .get("/restpage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
                             "<head>" +
                             "<title>REST Test Site</title>" +
@@ -114,8 +118,8 @@ object TestApp {
                             .push("GET", "/jquery.js")
                             .push("GET", "/rest/time")
                     true
-                } as HttpHandler)
-                .get("/cookiepage", { request: HttpRequest, response: HttpResponse ->
+                })
+                .get("/cookiepage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     var entity = "<html>" +
                             "<head>" +
                             "<title>Cookie Test Site</title>" +
@@ -132,31 +136,39 @@ object TestApp {
                             .cookie("test2", "test2")
                             .header("Content-Type", "text/html")
                     true
-                } as HttpHandler)
-                .get("/style.css", { request: HttpRequest, response: HttpResponse ->
+                })
+                .get("/style.css", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("body { background-color: black; color: white } a { color: white }")
                             .header("Content-Type", "text/css")
                     true
-                } as HttpHandler)
+                })
                 .get("/jquery.js", Handlers.buffered(File(temp, "jquery.js"), false, "text/javascript"))
-                .use("/secure", Http.router()
-                        .use(org.web25.http.handlers.Authentication.digest("test", { uname: String -> if (uname.equals("felix")) CredentialProvider.Credentials("felix", "test") else null } as CredentialProvider))
-                        .get("/", { request: HttpRequest, response: HttpResponse ->
+                .use("/secure", http.router()
+                        .use(org.web25.http.handlers.Authentication.digest("test", object : CredentialProvider {
+                            override fun findByUsername(username: String): CredentialProvider.Credentials {
+                                if(username == "felix") {
+                                    return CredentialProvider.Credentials("felix", "test")
+                                } else {
+                                    throw RuntimeException("No Credentials found!")
+                                }
+                            }
+                        }))
+                        .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                             response.entity("<body>" +
                                     "<p>This is a secure site!</p>" +
                                     "<p><a href=\"/\">Back</a></p>" +
                                     "</body>")
                                     .header("Content-Type", "text/html")
                             true
-                        } as HttpHandler)
+                        })
                 )
-                .use("/rest", Http.router()
-                        .use({ request: HttpRequest, response: HttpResponse -> response.header("X-Replace-Env", "true") } as HttpHandler)
-                        .get("/time", { request: HttpRequest, response: HttpResponse ->
+                .use("/rest", http.router()
+                        .use(middleware { request: IncomingHttpRequest, response: OutgoingHttpResponse -> response.header("X-Replace-Env", "true")})
+                        .get("/time", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                             response.entity("\${{iso_datetime}}")
                                     .header("X-Replace-Env", "true")
                             true
-                        } as HttpHandler)
+                        })
                 )
                 .after(Handlers.log())
                 .start()

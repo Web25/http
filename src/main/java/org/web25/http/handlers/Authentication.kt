@@ -1,8 +1,12 @@
 package org.web25.http.handlers
 
 import org.jetbrains.annotations.Contract
-import org.web25.http.*
+import org.web25.http.StatusCode
+import org.web25.http.exceptions.HttpHandleException
 import org.web25.http.handlers.auth.*
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 
 /**
  * Created by felix on 6/13/16.
@@ -10,9 +14,9 @@ import org.web25.http.handlers.auth.*
 class Authentication(private val strategy: Strategy) : HttpMiddleware {
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse) {
-        if (!strategy.authenticate(request)) {
-            response.header("WWW-Authenticate", strategy.authenticateHeader())
+    override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse) {
+        if (!strategy.authenticate(req)) {
+            res.header("WWW-Authenticate", strategy.authenticateHeader())
             throw HttpHandleException(StatusCode.UNAUTHORIZED, "The requested resource has restricted access!")
         }
     }

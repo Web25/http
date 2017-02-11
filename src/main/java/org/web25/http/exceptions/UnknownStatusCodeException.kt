@@ -1,4 +1,4 @@
-package org.web25.http
+package org.web25.http.exceptions
 
 /**
  * Created by felix on 9/10/15.

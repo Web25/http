@@ -1,4 +1,4 @@
-package org.web25.http
+package org.web25.http.util
 
 /**
  * Created by felix on 6/9/16.

@@ -2,6 +2,7 @@ package org.web25.http.drivers.server
 
 import org.eclipse.jetty.alpn.ALPN
 import org.slf4j.LoggerFactory
+import org.web25.http.HttpContext
 import org.web25.http.HttpVersion
 import java.io.IOException
 import java.net.SocketException
@@ -19,7 +20,7 @@ import javax.net.ssl.SSLSocket
  * Created by felix on 9/14/16.
  */
 class HttpsServerThread @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
-constructor(private val httpHandlerStack: HttpHandlerStack, private val sslContext: SSLContext) : HttpServerThread(httpHandlerStack), ExecutorListener {
+constructor(private val httpHandlerStack: HttpHandlerStack, private val sslContext: SSLContext, context : HttpContext) : HttpServerThread(httpHandlerStack, context), ExecutorListener {
 
     private val log = LoggerFactory.getLogger("HTTP")
 
@@ -131,9 +132,9 @@ constructor(private val httpHandlerStack: HttpHandlerStack, private val sslConte
 
         override fun run() {
             if (httpVersion === HttpVersion.HTTP_11) {
-                socketHandler = Http11SocketHandler(httpHandlerStack)
+                socketHandler = Http11SocketHandler(httpHandlerStack, context)
             } else if (httpVersion === HttpVersion.HTTP_20) {
-                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpsServerThread)
+                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpsServerThread, context)
             }
             socketHandler!!.handle(socket)
         }

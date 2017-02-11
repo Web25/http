@@ -1,9 +1,13 @@
 package org.web25.http.drivers
 
 import org.slf4j.LoggerFactory
-import org.web25.http.*
+import org.web25.http.HttpContext
+import org.web25.http.HttpRequest
+import org.web25.http.StatusCode
 import org.web25.http.drivers.server.*
-
+import org.web25.http.server.*
+import org.web25.http.util.handler
+import org.web25.http.util.middleware
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -12,7 +16,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by felix on 2/24/16.
  */
-open class DefaultHttpServer(var port: Int, protected var ssl: Boolean) : HttpServer {
+open class DefaultHttpServer(var port: Int, protected var ssl: Boolean, val context: HttpContext) : HttpServer {
 
     var httpHandlerStack: HttpHandlerStack
 
@@ -20,17 +24,17 @@ open class DefaultHttpServer(var port: Int, protected var ssl: Boolean) : HttpSe
 
     init {
         this.httpHandlerStack = HttpHandlerStack()
-        use({ req: HttpRequest, res: HttpResponse -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) } as HttpMiddleware)
+        use(middleware { req: IncomingHttpRequest, res: OutgoingHttpResponse -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) })
     }
 
     override fun start(): HttpServer {
-        use({ req: HttpRequest, res: HttpResponse ->
+        use(handler { req: IncomingHttpRequest, res: OutgoingHttpResponse ->
             res.status(StatusCode.NOT_FOUND)
             res.entity("Could not find resource at " + req.method().toUpperCase() + " " + req.path())
             true
-        } as HttpHandler)
+        })
         if (serverThread == null)
-            this.serverThread = HttpServerThread(httpHandlerStack)
+            this.serverThread = HttpServerThread(httpHandlerStack, context)
         serverThread!!.port = port
         serverThread!!.start()
         LOGGER.info("Started HTTP Server on port {}", port)
@@ -46,7 +50,7 @@ open class DefaultHttpServer(var port: Int, protected var ssl: Boolean) : HttpSe
         if (this is HttpsServer) {
             return this
         }
-        return DefaultHttpsServer(this)
+        return DefaultHttpsServer(this, context)
     }
 
     final override fun use(handler: HttpMiddleware): HttpServer {

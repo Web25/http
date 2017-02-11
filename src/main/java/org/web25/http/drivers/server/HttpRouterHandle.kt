@@ -1,9 +1,10 @@
 package org.web25.http.drivers.server
 
-import org.web25.http.HttpHandleException
 import org.web25.http.HttpRequest
-import org.web25.http.HttpResponse
-import org.web25.http.HttpRouter
+import org.web25.http.exceptions.HttpHandleException
+import org.web25.http.server.HttpRouter
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 
 /**
  * Created by Felix Resch on 29-Apr-16.
@@ -17,8 +18,8 @@ class HttpRouterHandle : HttpHandle {
     }
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse): Boolean {
-        return httpRouter.handle(request, response)
+    override fun handle(request: IncomingHttpRequest, response: OutgoingHttpResponse): Boolean {
+        return httpRouter(request, response)
     }
 
     override fun parentPath(path: String) {

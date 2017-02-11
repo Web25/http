@@ -1,7 +1,12 @@
 package org.web25.http.drivers.server
 
 import org.slf4j.LoggerFactory
-import org.web25.http.*
+import org.web25.http.HttpRequest
+import org.web25.http.StatusCode
+import org.web25.http.exceptions.HttpHandleException
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.util.*
@@ -30,7 +35,7 @@ class HttpHandlerStack {
         after.add(httpMiddleware)
     }
 
-    fun handle(httpRequest: HttpRequest, httpResponse: HttpResponse): Boolean {
+    fun handle(httpRequest: IncomingHttpRequest, httpResponse: OutgoingHttpResponse): Boolean {
         var handled = false
         try {
             for (httpHandle in httpHandlerHandles) {
@@ -64,7 +69,7 @@ class HttpHandlerStack {
         try {
             for (middleware in after) {
                 try {
-                    middleware.handle(httpRequest, httpResponse)
+                    middleware(httpRequest, httpResponse)
                 } catch (e: HttpHandleException) {
                     log.warn("Error while performing finalizing operations on HTTP request", e)
                 }
@@ -77,7 +82,7 @@ class HttpHandlerStack {
             httpResponse.entity(byteArrayOutputStream.toByteArray())
             httpResponse.status(StatusCode.INTERNAL_SERVER_ERROR)
         }
-
+        httpResponse.finished = true
         return handled
     }
 

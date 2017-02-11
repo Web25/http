@@ -1,9 +1,9 @@
-package org.web25.http
+package org.web25.http.auth
 
-import org.jetbrains.annotations.Contract
-import org.web25.http.auth.DefaultBasicStrategy
-import org.web25.http.auth.DefaultDigestStrategy
-import java.util.function.Supplier
+import org.web25.http.HttpRequest
+import org.web25.http.HttpResponse
+import org.web25.http.client.OutgoingHttpRequest
+import org.web25.http.drivers.Driver
 
 /**
  * Created by felix on 6/21/16.
@@ -19,32 +19,28 @@ interface Authentication : Driver {
 
     fun strategy(): String
 
-    fun authenticate(request: HttpRequest)
+    fun authenticate(request: OutgoingHttpRequest)
 
     fun supports(response: HttpResponse): Boolean {
-        val authenticate: String = response.header("WWW-Authenticate")!!.value
+        val authenticate: String = response.header("WWW-Authenticate").value
         return authenticate.startsWith(strategy())
     }
 
     companion object {
 
-        @Contract("_, _ -> !null")
-        fun basic(username: Supplier<String>, password: Supplier<String>): Authentication {
+        fun basic(username: () -> String, password: () -> String): Authentication {
             return DefaultBasicStrategy(username, password)
         }
 
-        @Contract("_, _ -> !null")
         fun basic(username: String, password: String): Authentication {
             return DefaultBasicStrategy(username, password)
         }
 
-        @Contract("_, _ -> !null")
         fun digest(username: String, password: String): Authentication {
             return DefaultDigestStrategy(username, password)
         }
 
-        @Contract("_, _ -> !null")
-        fun digest(username: Supplier<String>, password: Supplier<String>): Authentication {
+        fun digest(username: () -> String, password: () -> String): Authentication {
             return DefaultDigestStrategy(username, password)
         }
     }

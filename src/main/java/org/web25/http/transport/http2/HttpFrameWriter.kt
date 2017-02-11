@@ -20,16 +20,12 @@ class HttpFrameWriter(private val outputStream: OutputStream, private val httpCo
         }
 
         log.debug("Writing frame: " + httpFrame.toString())
-        val outputBuffer = ByteArrayOutputStream(httpFrame.length + Constants.Http20.Companion.FRAME_HEADER_LENGTH)
+        val outputBuffer = ByteArrayOutputStream(httpFrame.length + Constants.Http20.FRAME_HEADER_LENGTH)
         outputBuffer.write(HttpUtil.toByte(httpFrame.length), 1, 3)
         outputBuffer.write(HttpUtil.toByte(httpFrame.type), 1, 1)
         outputBuffer.write(HttpUtil.toByte(httpFrame.flags), 1, 1)
         outputBuffer.write(HttpUtil.toByte(httpFrame.streamIdentifier))
-        if (httpFrame.payload == null && httpFrame.length == 0) {
-            log.debug("Frame with null payload has been written as frame with payload length 0")
-        } else {
-            outputBuffer.write(httpFrame.payload)
-        }
+        outputBuffer.write(httpFrame.payload)
         outputBuffer.writeTo(this.outputStream)
     }
 

@@ -1,8 +1,11 @@
 package org.web25.http.handlers
 
-import org.web25.http.*
+import org.web25.http.HttpRequest
+import org.web25.http.StatusCode
+import org.web25.http.exceptions.HttpHandleException
 import org.web25.http.helper.HttpCacheControl
 import org.web25.http.helper.HttpHelper
+import org.web25.http.server.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -15,25 +18,25 @@ class DirectoryFileHandler(private val parent: File, private val caching: Boolea
     lateinit var parentPath: String
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse): Boolean {
-        if (!request.path().startsWith(parentPath)) {
+    override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse): Boolean {
+        if (!req.path().startsWith(parentPath)) {
             return false
         }
-        var path = request.path().replaceFirst(parentPath.toRegex(), "")
+        var path = req.path().replaceFirst(parentPath.toRegex(), "")
         if (path.contains("?")) {
             path = path.substring(0, path.indexOf("?"))
         }
         val file = File(parent, path)
         if (file.exists()) {
             if (caching) {
-                if (HttpCacheControl.cacheControl(request, response, cacheTime, java.lang.Long.toHexString(file.lastModified()))) {
+                if (HttpCacheControl.cacheControl(req, res, cacheTime, java.lang.Long.toHexString(file.lastModified()))) {
                     return true
                 }
             }
             try {
-                response.header("Content-Length", file.length().toString())
-                response.header("Content-Type", HttpHelper.context().mime().contentType(file))
-                response.entity(FileInputStream(file))
+                res.header("Content-Length", file.length().toString())
+                res.header("Content-Type", HttpHelper.context().mime().contentType(file))
+                res.entity(FileInputStream(file))
                 return true
             } catch (e: FileNotFoundException) {
                 throw HttpHandleException(StatusCode.INTERNAL_SERVER_ERROR, "Could not open resource for read: " + path, e)

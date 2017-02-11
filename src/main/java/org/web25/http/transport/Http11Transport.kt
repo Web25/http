@@ -1,27 +1,30 @@
 package org.web25.http.transport
 
+import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.*
+import org.web25.http.Http.Methods.GET
 import org.web25.http.drivers.DefaultHttpResponse
-import org.web25.http.drivers.IncomingHttpRequest
+import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.InputBuffer
+import org.web25.http.server.IncomingHttpRequest
 import java.io.*
 
 /**
  * Created by felix on 6/9/16.
  */
-class Http11Transport : org.web25.http.HttpTransport {
+class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport {
 
     override fun write(httpRequest: HttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
         httpRequest.prepareEntity()
-        output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), httpRequest.path() /*+ if (httpRequest.url().query != null) "?" + httpRequest.url().query else ""*/, "HTTP/1.1")
-        for (header in httpRequest.headers()) {
+        output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), httpRequest.path() /*+ if (httpRequest.openRequest().query != null) "?" + httpRequest.openRequest().query else ""*/, "HTTP/1.1")
+        for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
-        if (httpRequest.cookies().isNotEmpty()) {
+        if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
-            for ((name, value) in httpRequest.cookies()) {
+            for ((name, value) in httpRequest.cookies.values) {
                 builder.append(name)
                 builder.append("=")
                 builder.append(value)
@@ -42,10 +45,10 @@ class Http11Transport : org.web25.http.HttpTransport {
     override fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
         val stream = PrintStream(outputStream)
         stream.printf("HTTP/1.1 %03d %s\r\n", httpResponse.statusCode(), httpResponse.status().statusMessage())
-        for (header in httpResponse.headers()) {
+        for (header in httpResponse.headers.values) {
             stream.printf("%s: %s\r\n", header.name, header.value)
         }
-        for ((name, value) in httpResponse.cookies()) {
+        for ((name, value) in httpResponse.cookies) {
             stream.printf("Set-Cookie: %s\r\n", value)
         }
         stream.print("\r\n")
@@ -70,10 +73,10 @@ class Http11Transport : org.web25.http.HttpTransport {
     }
 
     @Throws(IOException::class)
-    override fun readRequest(inputStream: InputStream): HttpRequest {
+    override fun readRequest(inputStream: InputStream): IncomingHttpRequest {
         val inputBuffer = InputBuffer(inputStream)
         var statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
-        val request = IncomingHttpRequest()
+        val request = DefaultIncomingHttpRequest(context)
         parseRequestLine(statusLine, request)
         statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         while (statusLine != "") {
@@ -88,7 +91,7 @@ class Http11Transport : org.web25.http.HttpTransport {
             }
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
-        if (!request.method().equals(Http.GET, ignoreCase = true) && request.hasHeader("Content-Length")) {
+        if (!request.method().equals(GET, ignoreCase = true) && request.hasHeader("Content-Length")) {
             val length = Integer.parseInt(request.header("Content-Length").value)
             if (length == 0) {
                 return request
@@ -102,7 +105,7 @@ class Http11Transport : org.web25.http.HttpTransport {
     override fun readResponse(inputStream: InputStream, pipe: OutputStream?): HttpResponse {
         val inputBuffer = InputBuffer(inputStream)
         var statusLine: String? = inputBuffer.readUntil('\r'.toByte(), 1)
-        val response = DefaultHttpResponse()
+        val response = DefaultIncomingHttpResponse(context)
         response.status(StatusCode.constructFromHttpStatusLine(statusLine!!))
         statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         while (statusLine != null) {
@@ -120,7 +123,7 @@ class Http11Transport : org.web25.http.HttpTransport {
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
         if (response.hasHeader("Content-Length")) {
-            val length = response.header("Content-Length")!!.asInt()
+            val length = response.header("Content-Length").asInt()
             if (pipe != null) {
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 inputBuffer.pipe(length, pipe, byteArrayOutputStream)
@@ -139,7 +142,7 @@ class Http11Transport : org.web25.http.HttpTransport {
 
         private val log = LoggerFactory.getLogger("HTTP")
 
-        private fun parseRequestLine(line: String, httpRequest: IncomingHttpRequest) {
+        private fun parseRequestLine(line: String, httpRequest: DefaultIncomingHttpRequest) {
             val method = line.substring(0, line.indexOf(" ")).trim({ it <= ' ' })
             val path = line.substring(line.indexOf(" ") + 1, line.indexOf(" ", line.indexOf(" ") + 1)).trim({ it <= ' ' })
             val version = line.substring(line.indexOf(" ", line.indexOf(" ") + 1) + 1).trim({ it <= ' ' })
@@ -152,4 +155,59 @@ class Http11Transport : org.web25.http.HttpTransport {
             }
         }
     }
+}
+
+class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(context) {
+
+    private val log = LoggerFactory.getLogger("HTTP")
+
+    private var entityStream: InputStream? = null
+
+    fun status(statusCode : StatusCode): DefaultIncomingHttpResponse {
+        this.statusCode = statusCode
+        return this
+    }
+
+    fun header(name: String, value: String): DefaultIncomingHttpResponse {
+        this.headers.put(name, HttpHeader(name, value))
+        return this
+    }
+
+
+    fun cookie(name: String, value: String): DefaultIncomingHttpResponse {
+        this.cookies.put(name, HttpCookie(name, value))
+        return this
+    }
+
+    fun entity(entity: ByteArray): DefaultIncomingHttpResponse {
+        header("Content-Length", entity.size.toString())
+        if (!hasHeader("Content-Type")) {
+            header("Content-Type", "text/plain")
+        }
+        this.entity = entity
+        return this
+    }
+
+    fun entity(inputStream: InputStream): DefaultIncomingHttpResponse {
+        if (!hasHeader("Content-Type")) {
+            header("Content-Type", "text/plain")
+        }
+        this.entityStream = inputStream
+        return this
+    }
+
+    override fun responseBytes(): ByteArray {
+        if (request().method().equals("HEAD", ignoreCase = true)) {
+            return byteArrayOf()
+        } else if (entity.isEmpty() && entityStream != null) {
+            try {
+                this.entity = IOUtils.toByteArray(entityStream!!)
+            } catch (e: IOException) {
+                log.warn("Could not read resource", e)
+            }
+
+        }
+        return entity
+    }
+
 }

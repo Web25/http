@@ -1,6 +1,7 @@
 package org.web25.http.drivers.server
 
 import org.slf4j.LoggerFactory
+import org.web25.http.HttpContext
 import org.web25.http.HttpVersion
 import java.io.IOException
 import java.net.ServerSocket
@@ -11,7 +12,7 @@ import java.util.concurrent.*
 /**
  * Created by Felix Resch on 25-Apr-16.
  */
-open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack) : Thread(), ExecutorListener {
+open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack, val context : HttpContext) : Thread(), ExecutorListener {
 
     private val log = LoggerFactory.getLogger("HTTP")
 
@@ -54,6 +55,7 @@ open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack) : Th
             }
             try {
                 val socket = serverSocket!!.accept()
+                log.debug("Incoming connection from ${socket.remoteSocketAddress}")
                 futures.add(executorService!!.submit(SocketHandlerRunnable(socket)))
             } catch (e: SocketTimeoutException) {
                 log.debug("Socket timeout")
@@ -97,10 +99,13 @@ open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack) : Th
         private var socketHandler: SocketHandler? = null
 
         override fun run() {
+            log.debug("Starting handling of ${socket.remoteSocketAddress}")
             if (httpVersion === HttpVersion.HTTP_11) {
-                socketHandler = Http11SocketHandler(httpHandlerStack)
+                log.debug("Using HTTP/1.1")
+                socketHandler = Http11SocketHandler(httpHandlerStack, context)
             } else if (httpVersion === HttpVersion.HTTP_20) {
-                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpServerThread)
+                log.debug("Using HTTP/2.0")
+                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpServerThread, context)
             }
             socketHandler!!.handle(socket)
         }

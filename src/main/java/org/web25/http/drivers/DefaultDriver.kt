@@ -1,18 +1,20 @@
 package org.web25.http.drivers
 
+import org.web25.http.HttpContext
 import org.web25.http.HttpDriver
-import org.web25.http.HttpRequest
-import org.web25.http.HttpServer
+import org.web25.http.client.OutgoingHttpRequest
+import org.web25.http.drivers.client.DefaultHttpRequest
+import org.web25.http.server.HttpServer
 
 import java.net.URL
 
 /**
  * Created by felix on 9/11/15.
  */
-open class DefaultDriver : HttpDriver() {
+open class DefaultDriver(context: HttpContext) : HttpDriver(context) {
 
-    override fun url(url: URL): HttpRequest {
-        val request = DefaultHttpRequest().path(url.path).port(url.port).host(url.host)
+    override fun openRequest(url: URL): OutgoingHttpRequest {
+        val request = DefaultHttpRequest(context).port(url.port).host(url.host).path(url.path)
         if (url.protocol.toLowerCase() == "https") {
             request.https()
         }
@@ -21,9 +23,9 @@ open class DefaultDriver : HttpDriver() {
 
     override fun server(port: Int, ssl: Boolean): HttpServer {
         if (ssl) {
-            return DefaultHttpsServer(port)
+            return DefaultHttpsServer(port, context)
         } else {
-            return DefaultHttpServer(port, ssl)
+            return DefaultHttpServer(port, ssl, context)
         }
     }
 }

@@ -3,9 +3,10 @@ package org.web25.http.transport.http2
 import org.jetbrains.annotations.Contract
 import org.slf4j.LoggerFactory
 import org.web25.http.Constants
-import org.web25.http.drivers.IncomingHttpRequest
+import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.push.PushRequest
 import org.web25.http.drivers.push.PushableHttpResponse
+import org.web25.http.server.IncomingHttpRequest
 import org.web25.http.transport.http2.frames.DataFrame
 import org.web25.http.transport.http2.frames.HeadersFrame
 import org.web25.http.transport.http2.frames.PushPromiseFrame
@@ -84,7 +85,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 throw Http20Exception("During header transmission no other frames than CONTINUATION are allowed", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
             }
             if (httpFrame.type == Constants.Http20.FrameType.HEADERS) {
-                this.httpRequest = IncomingHttpRequest()
+                this.httpRequest = DefaultIncomingHttpRequest(httpConnection.context)
                 val headersFrame = HeadersFrame.from(httpFrame)
                 if (headersFrame.isPriority && headersFrame.streamDependency == streamIdentifier) {
                     throw Http20Exception("Circular stream dependency detected $streamIdentifier -> $streamIdentifier", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
@@ -175,6 +176,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 if (httpFrame.type == Constants.Http20.FrameType.DATA) {
                     try {
                         val dataFrame = DataFrame.from(httpFrame)
+
                         httpRequest.appendBytes(dataFrame.data)
                     } catch (e: HttpFrameException) {
                         terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR)
@@ -351,14 +353,14 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
             val byteArrayOutputStream = ByteArrayOutputStream()
             try {
                 encoder.encodeHeader(byteArrayOutputStream, ":status".toByteArray(), httpResponse.statusCode().toString().toByteArray(), false)
-                httpResponse.headers().forEach { httpHeader ->
+                httpResponse.headers.values.forEach { httpHeader ->
                     try {
                         encoder.encodeHeader(byteArrayOutputStream, httpHeader.name.toLowerCase().toByteArray(), httpHeader.value.toByteArray(), false)
                     } catch (e: IOException) {
                         log.warn("Could not encode headers")
                     }
                 }
-                httpResponse.cookies().forEach { httpCookie ->
+                httpResponse.cookies.values.forEach { httpCookie ->
                     try {
                         encoder.encodeHeader(byteArrayOutputStream, "set-cookie".toByteArray(), (httpCookie.name + "=" + httpCookie.value).toByteArray(), false)
                     } catch (e: IOException) {
@@ -389,7 +391,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 try {
                     encoder.encodeHeader(byteArrayOutputStream, ":method".toByteArray(), pushRequest.method().toByteArray(), false)
                     encoder.encodeHeader(byteArrayOutputStream, ":path".toByteArray(), pushRequest.path().toByteArray(), false)
-                    pushRequest.headers().forEach { httpHeader ->
+                    pushRequest.headers.values.forEach { httpHeader ->
                         try {
                             encoder.encodeHeader(byteArrayOutputStream, httpHeader.name.toLowerCase().toByteArray(), httpHeader.value.toByteArray(), false)
                         } catch (e: IOException) {

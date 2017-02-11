@@ -1,89 +1,92 @@
 package org.web25.http
 
-import org.jetbrains.annotations.Contract
-import org.web25.http.drivers.DefaultDriver
+import org.web25.http.Http.Methods.DELETE
+import org.web25.http.Http.Methods.GET
+import org.web25.http.Http.Methods.PATCH
+import org.web25.http.Http.Methods.POST
+import org.web25.http.Http.Methods.PUT
+import org.web25.http.Http.Methods.UPDATE
+import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.DefaultHttpRouter
+import org.web25.http.helper.DefaultHttpContext
+import org.web25.http.server.HttpRouter
+import org.web25.http.server.HttpServer
 import java.net.URL
 
 /**
  * Created by felix on 9/10/15.
  */
-object Http {
+class Http(val context : HttpContext = DefaultHttpContext(), private val driver: HttpDriver = HttpDrivers.defaultDriver(context)) {
 
-    val GET = "GET"
-    val POST = "POST"
-    val PUT = "PUT"
-    val DELETE = "DELETE"
-    val PATCH = "PATCH"
-    val UPDATE = "UPDATE"
-
-    private var driver: HttpDriver = DefaultDriver()
-
-    fun installDriver(driver: HttpDriver) {
-        Http.driver = driver
+    object Methods {
+        val GET = "GET"
+        val POST = "POST"
+        val PUT = "PUT"
+        val DELETE = "DELETE"
+        val PATCH = "PATCH"
+        val UPDATE = "UPDATE"
     }
 
-    fun url(url: URL): HttpRequest {
-        return driver.url(url)
+    fun url(url: URL): OutgoingHttpRequest {
+        return driver.openRequest(url)
     }
 
-    fun url(url: String): HttpRequest {
-        return driver.url(url)
+    fun url(url: String): OutgoingHttpRequest {
+        return driver.openRequest(url)
     }
 
-    operator fun get(url: URL): HttpRequest {
-        return url(url).method("GET")
+    fun get(url: URL): OutgoingHttpRequest {
+        return url(url).method(GET)
     }
 
-    fun post(url: URL): HttpRequest {
-        return url(url).method("POST")
+    fun post(url: URL): OutgoingHttpRequest {
+        return url(url).method(POST)
     }
 
-    fun put(url: URL): HttpRequest {
-        return url(url).method("PUT")
+    fun put(url: URL): OutgoingHttpRequest {
+        return url(url).method(PUT)
     }
 
-    fun update(url: URL): HttpRequest {
-        return url(url).method("UPDATE")
+    fun update(url: URL): OutgoingHttpRequest {
+        return url(url).method(UPDATE)
     }
 
-    fun delete(url: URL): HttpRequest {
-        return url(url).method("DELETE")
+    fun delete(url: URL): OutgoingHttpRequest {
+        return url(url).method(DELETE)
     }
 
-    fun patch(url: URL): HttpRequest {
-        return url(url).method("PATCH")
+    fun patch(url: URL): OutgoingHttpRequest {
+        return url(url).method(PATCH)
     }
 
-    operator fun get(url: String): HttpRequest {
-        return url(url).method("GET")
+    operator fun get(url: String): OutgoingHttpRequest {
+        return url(url).method(GET)
     }
 
-    fun post(url: String): HttpRequest {
-        return url(url).method("POST")
+    fun post(url: String): OutgoingHttpRequest {
+        return url(url).method(POST)
     }
 
-    fun put(url: String): HttpRequest {
-        return url(url).method("PUT")
+    fun put(url: String): OutgoingHttpRequest {
+        return url(url).method(PUT)
     }
 
-    fun update(url: String): HttpRequest {
-        return url(url).method("UPDATE")
+    fun update(url: String): OutgoingHttpRequest {
+        return url(url).method(UPDATE)
     }
 
-    fun delete(url: String): HttpRequest {
-        return url(url).method("DELETE")
+    fun delete(url: String): OutgoingHttpRequest {
+        return url(url).method(DELETE)
     }
 
-    fun patch(url: String): HttpRequest {
-        return url(url).method("PATCH")
+    fun patch(url: String): OutgoingHttpRequest {
+        return url(url).method(PATCH)
     }
 
-    @JvmOverloads fun server(port: Int, ssl: Boolean = false): HttpServer {
+    fun server(port: Int, ssl: Boolean = false): HttpServer {
         return driver.server(port, ssl)
     }
 
-    @Contract(" -> !null")
     fun router(): HttpRouter {
         return DefaultHttpRouter()
     }

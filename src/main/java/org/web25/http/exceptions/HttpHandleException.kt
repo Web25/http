@@ -1,4 +1,6 @@
-package org.web25.http
+package org.web25.http.exceptions
+
+import org.web25.http.StatusCode
 
 /**
  * Created by felix on 4/25/16.

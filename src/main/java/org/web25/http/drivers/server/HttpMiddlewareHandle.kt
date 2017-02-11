@@ -1,10 +1,11 @@
 package org.web25.http.drivers.server
 
-import org.web25.http.HttpHandleException
-import org.web25.http.HttpMiddleware
 import org.web25.http.HttpRequest
-import org.web25.http.HttpResponse
-import org.web25.http.HttpRoutable.Companion.joinPaths
+import org.web25.http.exceptions.HttpHandleException
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.HttpRoutable.Companion.joinPaths
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 
 
 /**
@@ -25,8 +26,8 @@ class HttpMiddlewareHandle : HttpHandle {
     }
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse): Boolean {
-        httpMiddleware!!.handle(request, response)
+    override fun handle(request: IncomingHttpRequest, response: OutgoingHttpResponse): Boolean {
+        httpMiddleware!!(request, response)
         return false
     }
 

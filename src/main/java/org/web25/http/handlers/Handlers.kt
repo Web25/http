@@ -1,8 +1,8 @@
 package org.web25.http.handlers
 
 import org.jetbrains.annotations.Contract
-import org.web25.http.HttpHandler
-import org.web25.http.HttpMiddleware
+import org.web25.http.server.HttpHandler
+import org.web25.http.server.HttpMiddleware
 import java.io.File
 import java.io.PrintStream
 

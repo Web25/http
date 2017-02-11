@@ -2,10 +2,10 @@ package org.web25.http.handlers
 
 import org.jetbrains.annotations.Contract
 import org.slf4j.LoggerFactory
-import org.web25.http.HttpHandleException
-import org.web25.http.HttpMiddleware
-import org.web25.http.HttpRequest
-import org.web25.http.HttpResponse
+import org.web25.http.exceptions.HttpHandleException
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 
 /**
  * Created by felix on 6/6/16.
@@ -13,10 +13,10 @@ import org.web25.http.HttpResponse
 class LoggingHandler : HttpMiddleware {
 
     @Throws(HttpHandleException::class)
-    override fun handle(request: HttpRequest, response: HttpResponse) {
-        LOGGER.info("{} {} - {} {} {} byte(s)", request.method().toUpperCase(), request.path(),
-                response.statusCode(), response.status().statusMessage(),
-                if (response.hasHeader("Content-Length")) response.header("Content-Length")!!.asInt() else "---")
+    override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse) {
+        LOGGER.info("{} {} - {} {} {} byte(s)", req.method().toUpperCase(), req.path(),
+                res.statusCode(), res.status().statusMessage(),
+                if (res.hasHeader("Content-Length")) res.header("Content-Length").asInt() else "---")
     }
 
     companion object {
