@@ -4,6 +4,9 @@ import org.web25.http.HttpRequest
 import org.web25.http.HttpResponse
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
+import org.web25.http.server.HttpMiddleware
+import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 
 /**
  * Created by felix on 6/21/16.

@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Contract
 import org.web25.http.exceptions.UnknownStatusCodeException
 import java.util.*
 import kotlin.reflect.declaredMemberProperties
+import kotlin.reflect.jvm.accessible
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Created by felix on 9/10/15.
@@ -403,8 +405,11 @@ class StatusCode private constructor(private var status: Int, private var status
         init {
             val fields = StatusCode.Companion::class.declaredMemberProperties
             fields.forEach {
-                val code = it.get(StatusCode.Companion) as StatusCode
-                index[code.status] == code
+                it.isAccessible = true
+                if(it.returnType == StatusCode::class) {
+                    val code = it.get(StatusCode.Companion) as StatusCode
+                    index[code.status] == code
+                }
             }
         }
 

@@ -14,7 +14,7 @@ open class DefaultHttpResponse(context : HttpContext) : HttpResponse(context) {
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
     override val cookies: MutableMap<String, HttpCookie> = TreeMap()
 
-    lateinit var statusCode: StatusCode
+    var statusCode: StatusCode = StatusCode.OK
     var entity: ByteArray = byteArrayOf()
     private var httpTransport: HttpTransport? = null
     lateinit var request: HttpRequest

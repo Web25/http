@@ -9,10 +9,6 @@ import org.web25.http.server.IncomingHttpRequest
  */
 open class DefaultIncomingHttpRequest(context: HttpContext) : IncomingHttpRequest(context) {
 
-    override fun checkAuth(username: String, password: String): Boolean {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun appendBytes(data: ByteArray): IncomingHttpRequest {
         val contentLength = if (hasHeader("Content-Length")) header("Content-Length").value else null
         if (entityBytes().isNotEmpty()) {

@@ -34,7 +34,7 @@ abstract class HttpRequest(val context : HttpContext) {
 
     @Throws(HeaderNotFoundException::class)
     abstract fun header(name: String): HttpHeader
-    fun hasHeader(name: String): Boolean = headers.containsKey(name)
+    fun hasHeader(name: String): Boolean = headers.containsKey(name.toLowerCase())
 
     fun hasHeaders(vararg names: String): Boolean = names.all { hasHeader(it) }
 
@@ -42,6 +42,6 @@ abstract class HttpRequest(val context : HttpContext) {
 
     @Throws(CookieNotFoundException::class)
     abstract fun cookie(name: String): HttpCookie
-    fun hasCookie(name: String): Boolean = headers.containsKey(name)
+    fun hasCookie(name: String): Boolean = headers.containsKey(name.toLowerCase())
 }
 

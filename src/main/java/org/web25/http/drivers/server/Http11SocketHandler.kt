@@ -35,7 +35,6 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
 
         while (run) {
             try {
-                run = false
                 HttpHelper.get().add(HttpSocketOptions())
                 log.debug("Reading request")
                 val httpRequest = transport.readRequest(socket.inputStream)
@@ -49,8 +48,13 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
                 httpHandlerStack.handle(httpRequest, response)
                 log.debug("Request handled!")
                 if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.header("Connection").value == "keep-alive") {
+                    log.debug("Keeping connection open")
                     response.header("Connection", "keep-alive")
                     run = true
+                } else {
+                    log.debug("Closing connection after handling")
+                    response.header("Connection", "close")
+                    run = false
                 }
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 transport.write(response, byteArrayOutputStream, response.entityStream())
@@ -91,8 +95,23 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
 
             } catch (e: IOException) {
                 log.warn("Socket Error", e)
+            } catch (e: Throwable) {
+                log.error("Internal error", e)
+                val httpResponse = HttpErrorResponse(context)
+                httpResponse.status(StatusCode.INTERNAL_SERVER_ERROR)
+                        .entity("An internal error happened!")
+                try {
+                    transport.write(httpResponse, socket.outputStream)
+                    socket.close()
+                } catch (e1: IOException) {
+                    log.warn("Could not send error message", e1)
+                }
             }
-
+            try {
+                socket.close()
+            } catch (e: IOException) {
+                log.warn("Could not close connection properly!", e)
+            }
         }
     }
 

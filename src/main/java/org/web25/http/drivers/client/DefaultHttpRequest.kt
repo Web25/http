@@ -32,7 +32,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     private var transport = Transport.HTTP
     var manager: HttpEventManager = HttpEventManager()
     private var pipe: OutputStream? = null
-    private var httpTransport: HttpTransport? = null
+    private var httpTransport: HttpTransport = HttpTransport.version11(context)
 
     private var authentication: Authentication? = null
 
@@ -87,6 +87,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     }
 
     override fun host(host: String): OutgoingHttpRequest {
+        header("Host", host)
         this.host = host
         return this
     }
@@ -101,7 +102,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
             val socket = transport.openSocket(host, port)
             print(socket.outputStream)
             manager.raise(HttpSentEvent(this))
-            response = httpTransport!!.readResponse(socket.inputStream, pipe!!)
+            response = httpTransport.readResponse(socket.inputStream, pipe)
             response.request(this)
             manager.raise(HttpReceivedEvent(this, response))
             socket.close()
@@ -279,7 +280,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     init {
         header("Connection", "close")
         header("User-Agent", "FeMoIO HTTP/0.1")
-        header("Host", host)
     }
 
 

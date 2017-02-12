@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit
  */
 class HttpTest {
 
-    @Rule
-    var timeout: TestRule = DisableOnDebug(Timeout(20, TimeUnit.SECONDS))
+    //@Rule
+    //var timeout: TestRule = DisableOnDebug(Timeout(20, TimeUnit.SECONDS))
 
     val http = Http()
 
