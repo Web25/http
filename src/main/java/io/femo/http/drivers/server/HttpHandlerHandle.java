@@ -4,6 +4,9 @@ import io.femo.http.HttpHandleException;
 import io.femo.http.HttpHandler;
 import io.femo.http.HttpRequest;
 import io.femo.http.HttpResponse;
+
+import java.util.StringTokenizer;
+
 import static io.femo.http.HttpRoutable.joinPaths;
 
 /**
@@ -46,7 +49,37 @@ public class HttpHandlerHandle implements HttpHandle {
             }
         }
         if(path != null) {
-            if(!request.path().equals(path)) {
+            String requested = request.path();
+            //first look if path or requested ends with / and the other one does not
+            if((path.endsWith("/") && !requested.endsWith("/")) || (!path.endsWith("/") && requested.endsWith("/"))) {
+                return false;
+            }
+
+            // When path is dynamic
+            if(path.contains("{") && path.contains("}")){
+                StringTokenizer tokenizedPath = new StringTokenizer(path, "/");
+                StringTokenizer tokenizedRequ = new StringTokenizer(requested, "/");
+
+                if(tokenizedPath.countTokens() != tokenizedRequ.countTokens())
+                    return false;
+
+                while(tokenizedPath.hasMoreElements()){
+                    String pathPart = tokenizedPath.nextToken();
+                    String requPart = tokenizedRequ.nextToken();
+
+                    if(pathPart.contains("{") && pathPart.contains("}")){
+                        //extract attribute name and value
+                    }
+                    else {
+                        if(!pathPart.equals(requPart))
+                            return false;
+                    }
+                }
+                return true;
+            }
+
+            // When path is static
+            if(!requested.equals(path)) {
                 return false;
             }
         }
