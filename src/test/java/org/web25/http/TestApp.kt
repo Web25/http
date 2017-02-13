@@ -25,10 +25,10 @@ object TestApp {
         }*/
         val http = Http()
         val httpServer = http.server(8080)
-                /*.secure()
+                .secure()
                 .keyPass("test1234")
                 .keystorePass("test1234")
-                .keystore("test.keystore")*/
+                .keystore("test.keystore")
                 //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +

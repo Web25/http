@@ -45,7 +45,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
 
     private var state: State? = null
 
-    var flowControlWindow: FlowControlWindow = FlowControlWindow(this)
+    var flowControlWindow: FlowControlWindow
         private set
 
     private val httpStreams: TreeMap<Int, HttpStream>
@@ -76,6 +76,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         //this.headerCompressionDecoder = new AtomicReference<>(new Decoder())
         //this.headerCompressionEncoder = new AtomicReference<>(new Encoder())
         this.state = State.ACTIVE
+        this.flowControlWindow = FlowControlWindow(this)
     }
 
     @Synchronized @Throws(IOException::class)

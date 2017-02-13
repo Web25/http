@@ -72,6 +72,7 @@ constructor(private val httpHandlerStack: HttpHandlerStack, private val sslConte
                         ALPN.remove(socket)   //TODO swap ifs, as soon as http/2.0 is implemented
                         if (list.contains("h2")) {
                             httpVersion.set(HttpVersion.HTTP_20)
+                            log.debug("Using HTTP/2.0")
                             return "h2"
                         }
                         if (list.contains("http/1.1"))
@@ -132,8 +133,10 @@ constructor(private val httpHandlerStack: HttpHandlerStack, private val sslConte
 
         override fun run() {
             if (httpVersion === HttpVersion.HTTP_11) {
+                log.debug("Using HTTP/1.1")
                 socketHandler = Http11SocketHandler(httpHandlerStack, context)
             } else if (httpVersion === HttpVersion.HTTP_20) {
+                log.debug("Using HTTP/2.0")
                 socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpsServerThread, context)
             }
             socketHandler!!.handle(socket)

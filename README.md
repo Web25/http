@@ -41,14 +41,19 @@ To retrieve the content of the response use
 
 To perform a simple HTTP POST use the following call.
 
-        Http.post("http://example.org/post").response();
+```kotlin
+val http = Http()
+http.post("http://example.org/post").response()
+```
         
 To append data use
-
-        Http
-            .post("http://example.org/post")
-            .data("test", "test")
-            .response();
+```kotlin
+http
+    .post("http://example.org/post")
+    .data("test", "test")
+    .response()
+```
+        
             
 The data is automatically UrlFormEncoded and sent to the server.
 
