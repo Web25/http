@@ -2,7 +2,6 @@ package org.web25.http.drivers.client
 
 import org.web25.http.*
 import org.web25.http.auth.Authentication
-import org.web25.http.client.HttpResponseCallback
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
 import org.web25.http.events.*
@@ -32,7 +31,8 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     private var transport = Transport.HTTP
     var manager: HttpEventManager = HttpEventManager()
     private var pipe: OutputStream? = null
-    private var httpTransport: HttpTransport = HttpTransport.version11(context)
+    var httpTransport: HttpTransport = HttpTransport.version11(context)
+        private set
 
     private var authentication: Authentication? = null
 
@@ -96,11 +96,11 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         return method
     }
 
-    override fun execute(callback: HttpResponseCallback?): OutgoingHttpRequest {
+    override fun execute(callback: ((HttpResponse) -> Unit)?): OutgoingHttpRequest {
         val response: HttpResponse
         try {
             val socket = transport.openSocket(host, port)
-            print(socket.outputStream)
+            httpTransport.write(this, socket.outputStream)
             manager.raise(HttpSentEvent(this))
             response = httpTransport.readResponse(socket.inputStream, pipe)
             response.request(this)
@@ -116,7 +116,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         var handled = false
         if (callback != null) {
             try {
-                callback.receivedResponse(response)
+                callback(response)
                 handled = true
             } catch (t: Throwable) {
                 t.printStackTrace()
@@ -204,7 +204,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         return this
     }
 
-    override fun pipe(outputStream: OutputStream): HttpRequest {
+    override fun pipe(outputStream: OutputStream): OutgoingHttpRequest {
         this.pipe = outputStream
         return this
     }
@@ -230,11 +230,11 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     }
 
     override fun entityBytes(): ByteArray {
-        return entity!!
+        return this.entity ?: byteArrayOf()
     }
 
     override fun entityString(): String {
-        return String(entity!!)
+        return String(entityBytes())
     }
 
 

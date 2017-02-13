@@ -11,21 +11,21 @@ class StatusCodeTest {
     @Test
     @Throws(Exception::class)
     fun testIndex() {
-        assertEquals("Status OK", 200, StatusCode.OK.status().toLong())
+        assertEquals("Status OK", 200, StatusCode.OK.status())
     }
 
     @Test
     @Throws(Exception::class)
     fun testFind() {
-        assertEquals("Status OK", 200, StatusCode.find(200).status().toLong())
-        assertEquals("Status Not Found", 404, StatusCode.find(404).status().toLong())
+        assertEquals("Status OK", 200, StatusCode.find(200).status())
+        assertEquals("Status Not Found", 404, StatusCode.find(404).status())
     }
 
     @Test
     @Throws(Exception::class)
     fun testConstructHttpStatus() {
         val statusCode = StatusCode.constructFromHttpStatusLine("HTTP/1.1 200 OK")
-        assertEquals("Status code", 200, statusCode.status().toLong())
+        assertEquals("Status code", 200, statusCode.status())
         assertEquals("Status Message", "OK", statusCode.statusMessage())
     }
 }

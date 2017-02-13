@@ -3,7 +3,6 @@ package org.web25.http
 import org.web25.http.drivers.Driver
 import org.web25.http.exceptions.CookieNotFoundException
 import org.web25.http.exceptions.HeaderNotFoundException
-import java.io.OutputStream
 
 /**
  * Created by felix on 9/10/15.
@@ -11,8 +10,6 @@ import java.io.OutputStream
 abstract class HttpRequest(val context : HttpContext) {
 
     abstract fun using(driver: Driver): HttpRequest
-
-    abstract fun pipe(outputStream: OutputStream): HttpRequest
 
     abstract fun prepareEntity(): HttpRequest
 

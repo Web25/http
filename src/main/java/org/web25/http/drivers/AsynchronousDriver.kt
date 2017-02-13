@@ -23,7 +23,8 @@ class AsynchronousDriver : DefaultDriver {
 
     override fun openRequest(url: URL): OutgoingHttpRequest {
         if (executorService == null)
-            return AsynchronousHttpRequest(context).path(url.path).host(url.host).port(url.port)
-        return AsynchronousExecutorHttpRequest(executorService, context).path(url.path).host(url.host).port(url.port)
+            return AsynchronousHttpRequest(context).path(url.file).host(url.host).port(normalizePort(url))
+        return AsynchronousExecutorHttpRequest(executorService, context).path(url.file).host(url.host).port(normalizePort(url))
     }
 }
+

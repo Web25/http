@@ -14,7 +14,7 @@ import java.net.URL
 open class DefaultDriver(context: HttpContext) : HttpDriver(context) {
 
     override fun openRequest(url: URL): OutgoingHttpRequest {
-        val request = DefaultHttpRequest(context).port(if(url.port < 0) url.defaultPort else url.port).host(url.host).path(url.path)
+        val request = DefaultHttpRequest(context).port(normalizePort(url)).host(url.host).path(url.file)
         if (url.protocol.toLowerCase() == "https") {
             request.https()
         }
@@ -28,4 +28,6 @@ open class DefaultDriver(context: HttpContext) : HttpDriver(context) {
             return DefaultHttpServer(port, ssl, context)
         }
     }
+
+    fun normalizePort(url: URL): Int = if(url.port <= 0) url.defaultPort else url.port
 }

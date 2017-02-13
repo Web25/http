@@ -3,15 +3,9 @@ package org.web25.http
 import com.google.gson.JsonParser
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.BeforeClass
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.DisableOnDebug
-import org.junit.rules.TestRule
-import org.junit.rules.Timeout
 import org.web25.http.auth.Authentication
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by felix on 1/19/16.
@@ -22,6 +16,7 @@ class HttpTest {
     //var timeout: TestRule = DisableOnDebug(Timeout(20, TimeUnit.SECONDS))
 
     val http = Http()
+    val parser = JsonParser()
 
     @Test
     @Throws(Exception::class)
@@ -36,7 +31,7 @@ class HttpTest {
     fun testHttpGetWithParameters() {
         val response = http.get("http://" + TestConstants.HTTP.HOST + "/get?param=2").response()
         assertEquals("Status", 200, response.status().status().toLong())
-        val content = parser!!.parse(response.responseString()).asJsonObject
+        val content = parser.parse(response.responseString()).asJsonObject
         val args = content.getAsJsonObject("args")
         val param = args.get("param")
         assertNotNull("Param", param)
@@ -70,7 +65,7 @@ class HttpTest {
     fun testHttpPostWithArguments() {
         val response = http.post("http://" + TestConstants.HTTP.HOST + "/post").data("param", "2").response()
         assertEquals("Status", 200, response.statusCode().toLong())
-        val content = parser!!.parse(response.responseString()).asJsonObject
+        val content = parser.parse(response.responseString()).asJsonObject
         val form = content.getAsJsonObject("form")
         val param = form.get("param")
         assertNotNull("Form Param", param)
@@ -82,7 +77,7 @@ class HttpTest {
     fun testHttpPostWithData() {
         val response = http.post("http://" + TestConstants.HTTP.HOST + "/post").entity("Value is 2").contentType("text/plain").response()
         assertEquals("Status", 200, response.statusCode().toLong())
-        val content = parser!!.parse(response.responseString()).asJsonObject
+        val content = parser.parse(response.responseString()).asJsonObject
         val data = content.get("data")
         assertNotNull("Data", data)
         assertEquals("Data Value", "Value is 2", data.asString)
@@ -92,7 +87,7 @@ class HttpTest {
     @Throws(Exception::class)
     fun testGetWithCookies() {
         val response = http.get("http://" + TestConstants.HTTP.HOST + "/cookies").cookie("Session", "abcd1234").response()
-        val content = parser!!.parse(response.responseString()).asJsonObject
+        val content = parser.parse(response.responseString()).asJsonObject
         val cookies = content.getAsJsonObject("cookies")
         val cookie = cookies.get("Session")
         assertNotNull("Cookies", cookie)
@@ -140,16 +135,4 @@ class HttpTest {
             }
         }).execute()
     }*/
-
-    companion object {
-
-        private var parser: JsonParser? = null
-
-        @BeforeClass
-        @Throws(Exception::class)
-        fun setUp() {
-            parser = JsonParser()
-            println("Using " + TestConstants.HTTP.HOST)
-        }
-    }
 }

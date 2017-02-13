@@ -10,6 +10,6 @@ abstract class AbstractStrategy protected constructor(private val realm: String)
     }
 
     override fun authenticateHeader(): String {
-        return String.format("%s realm=%s", name(), realm())
+        return String.format("%s realm=\"%s\"", name(), realm())
     }
 }

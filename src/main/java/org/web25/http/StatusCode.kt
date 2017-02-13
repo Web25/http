@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Contract
 import org.web25.http.exceptions.UnknownStatusCodeException
 import java.util.*
 import kotlin.reflect.declaredMemberProperties
-import kotlin.reflect.jvm.accessible
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -40,6 +39,12 @@ class StatusCode private constructor(private var status: Int, private var status
     @Contract(value = "null -> false", pure = true)
     override fun equals(o: Any?): Boolean {
         return o is StatusCode && o.status == status
+    }
+
+    init {
+        if(!StatusCode.index.containsKey(status)) {
+            StatusCode.index[status] = this
+        }
     }
 
     companion object {

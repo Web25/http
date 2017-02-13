@@ -4,7 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.web25.http.Http
-import org.web25.http.drivers.DefaultHttpResponse
+import org.web25.http.StatusCode
+import org.web25.http.transport.DefaultIncomingHttpResponse
 
 /**
  * Created by felix on 6/26/16.
@@ -14,14 +15,15 @@ class DefaultDigestStrategyTest {
     @Test
     @Throws(Exception::class)
     fun testExample() {
-        val httpRequest = Http["http://www.nowhere.org/dir/index.html"]
-        val httpResponse = DefaultHttpResponse()
+        val http = Http()
+        val httpRequest = http.get("http://www.nowhere.org/dir/index.html")
+        val httpResponse = DefaultIncomingHttpResponse(http.context)
         httpResponse.header("WWW-Authenticate", "Digest " +
                 "realm=\"testrealm@host.com\", " +
                 "qop=\"auth,auth-int\", " +
                 "nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", " +
                 "opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"")
-        httpResponse.status(401)
+        httpResponse.status(StatusCode.find(401))
         httpResponse.request(httpRequest)
         val defaultDigestStrategy = DefaultDigestStrategy("Mufasa", "Circle Of Life")
         defaultDigestStrategy.init(httpResponse)
