@@ -39,6 +39,6 @@ abstract class HttpRequest(val context : HttpContext) {
 
     @Throws(CookieNotFoundException::class)
     abstract fun cookie(name: String): HttpCookie
-    fun hasCookie(name: String): Boolean = headers.containsKey(name.toLowerCase())
+    fun hasCookie(name: String): Boolean = cookies.containsKey(name.toLowerCase())
 }
 
