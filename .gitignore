@@ -29,7 +29,7 @@ buildNumber.properties
 
 ## Directory-based project format:
 /keys
-/settings.xml
+/settingsList.xml
 .idea/
 # if you remove the above rule, at least ignore the following:
 
@@ -73,3 +73,11 @@ crashlytics.properties
 crashlytics-build.properties
 
 *.html
+
+*.keystore
+/test-result
+
+test-result.*
+
+*.dump
+/temp/

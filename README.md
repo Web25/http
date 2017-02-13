@@ -1,36 +1,37 @@
-# FeMo.IO HTTP Library
+# Web 2.5 HTTP Library
 
-As of version *0.0.2* support for *Java 7* has been dropped. For use with *Java 7* compatible systems use [http-jdk7](https://github.com/femoio/http-jdk7).
-
-[![Build Status](https://travis-ci.org/femoio/http.svg?branch=master)](https://travis-ci.org/femoio/http)
+[![Build Status](https://travis-ci.org/Web25/http.svg?branch=master)](https://travis-ci.org/Web25/http)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.femo/http/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.femo/http)
 
-        <dependency>
-            <groupId>io.femo</groupId>
-            <artifactId>http</artifactId>
-            <version>0.0.2</version>
-        </dependency>
+This library provides a simple API to perform various HTTP operations. As well as serving as a client you can also start a simple server that performs simple handling of HTTP requests in versions 1.1 and 2.0.
 
-This library provides a simple API for developers to perform synchronous and asynchronous HTTP Requests.
- 
-HTTP Versions supported:
+Support for **HTTP/2.0** is only available for the server but will soon be available for the client as well.
 
-* HTTP/1.1
+As of version *0.1.0* the project has switched vendor and is now written in Kotlin. It is still compatible with all JVM based languages but requires `kotlin-stdlib` and `kotlin-reflection` to function properly.
 
 ## GET Requests
 
-To perform a simple HTTP GET use the following call.
+Calls in kotlin are as simple as in Java. To perform a simple `GET` request on `http://example.org` use this snippet.
 
-        HttpResponse response = Http.get("http://example.org/").response();
+```kotlin
+val http = Http()
+val response = http.get("http://example.org/").response()
+```
+
+And for Java use this
+
+```java
+Http http = new Http()
+HttpResponse response = http.get("http://example.org/").response();
+```
         
-The request will be executed and the result cached in the HttpResponse object. All data is now exposed via simple jQuery
-like getters and setters. To check the response status use
+The request will be executed and the result cached in the HttpResponse object. 
  
-        if(response.statusCode() == StatusCode.OK) {
-            //Response was successfull
-        } else {
-            //Response was not successfull
-        }
+    if(response.statusCode() == StatusCode.OK) {
+        //Response was successfull
+    } else {
+        //Response was not successfull
+    }
         
 To retrieve the content of the response use
  
