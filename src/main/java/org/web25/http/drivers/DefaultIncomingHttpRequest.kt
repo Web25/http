@@ -16,8 +16,8 @@ open class DefaultIncomingHttpRequest(context: HttpContext) : IncomingHttpReques
         } else {
             val payload = entityBytes()
             val dst = ByteArray(payload.size + data.size)
-            System.arraycopy(dst, 0, payload, 0, payload.size)
-            System.arraycopy(dst, payload.size, data, 0, data.size)
+            System.arraycopy(payload, 0, dst, 0, payload.size)
+            System.arraycopy(data, 0, dst, payload.size, data.size)
             entity(dst)
         }
         if (contentLength != null)
