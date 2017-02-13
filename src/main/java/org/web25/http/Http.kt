@@ -11,7 +11,9 @@ import org.web25.http.drivers.DefaultHttpRouter
 import org.web25.http.helper.DefaultHttpContext
 import org.web25.http.server.HttpRouter
 import org.web25.http.server.HttpServer
+import java.io.File
 import java.net.URL
+import java.util.*
 
 /**
  * Created by felix on 9/10/15.
@@ -85,6 +87,12 @@ class Http(val context : HttpContext = DefaultHttpContext(), private val driver:
 
     fun server(port: Int, ssl: Boolean = false): HttpServer {
         return driver.server(port, ssl)
+    }
+
+    fun server(file: File): HttpServer {
+        var prop = Properties()
+        prop.load(file.inputStream())
+        return driver.server(prop.get("port").toString().toInt(), prop.get("ssl").toString().toBoolean())
     }
 
     fun router(): HttpRouter {
