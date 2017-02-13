@@ -12,7 +12,7 @@ import java.util.function.Supplier
 /**
  * Created by Felix Resch on 29-Apr-16.
  */
-interface HttpRoutable<out T: HttpRoutable<T>> {
+interface HttpRoutable<T: HttpRoutable<T>> {
 
     fun use(handler: HttpMiddleware): T
 
@@ -96,4 +96,5 @@ interface HttpRoutable<out T: HttpRoutable<T>> {
             return arrayOf(path1, path2).joinToString("/")
         }
     }
+
 }
