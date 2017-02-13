@@ -71,6 +71,7 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
                 HttpHelper.get().reset()
             } catch (e: SSLHandshakeException) {
                 log.warn("Error during handshake", e)
+                run = false
             } catch (e: SSLException) {
                 log.warn("SSL Error", e)
                 if (e.message!!.contains("plaintext")) {
@@ -85,8 +86,10 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
                     }
 
                 }
+                run = false
             } catch (e: SocketTimeoutException) {
                 log.debug("Connection timed out with " + socket.remoteSocketAddress.toString())
+                run = false
                 try {
                     socket.close()
                 } catch (e1: IOException) {
@@ -95,6 +98,7 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
 
             } catch (e: IOException) {
                 log.warn("Socket Error", e)
+                run = false
             } catch (e: Throwable) {
                 log.error("Internal error", e)
                 val httpResponse = HttpErrorResponse(context)
@@ -106,6 +110,7 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
                 } catch (e1: IOException) {
                     log.warn("Could not send error message", e1)
                 }
+                run = false
             }
             try {
                 socket.close()
