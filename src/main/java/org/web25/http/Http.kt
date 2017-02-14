@@ -9,6 +9,7 @@ import org.web25.http.Http.Methods.UPDATE
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.DefaultHttpRouter
 import org.web25.http.helper.DefaultHttpContext
+import org.web25.http.server.Configurator
 import org.web25.http.server.HttpRouter
 import org.web25.http.server.HttpServer
 import java.io.File
@@ -93,6 +94,10 @@ class Http(val context : HttpContext = DefaultHttpContext(), private val driver:
         var prop = Properties()
         prop.load(file.inputStream())
         return driver.server(prop.get("port").toString().toInt(), prop.get("ssl").toString().toBoolean())
+    }
+
+    fun server(configurator: Configurator): HttpServer {
+        return driver.server(configurator)
     }
 
     fun router(): HttpRouter {

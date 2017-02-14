@@ -4,6 +4,7 @@ import org.web25.http.HttpContext
 import org.web25.http.HttpDriver
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.client.DefaultHttpRequest
+import org.web25.http.server.Configurator
 import org.web25.http.server.HttpServer
 
 import java.net.URL
@@ -26,6 +27,14 @@ open class DefaultDriver(context: HttpContext) : HttpDriver(context) {
             return DefaultHttpsServer(port, context)
         } else {
             return DefaultHttpServer(port, ssl, context)
+        }
+    }
+
+    override fun server(configurator: Configurator): HttpServer {
+        if(configurator.getBoolean("ssl")) {
+            return DefaultHttpsServer(configurator, context)
+        } else {
+            return DefaultHttpServer(configurator, context);
         }
     }
 

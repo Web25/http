@@ -3,6 +3,7 @@ package org.web25.http.drivers
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
 import org.web25.http.drivers.server.HttpsServerThread
+import org.web25.http.server.Configurator
 import org.web25.http.server.HttpsServer
 import java.io.FileInputStream
 import java.io.IOException
@@ -26,6 +27,8 @@ class DefaultHttpsServer : DefaultHttpServer, HttpsServer {
     constructor(server: DefaultHttpServer, context: HttpContext) : super(server.port, true, context) {
         this.httpHandlerStack = server.httpHandlerStack
     }
+
+    constructor(configurator: Configurator, context: HttpContext) : this(configurator.getInt("port"), context)
 
     override fun keystorePass(keystorePass: String): HttpsServer {
         this.keystorePass = keystorePass

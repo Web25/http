@@ -27,6 +27,8 @@ open class DefaultHttpServer(var port: Int, protected var ssl: Boolean, val cont
         use(middleware { req: IncomingHttpRequest, res: OutgoingHttpResponse -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) })
     }
 
+    constructor(configurator: Configurator, context: HttpContext) : this(configurator.getInt("port"), configurator.getBoolean("ssl"), context)
+
     override fun start(): HttpServer {
         use(handler { req: IncomingHttpRequest, res: OutgoingHttpResponse ->
             res.status(StatusCode.NOT_FOUND)
