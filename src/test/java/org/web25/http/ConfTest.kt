@@ -16,7 +16,7 @@ class ConfTest {
     fun loadServerFromConf(){
         val http = Http()
         val server = http.server(File(javaClass.classLoader.getResource("server.conf").toURI())).start()
-        val response = http.get("http://localhost:8080/").response()
+        val response = http.get("http://localhost:3000/").response()
         assertNotNull(server)
         assertNotNull(response)
         assertEquals(404, response.statusCode())
@@ -27,7 +27,7 @@ class ConfTest {
     fun newServerConfigRes() {
         val http = Http()
         val server = http.server(Configurator resource "server.conf").start()
-        val response = http.get("http://localhost:8080/").response()
+        val response = http.get("http://localhost:3000/").response()
         assertNotNull(server)
         assertNotNull(response)
         assertEquals(404, response.statusCode())
@@ -38,7 +38,7 @@ class ConfTest {
     fun newServerConfigFile() {
         val http = Http()
         val server = http.server(Configurator file "temp/config.properties").start()
-        val response = http.get("http://localhost:8080/").response()
+        val response = http.get("http://localhost:4000/").response()
         assertNotNull(server)
         assertNotNull(response)
         assertEquals(404, response.statusCode())
