@@ -50,6 +50,8 @@ class ConfTest {
         @BeforeClass
         @JvmStatic
         fun setUp() {
+            val temp = File("temp")
+            if(!temp.exists()) temp.mkdir()
             val out = PrintStream("temp/config.properties")
             out.print("""port=8080
 ssl=false
