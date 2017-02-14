@@ -53,7 +53,7 @@ class ConfTest {
             val temp = File("temp")
             if(!temp.exists()) temp.mkdir()
             val out = PrintStream("temp/config.properties")
-            out.print("""port=8080
+            out.print("""port=4000
 ssl=false
 """)
             out.close()
