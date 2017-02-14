@@ -119,6 +119,16 @@ class HttpServerTest {
         assertEquals("text/plain", response.header("Content-Type").value)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun testDynamicPath(){
+        val http = Http()
+        var response = http.get("http://localhost:8080/dynamic/value1").response()
+        assertNotNull(response)
+        assertEquals(200, response.statusCode())
+        assertEquals("Yay", response.responseString())
+    }
+
     companion object {
 
         private var httpServer: HttpServer? = null
@@ -169,6 +179,10 @@ class HttpServerTest {
                     })
                     .get("/test-res", FileHandler.Companion.resource("/test.txt", true, "text/plain"))
                     .get("/test-file", FileHandler.Companion.buffered(File("test.txt"), true, "text/plain"))
+                    .get("/dynamic/{path}", handler { request, response ->
+                        response.entity("Yay")
+                        true
+                    })
                     .use("/test-dir", DirectoryFileHandler(File("testDocs"), false, 0))
                     .use("/style", router)
                     .use("/auth", authRouter)
