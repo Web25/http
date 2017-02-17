@@ -1,5 +1,6 @@
 package org.web25.http.drivers.client
 
+import org.slf4j.LoggerFactory
 import org.web25.http.*
 import org.web25.http.auth.Authentication
 import org.web25.http.client.OutgoingHttpRequest
@@ -23,6 +24,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     override val cookies: MutableMap<String, HttpCookie> = TreeMap()
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
 
+    private val log = LoggerFactory.getLogger("HTTP")
 
     lateinit var method: String
     private var entity: ByteArray? = null
@@ -113,20 +115,9 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
             throw HttpException(this, e)
         }
 
-        var handled = false
-        if (callback != null) {
-            try {
-                callback(response)
-                handled = true
-            } catch (t: Throwable) {
-                t.printStackTrace()
-                handled = false
-            }
 
-        }
-        manager.raise(HttpHandledEvent(this, response, handled))
-        this.response = response
         if (response.status().status() == StatusCode.FOUND.status()) {
+            manager.raise(HttpHandledEvent(this, response, false))
             try {
                 if(!response.hasHeader("Location")) {
                     throw HttpException(this, "No location header provided by remote server. Redirect not possible")
@@ -141,6 +132,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
             }
 
         } else if (!reauth && response.status().status() == StatusCode.UNAUTHORIZED.status()) {
+            manager.raise(HttpHandledEvent(this, response, false))
             reauth = true
             val authentications = context.findAuthentications(response)
             if (authentications.isNotEmpty()) {
@@ -157,7 +149,24 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                     authentication.authenticate(this)
                     execute(callback)
                 }
+            } else {
+                log.warn("No suitable authentication option found for ${response.header("WWW-Authenticate").value}")
+                this.response = response
             }
+        } else {
+            var handled = false
+            if (callback != null) {
+                try {
+                    callback(response)
+                    handled = true
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                    handled = false
+                }
+
+            }
+            manager.raise(HttpHandledEvent(this, response, handled))
+            this.response = response
         }
         return this
     }

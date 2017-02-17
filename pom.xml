@@ -6,7 +6,7 @@
 
     <groupId>org.web25</groupId>
     <artifactId>http</artifactId>
-    <version>0.0.4</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>FeMoIO Http</name>
