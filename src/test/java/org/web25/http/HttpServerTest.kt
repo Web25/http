@@ -14,6 +14,8 @@ import org.web25.http.util.handler
 import org.web25.http.util.middleware
 import java.io.File
 import java.io.PrintStream
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 /**
  * Created by felix on 4/25/16.
@@ -123,10 +125,18 @@ class HttpServerTest {
     @Throws(Exception::class)
     fun testDynamicPath(){
         val http = Http()
-        var response = http.get("http://localhost:8080/dynamic/value1").response()
+        val response = http.get("http://localhost:8080/dynamic/value1").response()
         assertNotNull(response)
         assertEquals(200, response.statusCode())
         assertEquals("Yay", response.responseString())
+    }
+
+    @Test
+    fun testCookies() {
+        val http = Http()
+        val response = http.get("http://localhost:8080/cookie/").response()
+        assertEquals(200, response.statusCode())
+        assertEquals("en-US", response.cookie("lang").value)
     }
 
     companion object {
@@ -168,6 +178,12 @@ class HttpServerTest {
                         true
                     })
             )
+            val cookieRouter = http.router()
+                    .get("/", handler { request, response ->
+                        response.cookie(HttpCookie("lang", "en-US", expires = ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("GMT")), path = "/cookie/", domain = "localhost", secure = true,
+                                httpOnly = true))
+                        true
+                    })
             httpServer = http.server(8080)
                     .get("/", handler { request, response ->
                         response.entity("Did it!")
@@ -186,6 +202,7 @@ class HttpServerTest {
                     .use("/test-dir", DirectoryFileHandler(File("testDocs"), false, 0))
                     .use("/style", router)
                     .use("/auth", authRouter)
+                    .use("/cookie", cookieRouter)
                     .after(middleware { request, response ->
                         System.out.printf("%-10s %s - %s byte(s)\n", request.method(), request.path(),
                                 if (response.hasHeader("Content-Length")) response.header("Content-Length").value else " --")

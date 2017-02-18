@@ -362,7 +362,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 }
                 httpResponse.cookies.values.forEach { httpCookie ->
                     try {
-                        encoder.encodeHeader(byteArrayOutputStream, "set-cookie".toByteArray(), (httpCookie.name + "=" + httpCookie.value).toByteArray(), false)
+                        encoder.encodeHeader(byteArrayOutputStream, "set-cookie".toByteArray(), httpCookie.toString().toByteArray(), false)
                     } catch (e: IOException) {
                         log.warn("Could not encode cookie")
                     }
