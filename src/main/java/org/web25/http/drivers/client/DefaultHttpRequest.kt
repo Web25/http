@@ -152,6 +152,18 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                 }
             } else {
                 log.warn("No suitable authentication option found for ${response.header("WWW-Authenticate").value}")
+                var handled = false
+                if (callback != null) {
+                    try {
+                        callback(response)
+                        handled = true
+                    } catch (t: Throwable) {
+                        t.printStackTrace()
+                        handled = false
+                    }
+
+                }
+                manager.raise(HttpHandledEvent(this, response, handled))
                 this.response = response
             }
         } else {
