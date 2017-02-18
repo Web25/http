@@ -57,7 +57,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             stream.printf("%s: %s\r\n", header.name, header.value)
         }
         for ((name, value) in httpResponse.cookies) {
-            stream.printf("Set-Cookie: %s\r\n", value)
+            stream.printf("Set-Cookie: %s\r\n", value.toString())
         }
         stream.print("\r\n")
         if (entityStream != null) {
