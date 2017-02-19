@@ -18,7 +18,6 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract val headers: MutableMap<String, HttpHeader>
     abstract val query: MutableMap<String, Any>
-
     abstract fun entityBytes(): ByteArray
     abstract fun entityString(): String
 
