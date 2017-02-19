@@ -2,6 +2,7 @@ package org.web25.http.util
 
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpCookie
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -11,7 +12,6 @@ import java.time.format.DateTimeFormatter
 object HttpCookieHelper {
 
     private val log = LoggerFactory.getLogger("HTTP")
-
     /**
      * As defined in RFC 6265, Section 5.2. The Set-Cookie Header
      *

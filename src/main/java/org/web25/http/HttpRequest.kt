@@ -37,6 +37,5 @@ abstract class HttpRequest(val context : HttpContext) {
     fun hasHeaders(vararg names: String): Boolean = names.all { hasHeader(it) }
 
     abstract fun path(): String
-
 }
 
