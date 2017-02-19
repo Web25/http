@@ -8,6 +8,7 @@ import org.web25.http.drivers.DefaultHttpResponse
 import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.InputBuffer
 import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.util.HttpCookieHelper
 import java.io.*
 
 /**
@@ -114,9 +115,8 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             val name: String = statusLine.substring(0, statusLine.indexOf(":")).trim({ it <= ' ' })
             val value: String = statusLine.substring(statusLine.indexOf(":") + 1).trim({ it <= ' ' })
             if (name == "Set-Cookie") {
-                val cname: String = value.substring(0, value.indexOf("="))
-                val cvalue: String = value.substring(value.indexOf("=") + 1, if (!value.contains(";")) value.length else value.indexOf(";"))
-                response.cookie(cname, cvalue)
+                val cookie = HttpCookieHelper.readCookie(value)
+                response.cookie(cookie)
             } else {
                 response.header(name, value)
             }
@@ -208,6 +208,11 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
 
         }
         return entity
+    }
+
+    fun cookie(cookie: HttpCookie): DefaultIncomingHttpResponse {
+        cookies[cookie.name] = cookie
+        return this
     }
 
 }

@@ -1,31 +1,29 @@
 package org.web25.http
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
 
 /**
  * Created by felix on 9/10/15.
  */
-class StatusCodeTest {
+internal class StatusCodeTest {
 
     @Test
-    @Throws(Exception::class)
     fun testIndex() {
-        assertEquals("Status OK", 200, StatusCode.OK.status())
+        assertEquals(200, StatusCode.OK.status())
     }
 
     @Test
-    @Throws(Exception::class)
     fun testFind() {
-        assertEquals("Status OK", 200, StatusCode.find(200).status())
-        assertEquals("Status Not Found", 404, StatusCode.find(404).status())
+        assertEquals(200, StatusCode.find(200).status())
+        assertEquals(404, StatusCode.find(404).status())
     }
 
     @Test
-    @Throws(Exception::class)
     fun testConstructHttpStatus() {
         val statusCode = StatusCode.constructFromHttpStatusLine("HTTP/1.1 200 OK")
-        assertEquals("Status code", 200, statusCode.status())
-        assertEquals("Status Message", "OK", statusCode.statusMessage())
+        assertEquals(200, statusCode.status())
+        assertEquals("OK", statusCode.statusMessage())
     }
 }
