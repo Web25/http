@@ -1,10 +1,10 @@
 package org.web25.http
 
 import org.apache.commons.io.FileUtils
-import org.junit.AfterClass
-import org.junit.Assert.*
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.web25.http.auth.Authentication
 import org.web25.http.handlers.DirectoryFileHandler
 import org.web25.http.handlers.FileHandler
@@ -20,12 +20,11 @@ import java.time.ZonedDateTime
 /**
  * Created by felix on 4/25/16.
  */
-class HttpServerTest {
+internal class HttpServerTest {
     
     val http = Http()
 
     @Test
-    @Throws(Exception::class)
     fun testGet() {
         val response = http.get("http://localhost:8080/").response()
         assertNotNull(response)
@@ -36,7 +35,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testPost() {
         val response = http.post("http://localhost:8080/").entity("This is test!").response()
         assertNotNull(response)
@@ -45,7 +43,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testStyle() {
         val response = http.get("http://localhost:8080/style/default").response()
         assertNotNull(response)
@@ -55,7 +52,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testResource() {
         val response = http.get("http://localhost:8080/test-res").response()
         assertNotNull(response)
@@ -65,7 +61,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testFile() {
         val response = http.get("http://localhost:8080/test-file").response()
         assertNotNull(response)
@@ -75,7 +70,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testDir() {
         val response = http.get("http://localhost:8080/test-dir/test.txt").response()
         assertNotNull(response)
@@ -86,7 +80,6 @@ class HttpServerTest {
 
 
     @Test
-    @Throws(Exception::class)
     fun testBasicAuth() {
         val http = Http()
         var response = http.get("http://localhost:8080/auth/basic/").response()
@@ -104,7 +97,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testDigestAuth() {
         val http = Http()
         var response = http.get("http://localhost:8080/auth/digest/").response()
@@ -122,7 +114,6 @@ class HttpServerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testDynamicPath(){
         val http = Http()
         val response = http.get("http://localhost:8080/dynamic/value1").response()
@@ -136,7 +127,16 @@ class HttpServerTest {
         val http = Http()
         val response = http.get("http://localhost:8080/cookie/").response()
         assertEquals(200, response.statusCode())
-        assertEquals("en-US", response.cookie("lang").value)
+        assertTrue(response.hasCookie("lang"))
+        val lang = response.cookie("lang")
+        assertNotNull(lang)
+        assertEquals("en-US", lang.value)
+        assertTrue(lang.secure)
+        assertTrue(lang.httpOnly)
+        assertEquals("localhost", lang.domain)
+        assertEquals("/cookie/", lang.path)
+        assertEquals(ZoneId.of("GMT"), lang.expires!!.zone)
+        assertEquals(ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("GMT")), lang.expires)
     }
 
     companion object {
@@ -153,8 +153,7 @@ class HttpServerTest {
             }
         }
 
-        @BeforeClass
-        @Throws(Exception::class)
+        @BeforeAll
         @JvmStatic
         fun setUp() {
             val http = Http()
@@ -226,8 +225,8 @@ class HttpServerTest {
 
         }
 
-        @AfterClass
-        @Throws(Exception::class)
+        @AfterAll
+        @JvmStatic
         fun tearDown() {
             httpServer!!.stop()
             File("test.txt").deleteOnExit()

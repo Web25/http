@@ -1,8 +1,8 @@
 package org.web25.http.auth
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import org.web25.http.Http
 import org.web25.http.StatusCode
 import org.web25.http.transport.DefaultIncomingHttpResponse
@@ -10,10 +10,9 @@ import org.web25.http.transport.DefaultIncomingHttpResponse
 /**
  * Created by felix on 6/26/16.
  */
-class DefaultDigestStrategyTest {
+internal class DefaultDigestStrategyTest {
 
     @Test
-    @Throws(Exception::class)
     fun testExample() {
         val http = Http()
         val httpRequest = http.get("http://www.nowhere.org/dir/index.html")

@@ -1,16 +1,16 @@
 package org.web25.http
 
 import com.jayway.awaitility.Awaitility
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.web25.http.server.Configurator
 import java.io.File
 import java.io.PrintStream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class ConfTest {
+internal class ConfTest {
 
     @Test
     fun loadServerFromConf(){
@@ -50,7 +50,7 @@ class ConfTest {
 
     companion object {
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setUp() {
             val temp = File("temp")
@@ -62,7 +62,7 @@ ssl=false
             out.close()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() {
             File("temp/config.properties").deleteOnExit()
