@@ -105,7 +105,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
             val socket = transport.openSocket(host, port)
             httpTransport.write(this, socket.outputStream)
             manager.raise(HttpSentEvent(this))
-            response = httpTransport.readResponse(socket.inputStream, pipe)
+            response = httpTransport.readResponse(socket.inputStream, pipe, this)
             response.request(this)
             manager.raise(HttpReceivedEvent(this, response))
             socket.close()
@@ -304,5 +304,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         header("User-Agent", "FeMoIO HTTP/0.1")
     }
 
+    override fun host(): String = host
 
 }

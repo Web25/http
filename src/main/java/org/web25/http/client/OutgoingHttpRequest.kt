@@ -35,4 +35,6 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
     fun https(): OutgoingHttpRequest {
         return transport(Transport.HTTPS)
     }
+
+    abstract fun host(): String
 }

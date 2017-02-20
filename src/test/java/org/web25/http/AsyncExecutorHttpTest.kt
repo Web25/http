@@ -14,7 +14,7 @@ import org.web25.http.helper.DefaultHttpContext
  */
 internal class AsyncExecutorHttpTest {
 
-    val context = DefaultHttpContext()
+    val context = DefaultHttpContext(HttpCookieStore.default())
     val http = Http(context = context, driver = HttpDrivers.asyncDriver(5, context))
     val parser: JsonParser = JsonParser()
 

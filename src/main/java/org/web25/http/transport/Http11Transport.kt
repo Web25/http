@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.*
 import org.web25.http.Http.Methods.GET
+import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.DefaultHttpResponse
 import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.InputBuffer
@@ -16,9 +17,10 @@ import java.io.*
  */
 class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport {
 
-    override fun write(httpRequest: HttpRequest, outputStream: OutputStream) {
+    override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
         httpRequest.prepareEntity()
+        
         var path = httpRequest.path()
         if(!httpRequest.query.isEmpty()){
             path += "?"
@@ -28,6 +30,8 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             path = path.dropLast(1) //last character will be a '&' otherwise
         }
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
+
+        context.cookieStore.findCookies(httpRequest)
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
@@ -111,7 +115,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     }
 
     @Throws(IOException::class)
-    override fun readResponse(inputStream: InputStream, pipe: OutputStream?): HttpResponse {
+    override fun readResponse(inputStream: InputStream, pipe: OutputStream?, request: OutgoingHttpRequest): HttpResponse {
         val inputBuffer = InputBuffer(inputStream)
         var statusLine: String? = inputBuffer.readUntil('\r'.toByte(), 1)
         val response = DefaultIncomingHttpResponse(context)
@@ -130,6 +134,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             }
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
+        context.cookieStore.store(request, response)
         if (response.hasHeader("Content-Length")) {
             val length = response.header("Content-Length").asInt()
             if (pipe != null) {
