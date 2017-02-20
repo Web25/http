@@ -19,4 +19,6 @@ interface HttpContext {
     fun addAuthentication(authentication: Authentication)
     fun findAuthentications(httpResponse: HttpResponse): Collection<Authentication>
 
+    val cookieStore: HttpCookieStore
+
 }

@@ -4,7 +4,6 @@ import org.web25.http.HttpRequest
 import org.web25.http.StatusCode
 import org.web25.http.exceptions.HttpHandleException
 import org.web25.http.helper.HttpCacheControl
-import org.web25.http.helper.HttpHelper
 import org.web25.http.server.*
 import java.io.File
 import java.io.FileInputStream
@@ -35,7 +34,7 @@ class DirectoryFileHandler(private val parent: File, private val caching: Boolea
             }
             try {
                 res.header("Content-Length", file.length().toString())
-                res.header("Content-Type", HttpHelper.context().mime().contentType(file))
+                res.header("Content-Type", req.context.mime().contentType(file))
                 res.entity(FileInputStream(file))
                 return true
             } catch (e: FileNotFoundException) {
