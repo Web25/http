@@ -31,10 +31,14 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
 
+<<<<<<< HEAD
         context.cookieStore.findCookies(httpRequest)
+=======
+>>>>>>> 5bf5e78... added query parsing for requests and test
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
+        context.cookieStore.findCookies(httpRequest)
         if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
             httpRequest.cookies.forEach {
