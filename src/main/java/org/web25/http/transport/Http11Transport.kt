@@ -54,7 +54,6 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         output.print("\r\n")
     }
 
-
     override fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
         val stream = PrintStream(outputStream)
         stream.printf("HTTP/1.1 %03d %s\r\n", httpResponse.statusCode(), httpResponse.status().statusMessage())
