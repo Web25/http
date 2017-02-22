@@ -17,8 +17,7 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract val cookies: MutableMap<String, HttpCookie>
     abstract val headers: MutableMap<String, HttpHeader>
-    abstract val getParameters: MutableMap<String, Any>
-    abstract val postParameters: MutableMap<String, Any>
+    abstract val query: MutableMap<String, Any>
 
     abstract fun entityBytes(): ByteArray
     abstract fun entityString(): String

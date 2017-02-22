@@ -23,8 +23,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override val cookies: MutableMap<String, HttpCookie> = TreeMap()
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
-    override val getParameters: MutableMap<String, Any> = TreeMap()
-    override val postParameters: MutableMap<String, Any> = TreeMap()
+    override val query: MutableMap<String, Any> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
 
