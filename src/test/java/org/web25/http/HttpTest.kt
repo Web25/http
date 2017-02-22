@@ -115,6 +115,20 @@ class HttpTest {
         assertEquals("Status", 200, response.statusCode().toLong())
     }
 
+    @Test
+    fun testQueryParsing(){
+        val http = Http()
+        val request = http.get("http://${TestConstants.HTTP.HOST}/get")
+        request.query["param"] = 2
+        val response = request.response()
+        assertEquals("Status", 200, response.status().status().toLong())
+        val content = parser.parse(response.responseString()).asJsonObject
+        val args = content.getAsJsonObject("args")
+        val param = args.get("param")
+        assertNotNull("Param", param)
+        assertEquals("Param Value", "2", param.asString)
+    }
+
     /*@Test
     @Throws(Exception::class)
     fun testEvents() {
