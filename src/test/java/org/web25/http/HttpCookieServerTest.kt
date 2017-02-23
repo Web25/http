@@ -68,7 +68,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/", handler { request, response ->
-                        if(request.hasCookie("hello") && request.cookie("hello").value == "world") {
+                        if("hello" in request.cookies && request.cookies["hello"].value == "world") {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -84,7 +84,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/", handler { request, response ->
-                        if(request.hasCookie("correct") && !request.hasCookie("expired")) {
+                        if("correct" in request.cookies && "expired" !in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -99,7 +99,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/", handler { request, response ->
-                        if(request.hasCookie("correct") && !request.hasCookie("expired")) {
+                        if("correct" in request.cookies && "expired" !in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -114,7 +114,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/", handler { request, response ->
-                        if(request.hasCookie("correct") && !request.hasCookie("incorrect")) {
+                        if("correct" in request.cookies && "incorrect" !in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -129,7 +129,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/", handler { request, response ->
-                        if(request.hasCookie("visible") && !request.hasCookie("invisible")) {
+                        if("visible" in request.cookies && "invisible" !in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -138,7 +138,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/subpath/", handler { request, response ->
-                        if(request.hasCookie("visible") && request.hasCookie("invisible")) {
+                        if("visible" in request.cookies && "invisible" in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
@@ -147,7 +147,7 @@ internal class HttpCookieServerTest {
                         true
                     })
                     .post("/otherSubpath", handler { request, response ->
-                        if(request.hasCookie("visible") && !request.hasCookie("invisible")) {
+                        if("visible" in request.cookies && "invisible" !in request.cookies) {
                             response.status(200)
                         } else {
                             response.status(400)
