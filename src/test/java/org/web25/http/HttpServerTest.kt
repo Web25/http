@@ -128,7 +128,7 @@ internal class HttpServerTest {
         val response = http.get("http://localhost:8080/cookie/").response()
         assertEquals(200, response.statusCode())
         assertTrue(response.hasCookie("lang"))
-        val lang = response.cookie("lang")
+        val lang = response.cookies["lang"]
         assertNotNull(lang)
         assertEquals("en-US", lang.value)
         assertTrue(lang.secure)
@@ -182,7 +182,7 @@ internal class HttpServerTest {
             )
             val cookieRouter = http.router()
                     .get("/", handler { request, response ->
-                        if(request.hasCookie("lang") && request.cookie("lang").value == "en-US") {
+                        if("lang" in request.cookies && request.cookies["lang"].value == "en-US") {
                             response.entity("Alright")
                         }
                         response.cookie(HttpCookie("lang", "en-US", expires = ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("GMT")), path = "/cookie/", domain = "localhost", secure = true,

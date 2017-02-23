@@ -27,10 +27,10 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
-            for ((name, value) in httpRequest.cookies.values) {
-                builder.append(name)
+            httpRequest.cookies.forEach {
+                builder.append(it.name)
                 builder.append("=")
-                builder.append(value)
+                builder.append(it.value)
                 builder.append(";")
             }
             output.printf("%s: %s\r\n", "Cookie", builder.toString())
@@ -51,8 +51,8 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         for (header in httpResponse.headers.values) {
             stream.printf("%s: %s\r\n", header.name, header.value)
         }
-        for ((name, value) in httpResponse.cookies) {
-            stream.printf("Set-Cookie: %s\r\n", value.toString())
+        httpResponse.cookies.forEach {
+            stream.printf("Set-Cookie: %s\r\n", it.toString())
         }
         stream.print("\r\n")
         if (entityStream != null) {
@@ -87,7 +87,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             val value: String = statusLine.substring(statusLine.indexOf(":") + 1).trim({ it <= ' ' })
             if (name == "Cookie") {
                 HttpCookieHelper.readCookies(value).forEach {
-                    request.cookie(it)
+                    request.cookies[it.name] = it
                 }
             } else {
                 request.header(name, value)
@@ -178,7 +178,7 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
 
 
     fun cookie(name: String, value: String): DefaultIncomingHttpResponse {
-        this.cookies.put(name, HttpCookie(name, value))
+        this.cookies[name] = value
         return this
     }
 

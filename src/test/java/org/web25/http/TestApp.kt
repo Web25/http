@@ -133,7 +133,7 @@ object TestApp {
                             "<title>Cookie Test Site</title>" +
                             "</head>" +
                             "<body>"
-                    if (request.hasCookie("test1") && request.hasCookie("test2")) {
+                    if ("test1" in request.cookies && "test2" in request.cookies) {
                         entity += "<p>You have visited this site before</p>"
                     } else {
                         entity += "<p>Visit this site again, to see if cookies are working</p>"

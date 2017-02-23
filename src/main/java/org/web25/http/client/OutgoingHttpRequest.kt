@@ -7,7 +7,6 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
 
     abstract fun method(method: String): OutgoingHttpRequest
 
-    abstract fun cookie(name: String, value: String): OutgoingHttpRequest
     abstract fun header(name: String, value: String): OutgoingHttpRequest
     abstract fun entity(entity: ByteArray): OutgoingHttpRequest
     abstract fun entity(entity: String): OutgoingHttpRequest
@@ -34,6 +33,11 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
 
     fun https(): OutgoingHttpRequest {
         return transport(Transport.HTTPS)
+    }
+
+    fun cookie(name: String, value: String): OutgoingHttpRequest {
+        cookies[name] = value
+        return this
     }
 
     abstract fun host(): String
