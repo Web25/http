@@ -53,12 +53,14 @@ class InMemoryCookieStore: HttpCookieStore {
                 val oldCookie = cookies.filter { it.domain == cookieDomain && it.path == path && it.name == name }
                 val creationTime = if (oldCookie.count() > 0) oldCookie[0].creationTime else ZonedDateTime.now()
                 cookies.removeAll { it.domain == cookieDomain && it.path == path && it.name == name }
-                cookies.add(Cookie(name, it.value, expiryDate, cookieDomain, path, creationTime, ZonedDateTime.now(), persistent, hostOnly, it.httpOnly, it.secure))
+                if(expiryDate.isAfter(ZonedDateTime.now()))
+                    cookies.add(Cookie(name, it.value, expiryDate, cookieDomain, path, creationTime, ZonedDateTime.now(), persistent, hostOnly, it.httpOnly, it.secure))
             }
         })
     }
 
     override fun findCookies(request: OutgoingHttpRequest) {
+        purge()
         synchronized(cookies, {
             cookies.filter {
                 if(it.hostOnlyFlag) {
