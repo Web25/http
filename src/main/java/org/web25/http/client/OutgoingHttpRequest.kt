@@ -37,4 +37,8 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
     }
 
     abstract fun host(): String
+    operator fun invoke(): HttpResponse {
+        execute()
+        return response()
+    }
 }

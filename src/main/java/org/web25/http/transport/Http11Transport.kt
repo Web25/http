@@ -86,9 +86,9 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             val name: String = statusLine.substring(0, statusLine.indexOf(":")).trim({ it <= ' ' })
             val value: String = statusLine.substring(statusLine.indexOf(":") + 1).trim({ it <= ' ' })
             if (name == "Cookie") {
-                val cname: String = value.substring(0, value.indexOf("="))
-                val cvalue: String = value.substring(value.indexOf("=") + 1, if (!value.contains(";")) value.length else value.indexOf(";"))
-                request.cookie(cname, cvalue)
+                HttpCookieHelper.readCookies(value).forEach {
+                    request.cookie(it)
+                }
             } else {
                 request.header(name, value)
             }

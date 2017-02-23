@@ -12,3 +12,7 @@ fun String.occurrences(s: Char): Int {
     }
     return counter
 }
+
+fun Any.nop() {
+
+}

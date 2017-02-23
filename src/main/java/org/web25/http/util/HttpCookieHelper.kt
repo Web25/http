@@ -1,7 +1,7 @@
 package org.web25.http.util
 
+import org.slf4j.LoggerFactory
 import org.web25.http.HttpCookie
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -9,6 +9,8 @@ import java.time.format.DateTimeFormatter
  * Created by felix on 2/18/17.
  */
 object HttpCookieHelper {
+
+    private val log = LoggerFactory.getLogger("HTTP")
 
     /**
      * As defined in RFC 6265, Section 5.2. The Set-Cookie Header
@@ -52,7 +54,8 @@ object HttpCookieHelper {
                     attributeName.equals(other = "expires", ignoreCase = true) -> {
                         if(attributeValue.isEmpty())
                             throw HttpCookieException("Invalid Cookie. Expires attribute is empty")
-                        val dateTime = ZonedDateTime.parse(attributeValue, DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("GMT")))
+                        //val unzoned = ZonedDateTime.parse(attributeValue, DateTimeFormatter.RFC_1123_DATE_TIME)
+                        val dateTime = ZonedDateTime.parse(attributeValue, DateTimeFormatter.RFC_1123_DATE_TIME)
                         cookie.expires = dateTime
                     }
                     attributeName.equals(other = "max-age", ignoreCase = true) -> {
@@ -135,7 +138,53 @@ object HttpCookieHelper {
      * @since 0.2.0
      */
     fun matchPath(cookiePath: String, requestPath: String): Boolean {
-        return cookiePath == requestPath || (cookiePath.endsWith("/") && requestPath.startsWith(cookiePath)) || (requestPath.startsWith(cookiePath) && requestPath[cookiePath.length] == '/')
+        val equals = cookiePath == requestPath
+        if(equals)
+            return true
+        val isSubpath = (cookiePath.endsWith("/") && requestPath.startsWith(cookiePath))
+        if(isSubpath)
+            return true
+        val otherThing = (requestPath.startsWith(cookiePath) && requestPath[cookiePath.length] == '/')
+        if(otherThing)
+            return true
+        return false
+    }
+
+    /**
+     * Reads cookies from an incoming cookie header.
+     *
+     * Note: All invalid cookies will be dropped.
+     *
+     * @param cookieString the value of the cookie header
+     * @return a list of the valid cookies in the cookieString
+     * @author Felix Resch <felix.resch@web25.org>
+     * @since 0.2.0
+     */
+    fun readCookies(cookieString : String): List<HttpCookie> {
+        if(cookieString.contains(";")) {
+            val cookieList = mutableListOf<HttpCookie>()
+            cookieString.split(";").forEach {
+                try {
+                    cookieList.add(readServerCookie(it))
+                } catch (e: HttpCookieException) {
+                    log.warn("Parsing of cookie failed", e)
+                }
+            }
+            return cookieList
+        } else {
+            return listOf(readServerCookie(cookieString))
+        }
+    }
+
+    /**
+     * Helper function for readCookies
+     */
+    private fun readServerCookie(cookieString : String): HttpCookie {
+        if(!cookieString.contains("="))
+            throw HttpCookieException("Invalid Cookie. Cookies String does not contain `=`")
+        val name = cookieString.substring(0, cookieString.indexOf("=")).trim()
+        val value = cookieString.substring(cookieString.indexOf("=") + 1).trim()
+        return HttpCookie(name, value)
     }
 }
 
