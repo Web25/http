@@ -19,7 +19,7 @@ import java.util.*
 /**
  * Created by felix on 9/10/15.
  */
-class Http(val context : HttpContext = DefaultHttpContext(), private val driver: HttpDriver = HttpDrivers.defaultDriver(context)) {
+class Http(cookieStore : HttpCookieStore = HttpCookieStore.default(), val context : HttpContext = DefaultHttpContext(cookieStore), private val driver: HttpDriver = HttpDrivers.defaultDriver(context)) {
 
     object Methods {
         val GET = "GET"

@@ -320,10 +320,10 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 if (value.contains(";")) {
                     val cookies = value.split(";".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
                     for (cookie in cookies) {
-                        httpRequest.cookie(cookie.substring(0, cookie.indexOf("=")), cookie.substring(cookie.indexOf("=") + 1))
+                        httpRequest.cookies[cookie.substring(0, cookie.indexOf("="))] = cookie.substring(cookie.indexOf("=") + 1)
                     }
                 } else {
-                    httpRequest.cookie(value.substring(0, value.indexOf("=")), value.substring(value.indexOf("=") + 1))
+                    httpRequest.cookies[value.substring(0, value.indexOf("="))] = value.substring(value.indexOf("=") + 1)
                 }
             }
             regularHeaders = true
@@ -360,9 +360,9 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                         log.warn("Could not encode headers")
                     }
                 }
-                httpResponse.cookies.values.forEach { httpCookie ->
+                httpResponse.cookies.forEach { httpCookie ->
                     try {
-                        encoder.encodeHeader(byteArrayOutputStream, "set-cookie".toByteArray(), (httpCookie.name + "=" + httpCookie.value).toByteArray(), false)
+                        encoder.encodeHeader(byteArrayOutputStream, "set-cookie".toByteArray(), httpCookie.toString().toByteArray(), false)
                     } catch (e: IOException) {
                         log.warn("Could not encode cookie")
                     }

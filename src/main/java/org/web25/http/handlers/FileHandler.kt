@@ -5,9 +5,9 @@ import org.apache.commons.io.IOUtils
 import org.jetbrains.annotations.Contract
 import org.web25.http.Http
 import org.web25.http.StatusCode
+import org.web25.http.drivers.Base64Driver
 import org.web25.http.exceptions.HttpHandleException
 import org.web25.http.helper.HttpCacheControl
-import org.web25.http.helper.HttpHelper
 import org.web25.http.server.HttpHandler
 import org.web25.http.server.IncomingHttpRequest
 import org.web25.http.server.OutgoingHttpResponse
@@ -25,8 +25,8 @@ abstract class FileHandler private constructor(private val caching: Boolean, pri
     @Throws(HttpHandleException::class)
     override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse): Boolean {
         if (req.method() == Http.Methods.GET) {
-            if (!(caching && HttpCacheControl.cacheControl(req, res, 3600, etag()))) {
-                res.header("Content-Type", mimeType).entity(fileContent())
+            if (!(caching && HttpCacheControl.cacheControl(req, res, 3600, etag(req.context.base64())))) {
+                res.header("Content-Type", mimeType).entity(fileContent(req.context.base64()))
             }
             return true
         } else {
@@ -38,10 +38,10 @@ abstract class FileHandler private constructor(private val caching: Boolean, pri
     }
 
     @Throws(HttpHandleException::class)
-    protected abstract fun fileContent(): ByteArray
+    protected abstract fun fileContent(base64Driver: Base64Driver): ByteArray
 
     @Throws(HttpHandleException::class)
-    protected abstract fun etag(): String
+    protected abstract fun etag(base64Driver: Base64Driver): String
 
     private class BufferedFileHandler(caching: Boolean, private val source: File, mimeType: String) : FileHandler(caching, mimeType) {
         lateinit var buffer: ByteArray
@@ -49,13 +49,13 @@ abstract class FileHandler private constructor(private val caching: Boolean, pri
         lateinit var etag: String
 
         @Throws(HttpHandleException::class)
-        override fun fileContent(): ByteArray {
+        override fun fileContent(base64Driver: Base64Driver): ByteArray {
             validateBuffer()
             return buffer
         }
 
         @Throws(HttpHandleException::class)
-        override fun etag(): String {
+        override fun etag(base64Driver: Base64Driver): String {
             validateBuffer()
             return etag
         }
@@ -86,25 +86,25 @@ abstract class FileHandler private constructor(private val caching: Boolean, pri
         lateinit var etag: String
 
         @Throws(HttpHandleException::class)
-        override fun fileContent(): ByteArray {
-            validateBuffer()
+        override fun fileContent(base64Driver: Base64Driver): ByteArray {
+            validateBuffer(base64Driver)
             return buffer
         }
 
         @Throws(HttpHandleException::class)
-        override fun etag(): String {
-            validateBuffer()
+        override fun etag(base64Driver: Base64Driver): String {
+            validateBuffer(base64Driver)
             return etag
         }
 
         @Throws(HttpHandleException::class)
-        private fun validateBuffer() {
+        private fun validateBuffer(base64Driver: Base64Driver) {
             if (buffer.isEmpty()) {
                 try {
                     val messageDigest = MessageDigest.getInstance("MD5")
                     val digestInputStream = DigestInputStream(javaClass.getResourceAsStream(resourceName), messageDigest)
                     buffer = IOUtils.toByteArray(digestInputStream)
-                    etag = HttpHelper.context().base64().encodeToString(messageDigest.digest())
+                    etag = base64Driver.encodeToString(messageDigest.digest())
                 } catch (e: IOException) {
                     throw HttpHandleException(StatusCode.INTERNAL_SERVER_ERROR, "Server is not capable to create the requested resource", e)
                 } catch (e: NoSuchAlgorithmException) {

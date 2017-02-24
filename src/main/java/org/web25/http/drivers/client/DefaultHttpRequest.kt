@@ -6,7 +6,6 @@ import org.web25.http.auth.Authentication
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
 import org.web25.http.events.*
-import org.web25.http.exceptions.CookieNotFoundException
 import org.web25.http.exceptions.HttpException
 import java.io.IOException
 import java.io.OutputStream
@@ -21,7 +20,6 @@ import java.util.*
  */
 open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(context) {
 
-    override val cookies: MutableMap<String, HttpCookie> = TreeMap()
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
     override val getParameters: MutableMap<String, Any> = TreeMap()
     override val postParameters: MutableMap<String, Any> = TreeMap()
@@ -50,11 +48,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override fun method(method: String): OutgoingHttpRequest {
         this.method = method
-        return this
-    }
-
-    override fun cookie(name: String, value: String): OutgoingHttpRequest {
-        cookies.put(name, HttpCookie(name, value))
         return this
     }
 
@@ -106,7 +99,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
             val socket = transport.openSocket(host, port)
             httpTransport.write(this, socket.outputStream)
             manager.raise(HttpSentEvent(this))
-            response = httpTransport.readResponse(socket.inputStream, pipe)
+            response = httpTransport.readResponse(socket.inputStream, pipe, this)
             response.request(this)
             manager.raise(HttpReceivedEvent(this, response))
             socket.close()
@@ -127,7 +120,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                 val url = URL(response.header("Location").value)
                 this.host = url.host
                 this.port = url.port
-                response.cookies.values.forEach { httpCookie -> cookie(httpCookie.name, httpCookie.value) }
+                response.cookies.forEach { it -> cookies[it.name] = it }
                 execute(callback)
             } catch (e: MalformedURLException) {
                 throw HttpException(this, e)
@@ -153,6 +146,18 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                 }
             } else {
                 log.warn("No suitable authentication option found for ${response.header("WWW-Authenticate").value}")
+                var handled = false
+                if (callback != null) {
+                    try {
+                        callback(response)
+                        handled = true
+                    } catch (t: Throwable) {
+                        t.printStackTrace()
+                        handled = false
+                    }
+
+                }
+                manager.raise(HttpHandledEvent(this, response, handled))
                 this.response = response
             }
         } else {
@@ -280,18 +285,11 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         this.response = response
     }
 
-    override fun cookie(name: String): HttpCookie {
-        if(hasCookie(name)) {
-            return cookies[name]!!
-        } else {
-            throw CookieNotFoundException(name)
-        }
-    }
-
     init {
         header("Connection", "close")
         header("User-Agent", "FeMoIO HTTP/0.1")
     }
 
+    override fun host(): String = host
 
 }

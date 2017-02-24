@@ -1,6 +1,7 @@
 package org.web25.http.helper
 
 import org.web25.http.HttpContext
+import org.web25.http.HttpCookieStore
 import org.web25.http.HttpResponse
 import org.web25.http.auth.Authentication
 import org.web25.http.drivers.*
@@ -9,7 +10,7 @@ import java.util.*
 /**
  * Created by felix on 6/8/16.
  */
-class DefaultHttpContext : HttpContext {
+class DefaultHttpContext(override val cookieStore : HttpCookieStore) : HttpContext {
 
     private val authentications = mutableListOf<Authentication>()
 

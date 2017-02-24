@@ -2,7 +2,10 @@ package org.web25.http.drivers.push
 
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
-import org.web25.http.*
+import org.web25.http.HttpContext
+import org.web25.http.HttpHeader
+import org.web25.http.HttpRequest
+import org.web25.http.StatusCode
 import org.web25.http.server.OutgoingHttpResponse
 import java.io.IOException
 import java.io.InputStream
@@ -88,7 +91,7 @@ class PushableHttpResponse(httpRequest: HttpRequest, context : HttpContext = htt
 
 
     override fun cookie(name: String, value: String): OutgoingHttpResponse {
-        this.cookies.put(name, HttpCookie(name, value))
+        this.cookies[name] = value
         return this
     }
 }

@@ -1,7 +1,6 @@
 package org.web25.http
 
 import org.web25.http.drivers.Driver
-import org.web25.http.exceptions.CookieNotFoundException
 import org.web25.http.exceptions.HeaderNotFoundException
 
 /**
@@ -15,7 +14,8 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract fun method(): String
 
-    abstract val cookies: MutableMap<String, HttpCookie>
+    val cookies = CookieList()
+
     abstract val headers: MutableMap<String, HttpHeader>
     abstract val getParameters: MutableMap<String, Any>
     abstract val postParameters: MutableMap<String, Any>
@@ -39,8 +39,5 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract fun path(): String
 
-    @Throws(CookieNotFoundException::class)
-    abstract fun cookie(name: String): HttpCookie
-    fun hasCookie(name: String): Boolean = cookies.containsKey(name.toLowerCase())
 }
 

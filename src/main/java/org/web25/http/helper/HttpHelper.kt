@@ -1,10 +1,7 @@
 package org.web25.http.helper
 
-import org.jetbrains.annotations.Contract
-import org.web25.http.HttpContext
 import org.web25.http.HttpRequest
 import org.web25.http.HttpResponse
-import org.web25.http.drivers.Driver
 import org.web25.http.drivers.server.HttpThread
 import org.xjs.dynamic.Pluggable
 import java.net.SocketAddress
@@ -14,12 +11,6 @@ import java.net.SocketAddress
  */
 object HttpHelper {
 
-    private val context = object : ThreadLocal<HttpContext>() {
-        @Contract(" -> !null")
-        override fun initialValue(): HttpContext {
-            return DefaultHttpContext()
-        }
-    }
 
     fun response(): HttpResponse {
         if (Thread.currentThread() is Pluggable<*>) {
@@ -73,14 +64,6 @@ object HttpHelper {
             Pluggable.removeAll(SocketAddress::class.java)
             Pluggable.add(socketAddress)
         }
-    }
-
-    fun context(): HttpContext {
-        return context.get()
-    }
-
-    fun useDriver(driver: Driver) {
-        context.get().useDriver(driver)
     }
 
     fun get(): Pluggable<HttpThread> {

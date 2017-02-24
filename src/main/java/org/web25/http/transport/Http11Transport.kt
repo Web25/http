@@ -4,10 +4,12 @@ import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.*
 import org.web25.http.Http.Methods.GET
+import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.DefaultHttpResponse
 import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.InputBuffer
 import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.util.HttpCookieHelper
 import java.io.*
 
 /**
@@ -15,19 +17,20 @@ import java.io.*
  */
 class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport {
 
-    override fun write(httpRequest: HttpRequest, outputStream: OutputStream) {
+    override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
         httpRequest.prepareEntity()
+        context.cookieStore.findCookies(httpRequest)
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), httpRequest.path() /*+ if (httpRequest.openRequest().query != null) "?" + httpRequest.openRequest().query else ""*/, "HTTP/1.1")
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
         if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
-            for ((name, value) in httpRequest.cookies.values) {
-                builder.append(name)
+            httpRequest.cookies.forEach {
+                builder.append(it.name)
                 builder.append("=")
-                builder.append(value)
+                builder.append(it.value)
                 builder.append(";")
             }
             output.printf("%s: %s\r\n", "Cookie", builder.toString())
@@ -48,8 +51,8 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         for (header in httpResponse.headers.values) {
             stream.printf("%s: %s\r\n", header.name, header.value)
         }
-        for ((name, value) in httpResponse.cookies) {
-            stream.printf("Set-Cookie: %s\r\n", value)
+        httpResponse.cookies.forEach {
+            stream.printf("Set-Cookie: %s\r\n", it.toString())
         }
         stream.print("\r\n")
         if (entityStream != null) {
@@ -83,9 +86,9 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             val name: String = statusLine.substring(0, statusLine.indexOf(":")).trim({ it <= ' ' })
             val value: String = statusLine.substring(statusLine.indexOf(":") + 1).trim({ it <= ' ' })
             if (name == "Cookie") {
-                val cname: String = value.substring(0, value.indexOf("="))
-                val cvalue: String = value.substring(value.indexOf("=") + 1, if (!value.contains(";")) value.length else value.indexOf(";"))
-                request.cookie(cname, cvalue)
+                HttpCookieHelper.readCookies(value).forEach {
+                    request.cookies[it.name] = it
+                }
             } else {
                 request.header(name, value)
             }
@@ -102,7 +105,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     }
 
     @Throws(IOException::class)
-    override fun readResponse(inputStream: InputStream, pipe: OutputStream?): HttpResponse {
+    override fun readResponse(inputStream: InputStream, pipe: OutputStream?, request: OutgoingHttpRequest): HttpResponse {
         val inputBuffer = InputBuffer(inputStream)
         var statusLine: String? = inputBuffer.readUntil('\r'.toByte(), 1)
         val response = DefaultIncomingHttpResponse(context)
@@ -114,14 +117,14 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             val name: String = statusLine.substring(0, statusLine.indexOf(":")).trim({ it <= ' ' })
             val value: String = statusLine.substring(statusLine.indexOf(":") + 1).trim({ it <= ' ' })
             if (name == "Set-Cookie") {
-                val cname: String = value.substring(0, value.indexOf("="))
-                val cvalue: String = value.substring(value.indexOf("=") + 1, if (!value.contains(";")) value.length else value.indexOf(";"))
-                response.cookie(cname, cvalue)
+                val cookie = HttpCookieHelper.readCookie(value)
+                response.cookie(cookie)
             } else {
                 response.header(name, value)
             }
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
+        context.cookieStore.store(request, response)
         if (response.hasHeader("Content-Length")) {
             val length = response.header("Content-Length").asInt()
             if (pipe != null) {
@@ -175,7 +178,7 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
 
 
     fun cookie(name: String, value: String): DefaultIncomingHttpResponse {
-        this.cookies.put(name, HttpCookie(name, value))
+        this.cookies[name] = value
         return this
     }
 
@@ -208,6 +211,11 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
 
         }
         return entity
+    }
+
+    fun cookie(cookie: HttpCookie): DefaultIncomingHttpResponse {
+        cookies[cookie.name] = cookie
+        return this
     }
 
 }

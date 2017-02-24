@@ -7,6 +7,8 @@ import org.web25.http.server.OutgoingHttpResponse
 import org.web25.http.util.handler
 import org.web25.http.util.middleware
 import java.io.File
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 /**
  * Created by felix on 6/13/16.
@@ -24,11 +26,17 @@ object TestApp {
             System.err.println("Could not load jquery... Some parts of the website might not be working correctly...");
         }*/
         val http = Http()
+        val cookieRouter = http.router()
+                .get("/", handler { request, response ->
+                    response.cookie(HttpCookie("lang", "en-US", expires = ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("GMT")), path = "/cookie/", domain = "localhost", secure = true,
+                            httpOnly = true))
+                    true
+                })
         val httpServer = http.server(8080)
-                .secure()
+                /*.secure()
                 .keyPass("test1234")
                 .keystorePass("test1234")
-                .keystore("test.keystore")
+                .keystore("test.keystore")*/
                 //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
@@ -125,7 +133,7 @@ object TestApp {
                             "<title>Cookie Test Site</title>" +
                             "</head>" +
                             "<body>"
-                    if (request.hasCookie("test1") && request.hasCookie("test2")) {
+                    if ("test1" in request.cookies && "test2" in request.cookies) {
                         entity += "<p>You have visited this site before</p>"
                     } else {
                         entity += "<p>Visit this site again, to see if cookies are working</p>"
@@ -170,6 +178,7 @@ object TestApp {
                             true
                         })
                 )
+                .use("/cookie", cookieRouter)
                 .after(Handlers.log())
                 .start()
         Runtime.getRuntime().addShutdownHook(object : Thread() {

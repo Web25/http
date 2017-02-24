@@ -1,10 +1,10 @@
 package org.web25.http.drivers
 
 import org.apache.commons.io.FileUtils
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.web25.http.Http
 import java.io.File
 import java.io.FileOutputStream
@@ -16,7 +16,6 @@ import java.io.PrintStream
 class DefaultMimeServiceTest {
 
     @Test
-    @Throws(Exception::class)
     fun testMimes() {
         val html = File("test/test.html")
         val png = File("test/test.png")
@@ -29,7 +28,7 @@ class DefaultMimeServiceTest {
         assertEquals("image/gif", mimeService.contentType(gif))
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val test = File("test")
         if (!test.exists()) {
@@ -45,7 +44,7 @@ class DefaultMimeServiceTest {
     }
 
 
-    @After
+    @AfterEach
     fun tearDown() {
         FileUtils.deleteDirectory(File("test"))
     }

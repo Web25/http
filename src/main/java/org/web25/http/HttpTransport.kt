@@ -1,5 +1,6 @@
 package org.web25.http
 
+import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
 import org.web25.http.server.IncomingHttpRequest
 import org.web25.http.transport.Http11Transport
@@ -12,14 +13,14 @@ import java.io.OutputStream
  */
 interface HttpTransport : Driver {
 
-    fun write(httpRequest: HttpRequest, outputStream: OutputStream)
+    fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream)
     fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream? = null)
 
     @Throws(IOException::class)
     fun readRequest(inputStream: InputStream): IncomingHttpRequest
 
     @Throws(IOException::class)
-    fun readResponse(inputStream: InputStream, pipe: OutputStream? = null): HttpResponse
+    fun readResponse(inputStream: InputStream, pipe: OutputStream? = null, request: OutgoingHttpRequest): HttpResponse
 
     companion object {
 

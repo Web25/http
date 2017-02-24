@@ -1,6 +1,7 @@
 package org.web25.http.server
 
 import org.web25.http.HttpContext
+import org.web25.http.HttpCookie
 import org.web25.http.HttpResponse
 import org.web25.http.StatusCode
 import org.web25.http.drivers.DefaultHttpResponse
@@ -22,5 +23,9 @@ abstract class OutgoingHttpResponse(context : HttpContext): DefaultHttpResponse(
     abstract fun cookie(name: String, value: String): OutgoingHttpResponse
 
     fun status(status: Int): HttpResponse = status(StatusCode.find(status))
+    fun cookie(cookie : HttpCookie): OutgoingHttpResponse {
+        cookies[cookie.name] = cookie
+        return this
+    }
 
 }
