@@ -1,6 +1,5 @@
 package org.web25.http
 
-import org.web25.http.exceptions.CookieNotFoundException
 import org.web25.http.exceptions.HeaderNotFoundException
 
 /**
@@ -20,10 +19,9 @@ abstract class HttpResponse(val context : HttpContext) {
 
     fun hasHeader(name: String): Boolean = headers.containsKey(name)
 
-    @Throws(CookieNotFoundException::class)
-    abstract fun cookie(name: String): HttpCookie
+    val cookies = CookieList()
 
-    fun hasCookie(name: String): Boolean = cookies.containsKey(name)
+    fun hasCookie(name: String): Boolean = name in cookies
 
     fun statusCode(): Int {
         return status().status()
@@ -32,5 +30,4 @@ abstract class HttpResponse(val context : HttpContext) {
     abstract fun statusLine(): String
 
     abstract val headers: MutableMap<String, HttpHeader>
-    abstract val cookies: MutableMap<String, HttpCookie>
 }

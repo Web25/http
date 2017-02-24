@@ -6,7 +6,6 @@ import org.web25.http.auth.Authentication
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
 import org.web25.http.events.*
-import org.web25.http.exceptions.CookieNotFoundException
 import org.web25.http.exceptions.HttpException
 import java.io.IOException
 import java.io.OutputStream
@@ -21,7 +20,6 @@ import java.util.*
  */
 open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(context) {
 
-    override val cookies: MutableMap<String, HttpCookie> = TreeMap()
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
@@ -48,11 +46,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override fun method(method: String): OutgoingHttpRequest {
         this.method = method
-        return this
-    }
-
-    override fun cookie(name: String, value: String): OutgoingHttpRequest {
-        cookies.put(name, HttpCookie(name, value))
         return this
     }
 
@@ -125,7 +118,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                 val url = URL(response.header("Location").value)
                 this.host = url.host
                 this.port = url.port
-                response.cookies.values.forEach { httpCookie -> cookie(httpCookie.name, httpCookie.value) }
+                response.cookies.forEach { it -> cookies[it.name] = it }
                 execute(callback)
             } catch (e: MalformedURLException) {
                 throw HttpException(this, e)
@@ -288,14 +281,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     protected fun response(response: HttpResponse) {
         this.response = response
-    }
-
-    override fun cookie(name: String): HttpCookie {
-        if(hasCookie(name)) {
-            return cookies[name]!!
-        } else {
-            throw CookieNotFoundException(name)
-        }
     }
 
     init {
