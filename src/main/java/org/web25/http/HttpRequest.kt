@@ -18,12 +18,12 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract val headers: MutableMap<String, HttpHeader>
     abstract val query: MutableMap<String, Any>
-    abstract val pathVar: MutableMap<String, Any>
+    abstract val pathVars: MutableMap<String, Any>
     
     abstract fun entityBytes(): ByteArray
     abstract fun entityString(): String
 
-
+    abstract fun parsePathVars()
     abstract fun response(): HttpResponse
 
 

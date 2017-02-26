@@ -1,8 +1,7 @@
 package org.web25.http
 
 import com.google.gson.JsonParser
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.web25.http.auth.Authentication
@@ -114,7 +113,28 @@ internal class HttpTest {
         val args = content.getAsJsonObject("args")
         val param = args.get("param")
         assertNotNull(param)
-        assertEquals("Param Value", "2", param.asString)
+        assertEquals("2", param.asString)
+    }
+
+    @Test
+    fun testDynamicPathVariables(){
+        val http = Http()
+        var request = http.get("http://${TestConstants.HTTP.HOST}/status/{code}")
+        request.pathVars["code"] = 200
+        var response = request.response()
+        assertEquals(200, response.statusCode())
+
+        request = http.get("http://${TestConstants.HTTP.HOST}/status/{code}")
+        request.pathVars["code"] = 404
+        response = request.response()
+        assertEquals(404, response.statusCode())
+    }
+
+    @Test()
+    fun testNPEOnDynamicPathVars(){
+        val http = Http()
+        val request = http.get("http://${TestConstants.HTTP.HOST}/status/{code}")
+        assertThrows<NullPointerException>(NullPointerException::class.java, {request.response()})
     }
 
     /*@Test
