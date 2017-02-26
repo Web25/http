@@ -22,6 +22,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
     override val query: MutableMap<String, Any> = TreeMap()
+    override val pathVar: MutableMap<String, Any> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
 
