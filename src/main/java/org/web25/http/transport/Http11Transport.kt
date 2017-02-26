@@ -29,13 +29,13 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             }
             path = path.dropLast(1) //last character will be a '&' otherwise
         }
-        context.cookieStore.findCookies(httpRequest)
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
 
         context.cookieStore.findCookies(httpRequest)
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
+        context.cookieStore.findCookies(httpRequest)
         if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
             httpRequest.cookies.forEach {
@@ -54,6 +54,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         output.print("\r\n")
     }
+
 
     override fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
         val stream = PrintStream(outputStream)

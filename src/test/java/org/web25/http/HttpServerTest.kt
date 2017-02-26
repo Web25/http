@@ -143,6 +143,7 @@ internal class HttpServerTest {
     }
 
     companion object {
+
         private var httpServer: HttpServer? = null
 
         private val credentialProvider = object : CredentialProvider {
