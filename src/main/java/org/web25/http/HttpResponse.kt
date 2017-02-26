@@ -19,10 +19,6 @@ abstract class HttpResponse(val context : HttpContext) {
 
     fun hasHeader(name: String): Boolean = headers.containsKey(name)
 
-    val cookies = CookieList()
-
-    fun hasCookie(name: String): Boolean = name in cookies
-
     fun statusCode(): Int {
         return status().status()
     }

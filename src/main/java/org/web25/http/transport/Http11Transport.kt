@@ -32,6 +32,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         context.cookieStore.findCookies(httpRequest)
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
 
+        context.cookieStore.findCookies(httpRequest)
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
