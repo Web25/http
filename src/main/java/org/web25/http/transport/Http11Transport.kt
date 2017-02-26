@@ -20,7 +20,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
         httpRequest.prepareEntity()
-        
+
         var path = httpRequest.path()
         if(!httpRequest.query.isEmpty()){
             path += "?"
@@ -31,10 +31,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
 
-<<<<<<< HEAD
         context.cookieStore.findCookies(httpRequest)
-=======
->>>>>>> 5bf5e78... added query parsing for requests and test
         for (header in httpRequest.headers.values) {
             output.printf("%s: %s\r\n", header.name, header.value)
         }
