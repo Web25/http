@@ -1,7 +1,5 @@
 package org.web25.http
 
-import org.web25.http.exceptions.HeaderNotFoundException
-
 /**
  * Created by felix on 9/10/15.
  */
@@ -14,14 +12,11 @@ abstract class HttpResponse(val context : HttpContext) {
     abstract fun request(request: HttpRequest)
     abstract fun request(): HttpRequest
 
-    @Throws(HeaderNotFoundException::class)
-    abstract fun header(name: String): HttpHeader
-
-    fun hasHeader(name: String): Boolean = headers.containsKey(name)
-
     val cookies = CookieList()
+    val headers = HeaderList()
 
     fun hasCookie(name: String): Boolean = name in cookies
+    fun hasHeader(name: String): Boolean = name in headers
 
     fun statusCode(): Int {
         return status().status()
@@ -29,5 +24,4 @@ abstract class HttpResponse(val context : HttpContext) {
 
     abstract fun statusLine(): String
 
-    abstract val headers: MutableMap<String, HttpHeader>
 }

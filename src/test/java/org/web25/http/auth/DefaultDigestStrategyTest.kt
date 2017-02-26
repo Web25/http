@@ -29,7 +29,7 @@ internal class DefaultDigestStrategyTest {
         assertTrue(defaultDigestStrategy.isInitialized)
         assertTrue(defaultDigestStrategy.matches(httpRequest))
         defaultDigestStrategy.authenticate(httpRequest)
-        assertEquals(httpRequest.header("Authorization").value, "Digest username=\"Mufasa\", " +
+        assertEquals(httpRequest.headers["Authorization"], "Digest username=\"Mufasa\", " +
                 "realm=\"testrealm@host.com\", " +
                 "nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", " +
                 "uri=\"/dir/index.html\", " +

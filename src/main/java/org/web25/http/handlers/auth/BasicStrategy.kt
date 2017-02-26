@@ -12,7 +12,7 @@ class BasicStrategy(realm: String, private val credentialProvider: CredentialPro
             return false
         }
         val base64Driver = request.context.base64()
-        val authorization = request.header("Authorization").value
+        val authorization = request.headers["Authorization"]
         if (!authorization.startsWith(name())) {
             return false
         }

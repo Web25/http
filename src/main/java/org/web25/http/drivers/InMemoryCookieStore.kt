@@ -20,7 +20,7 @@ class InMemoryCookieStore: HttpCookieStore {
 
     override fun store(request: OutgoingHttpRequest, response: HttpResponse) {
         synchronized(cookies, {
-            response.cookies.forEach {
+            response.cookies.forEach { it ->
                 val persistent: Boolean
                 val expiryDate: ZonedDateTime
                 val maxAge = it.maxAge

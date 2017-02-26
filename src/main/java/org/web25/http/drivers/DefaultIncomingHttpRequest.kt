@@ -10,7 +10,7 @@ import org.web25.http.server.IncomingHttpRequest
 open class DefaultIncomingHttpRequest(context: HttpContext) : IncomingHttpRequest(context) {
 
     override fun appendBytes(data: ByteArray): IncomingHttpRequest {
-        val contentLength = if (hasHeader("Content-Length")) header("Content-Length").value else null
+        val contentLength = if (hasHeader("Content-Length")) headers["Content-Length"] else null
         if (entityBytes().isNotEmpty()) {
             entity(data)
         } else {
