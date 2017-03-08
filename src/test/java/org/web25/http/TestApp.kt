@@ -37,7 +37,7 @@ object TestApp {
                 .keyPass("test1234")
                 .keystorePass("test1234")
                 .keystore("test.keystore")*/
-                //.use(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
+                //.fallback(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
                 .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
                     response.entity("<html>" +
                             "<head>" +

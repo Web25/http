@@ -7,7 +7,6 @@ import org.web25.http.Http.Methods.POST
 import org.web25.http.Http.Methods.PUT
 import org.web25.http.Http.Methods.UPDATE
 import org.web25.http.client.OutgoingHttpRequest
-import org.web25.http.drivers.DefaultHttpRouter
 import org.web25.http.helper.DefaultHttpContext
 import org.web25.http.server.Configurator
 import org.web25.http.server.HttpRouter
@@ -101,6 +100,6 @@ class Http(cookieStore : HttpCookieStore = HttpCookieStore.default(), val contex
     }
 
     fun router(): HttpRouter {
-        return DefaultHttpRouter()
+        return driver.router()
     }
 }

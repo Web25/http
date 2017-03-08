@@ -2,6 +2,7 @@ package org.web25.http.drivers.server
 
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
+import org.web25.http.drivers.treehandler.TreeHandler
 import org.web25.http.transport.http2.HttpConnection
 import org.web25.http.transport.http2.HttpSettings
 import org.web25.http.transport.http2.frames.SettingsFrame
@@ -11,7 +12,7 @@ import java.net.Socket
 /**
  * Created by felix on 9/15/16.
  */
-class Http20SocketHandler(private val httpHandlerStack: HttpHandlerStack, private val executorListener: ExecutorListener, val context : HttpContext) : SocketHandler {
+class TreeHttp20SocketHandler(private val treeHandler: TreeHandler, private val executorListener: ExecutorListener, val context : HttpContext) : SocketHandler {
     private val log = LoggerFactory.getLogger("HTTP")
 
     override fun handle(socket: Socket) {
@@ -25,7 +26,7 @@ class Http20SocketHandler(private val httpHandlerStack: HttpHandlerStack, privat
                 return
             }
             val httpConnection = HttpConnection(socket, HttpSettings(HttpSettings.EndpointType.SERVER), executorListener, context)
-            httpConnection.handler(httpHandlerStack)
+            httpConnection.handler(treeHandler)
             val settingsFrame = SettingsFrame(httpConnection.remoteSettings)
             httpConnection.enqueueFrame(settingsFrame, null)
             httpConnection.handle()

@@ -2,6 +2,7 @@ package org.web25.http
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.web25.http.path.HttpPath
 
 /**
  * Created by felix on 3/6/17.

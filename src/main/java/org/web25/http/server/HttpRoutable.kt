@@ -18,7 +18,7 @@ interface HttpRoutable<T: HttpRoutable<T>> {
 
     fun use(path: String, handler: HttpMiddleware): T
 
-    fun use(handler: HttpHandler): T
+    fun fallback(handler: HttpHandler): T
 
     fun use(path: String, httpHandler: HttpHandler): T
 

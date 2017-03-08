@@ -19,7 +19,6 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
     abstract fun use(httpTransport: HttpTransport): OutgoingHttpRequest
     abstract fun port(port: Int): OutgoingHttpRequest
     abstract fun host(host: String): OutgoingHttpRequest
-    abstract fun path(path: String): OutgoingHttpRequest
     abstract fun pipe(outputStream: OutputStream): OutgoingHttpRequest
 
     fun execute(): OutgoingHttpRequest {
@@ -37,6 +36,11 @@ abstract class OutgoingHttpRequest(context : HttpContext): HttpRequest(context) 
 
     fun cookie(name: String, value: String): OutgoingHttpRequest {
         cookies[name] = value
+        return this
+    }
+
+    override fun path(path: String): OutgoingHttpRequest {
+        super.path(path)
         return this
     }
 

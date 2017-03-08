@@ -142,7 +142,7 @@ internal class HttpCookieServerTest {
                             response.status(200)
                         } else {
                             response.status(400)
-                            System.err.println("Cookies for subpath sould be visible in same subpath")
+                            System.err.println("Cookies for subpath should be visible in same subpath")
                         }
                         true
                     })
@@ -151,7 +151,7 @@ internal class HttpCookieServerTest {
                             response.status(200)
                         } else {
                             response.status(400)
-                            System.err.println("Cookie for subpath sould not be visible in different subpath")
+                            System.err.println("Cookie for subpath should not be visible in different subpath")
                         }
                         true
                     })

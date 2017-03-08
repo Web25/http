@@ -22,7 +22,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override val headers: MutableMap<String, HttpHeader> = TreeMap()
     override val query: MutableMap<String, Any> = TreeMap()
-    override val pathVars: MutableMap<String, Any> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
 
@@ -39,7 +38,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     private var authentication: Authentication? = null
 
     var port = 80
-    lateinit var path: String
     lateinit var host: String
 
     private val drivers: MutableList<Driver> = mutableListOf()
@@ -78,11 +76,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         return this
     }
 
-    override fun path(path: String): OutgoingHttpRequest {
-        this.path = path
-        return this
-    }
-
     override fun host(host: String): OutgoingHttpRequest {
         header("Host", host)
         this.host = host
@@ -91,24 +84,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override fun method(): String {
         return method
-    }
-
-    override fun parsePathVars(){
-        if(path.contains("{") && path.contains("}")){
-            var parsedPath = ""
-            val tokenizer = StringTokenizer(path, "/", true)
-            while(tokenizer.hasMoreTokens()){
-                val part = tokenizer.nextToken()
-                if(part.contains("{") && part.contains("}")){
-                    val key = part.substring(1, part.length - 1)
-                    val value = pathVars[key] ?: throw NullPointerException("No value for path variable $key defined")
-                    parsedPath += part.replace("{$key}", value.toString())
-                }
-                else
-                    parsedPath += part
-            }
-            path = parsedPath
-        }
     }
 
     override fun execute(callback: ((HttpResponse) -> Unit)?): OutgoingHttpRequest {
@@ -285,10 +260,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override fun transport(): Transport {
         return transport
-    }
-
-    override fun path(): String {
-        return path
     }
 
     override fun requestLine(): String {

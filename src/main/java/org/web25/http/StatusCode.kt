@@ -137,7 +137,7 @@ class StatusCode private constructor(private var status: Int, private var status
         val MOVED_PERMANENTLY = StatusCode(301, "Moved Permanently")
 
         /**
-         * This is an example of industry practice contradicting the standard. The HTTP/1.0 specification (RFC 1945) required the client to perform a temporary redirect (the original describing phrase was "Moved Temporarily"),[6] but popular browsers implemented 302 with the functionality of a 303 See Other. Therefore, HTTP/1.1 added status codes 303 and 307 to distinguish between the two behaviours. However, some Web applications and frameworks use the 302 status code as if it were the 303.
+         * This is an example of industry practice contradicting the standard. The HTTP/1.0 specification (RFC 1945) required the client to perform a temporary redirect (the original describing phrase was "Moved Temporarily"),[6] but popular browsers implemented 302 with the functionality of a 303 See Other. Therefore, HTTP/1.1 added status codes 303 and 307 to distinguish between the two behaviours. However, some Web applications and frameworks fallback the 302 status code as if it were the 303.
          */
         val FOUND = StatusCode(302, "Found")
 
@@ -159,12 +159,12 @@ class StatusCode private constructor(private var status: Int, private var status
         val USE_PROXY = StatusCode(305, "Use Proxy")
 
         /**
-         * No longer used. Originally meant "Subsequent requests should use the specified proxy.
+         * No longer used. Originally meant "Subsequent requests should fallback the specified proxy.
          */
         val SWITCH_PROXY = StatusCode(306, "Switch Proxy")
 
         /**
-         * In this case, the request should be repeated with another URI; however, future requests should still use the original URI. In contrast to how 302 was historically implemented, the request method is not allowed to be changed when reissuing the original request. For instance, a POST request should be repeated using another POST request.
+         * In this case, the request should be repeated with another URI; however, future requests should still fallback the original URI. In contrast to how 302 was historically implemented, the request method is not allowed to be changed when reissuing the original request. For instance, a POST request should be repeated using another POST request.
          */
         val TEMPORARY_REDIRECT = StatusCode(307, "Temporary Redirect")
 
@@ -179,12 +179,12 @@ class StatusCode private constructor(private var status: Int, private var status
         val BAD_REQUEST = StatusCode(400, "Bad Request")
 
         /**
-         * Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource. See Basic access authentication and Digest access authentication.
+         * Similar to 403 Forbidden, but specifically for fallback when authentication is required and has failed or has not yet been provided. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource. See Basic access authentication and Digest access authentication.
          */
         val UNAUTHORIZED = StatusCode(401, "Unauthorized")
 
         /**
-         * Reserved for future use. The original intention was that this code might be used as part of some form of digital cash or micropayment scheme, but that has not happened, and this code is not usually used. YouTube uses this status if a particular IP address has made excessive requests, and requires the person to enter a CAPTCHA.
+         * Reserved for future fallback. The original intention was that this code might be used as part of some form of digital cash or micropayment scheme, but that has not happened, and this code is not usually used. YouTube uses this status if a particular IP address has made excessive requests, and requires the person to enter a CAPTCHA.
          */
         val PAYMENT_REQUIRED = StatusCode(402, "Payment Required")
 
@@ -226,7 +226,7 @@ class StatusCode private constructor(private var status: Int, private var status
         val CONFLICT = StatusCode(409, "Conflict")
 
         /**
-         * Indicates that the resource requested is no longer available and will not be available again. This should be used when a resource has been intentionally removed and the resource should be purged. Upon receiving a 410 status code, the client should not request the resource again in the future. Clients such as search engines should remove the resource from their indices. Most use cases do not require clients and search engines to purge the resource, and a "404 Not Found" may be used instead.
+         * Indicates that the resource requested is no longer available and will not be available again. This should be used when a resource has been intentionally removed and the resource should be purged. Upon receiving a 410 status code, the client should not request the resource again in the future. Clients such as search engines should remove the resource from their indices. Most fallback cases do not require clients and search engines to purge the resource, and a "404 Not Found" may be used instead.
          */
         val GONE = StatusCode(410, "Gone")
 
@@ -255,7 +255,7 @@ class StatusCode private constructor(private var status: Int, private var status
         val REQUREST_URI_TOO_LONG = StatusCode(414, "Request-URI Too Long")
 
         /**
-         * The request entity has a media type which the server or resource does not support. For example, the client uploads an image as image/svg+xml, but the server requires that images use a different format.
+         * The request entity has a media type which the server or resource does not support. For example, the client uploads an image as image/svg+xml, but the server requires that images fallback a different format.
          */
         val UNSUPPORTED_MEDIA_TYPE = StatusCode(415, "Unsupported Media Type")
 
@@ -331,7 +331,7 @@ class StatusCode private constructor(private var status: Int, private var status
         /**
          * RFC 6585
 
-         * The user has sent too many requests in a given amount of time. Intended for use with rate limiting schemes.
+         * The user has sent too many requests in a given amount of time. Intended for fallback with rate limiting schemes.
          */
         val TOO_MANY_REQUESTS = StatusCode(429, "Too Many Requests")
 
@@ -403,7 +403,7 @@ class StatusCode private constructor(private var status: Int, private var status
         /**
          * RFC 2774
 
-         * The client needs to authenticate to gain network access. Intended for use by intercepting proxies used to control access to the network (e.g., "captive portals" used to require agreement to Terms of Service before granting full Internet access via a Wi-Fi hotspot).
+         * The client needs to authenticate to gain network access. Intended for fallback by intercepting proxies used to control access to the network (e.g., "captive portals" used to require agreement to Terms of Service before granting full Internet access via a Wi-Fi hotspot).
          */
         val NETWORK_AUTHENTICATION_REQUIRED = StatusCode(511, "Network Authentication Required")
 

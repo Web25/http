@@ -120,12 +120,12 @@ internal class HttpTest {
     fun testDynamicPathVariables(){
         val http = Http()
         var request = http.get("http://${TestConstants.HTTP.HOST}/status/{code}")
-        request.pathVars["code"] = 200
+        request.path["code"] = 200
         var response = request.response()
         assertEquals(200, response.statusCode())
 
         request = http.get("http://${TestConstants.HTTP.HOST}/status/{code}")
-        request.pathVars["code"] = 404
+        request.path["code"] = 404
         response = request.response()
         assertEquals(404, response.statusCode())
     }

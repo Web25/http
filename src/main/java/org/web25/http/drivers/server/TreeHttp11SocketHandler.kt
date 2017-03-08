@@ -5,6 +5,7 @@ import org.web25.http.HttpContext
 import org.web25.http.HttpTransport
 import org.web25.http.StatusCode
 import org.web25.http.drivers.push.PushableHttpResponse
+import org.web25.http.drivers.treehandler.TreeHandler
 import org.web25.http.helper.HttpHelper
 import org.web25.http.helper.HttpSocketOptions
 import java.io.ByteArrayOutputStream
@@ -18,7 +19,7 @@ import javax.net.ssl.SSLHandshakeException
 /**
  * Created by felix on 9/15/16.
  */
-class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val context : HttpContext) : SocketHandler {
+class TreeHttp11SocketHandler(private val treeHandler: TreeHandler, val context : HttpContext) : SocketHandler {
 
     private val log = LoggerFactory.getLogger("HTTP")
     private val transport by lazy {
@@ -45,7 +46,7 @@ class Http11SocketHandler(private val httpHandlerStack: HttpHandlerStack, val co
                 HttpHelper.response(response)
                 HttpHelper.get().add(socket)
                 log.debug("Handling request")
-                httpHandlerStack.handle(httpRequest, response)
+                treeHandler.handle(httpRequest, response)
                 log.debug("Request handled!")
                 if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.header("Connection").value == "keep-alive") {
                     log.debug("Keeping connection open")

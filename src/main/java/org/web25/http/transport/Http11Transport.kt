@@ -20,8 +20,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
         httpRequest.prepareEntity()
-        httpRequest.parsePathVars()
-        var path = httpRequest.path()
+        var path = httpRequest.path.buildActualPath()
         if(!httpRequest.query.isEmpty()){
             path += "?"
             httpRequest.query.forEach { entry ->

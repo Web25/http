@@ -10,7 +10,7 @@ class HttpErrorResponse(context: HttpContext): OutgoingHttpResponse(context) {
     override var finished: Boolean = true
 
     override fun push(method: String, path: String): OutgoingHttpResponse {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
     override fun entity(entity: String): OutgoingHttpResponse = entity(entity.toByteArray())
@@ -21,11 +21,11 @@ class HttpErrorResponse(context: HttpContext): OutgoingHttpResponse(context) {
     }
 
     override fun entity(inputStream: InputStream): OutgoingHttpResponse {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
     override fun entityStream(): InputStream? {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
     override fun status(statusCode: StatusCode): OutgoingHttpResponse {
@@ -34,11 +34,11 @@ class HttpErrorResponse(context: HttpContext): OutgoingHttpResponse(context) {
     }
 
     override fun header(name: String, value: String): OutgoingHttpResponse {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
     override fun cookie(name: String, value: String): OutgoingHttpResponse {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
 }

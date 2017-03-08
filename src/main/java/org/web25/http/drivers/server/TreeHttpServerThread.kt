@@ -3,6 +3,7 @@ package org.web25.http.drivers.server
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
 import org.web25.http.HttpVersion
+import org.web25.http.drivers.treehandler.TreeHandler
 import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
@@ -12,7 +13,7 @@ import java.util.concurrent.*
 /**
  * Created by Felix Resch on 25-Apr-16.
  */
-open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack, val context : HttpContext) : Thread(), ExecutorListener {
+open class TreeHttpServerThread(private val treeHandler: TreeHandler, val context : HttpContext) : Thread(), ExecutorListener {
 
     private val log = LoggerFactory.getLogger("HTTP")
 
@@ -102,10 +103,10 @@ open class HttpServerThread(private val httpHandlerStack: HttpHandlerStack, val 
             log.debug("Starting handling of ${socket.remoteSocketAddress}")
             if (httpVersion === HttpVersion.HTTP_11) {
                 log.debug("Using HTTP/1.1")
-                socketHandler = Http11SocketHandler(httpHandlerStack, context)
+                socketHandler = TreeHttp11SocketHandler(treeHandler, context)
             } else if (httpVersion === HttpVersion.HTTP_20) {
                 log.debug("Using HTTP/2.0")
-                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpServerThread, context)
+                socketHandler = TreeHttp20SocketHandler(treeHandler, this@TreeHttpServerThread, context)
             }
             socketHandler!!.handle(socket)
         }

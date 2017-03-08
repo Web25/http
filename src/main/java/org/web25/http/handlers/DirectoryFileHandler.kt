@@ -53,7 +53,7 @@ class DirectoryFileHandler(private val parent: File, private val caching: Boolea
         return this
     }
 
-    override fun use(handler: HttpHandler): DirectoryFileHandler {
+    override fun fallback(handler: HttpHandler): DirectoryFileHandler {
         return this
     }
 

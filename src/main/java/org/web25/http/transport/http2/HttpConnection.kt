@@ -8,8 +8,8 @@ import org.web25.http.Constants
 import org.web25.http.HttpContext
 import org.web25.http.drivers.push.PushRequest
 import org.web25.http.drivers.server.ExecutorListener
-import org.web25.http.drivers.server.HttpHandlerStack
 import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.IncomingRequestHandler
 import org.web25.http.server.OutgoingHttpResponse
 import org.web25.http.transport.http2.frames.GoAwayFrame
 import org.web25.http.transport.http2.frames.SettingsFrame
@@ -54,7 +54,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
 
     private val exclusiveHeaderLock = AtomicBoolean(false)
     private val lockHolder = AtomicInteger(-1)
-    private var httpHandlerStack: HttpHandlerStack = HttpHandlerStack()
+    private lateinit var handler: IncomingRequestHandler
 
     init {
         this.remoteSettings = HttpSettings(HttpSettings.EndpointType.CLIENT)
@@ -105,8 +105,8 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         return HttpStream(this, nextStreamIdentifier.getAndAdd(2))
     }
 
-    fun handler(httpHandlerStack: HttpHandlerStack) {
-        this.httpHandlerStack = httpHandlerStack
+    fun handler(handler: IncomingRequestHandler) {
+        this.handler = handler
     }
 
     val hpackDecoder: Decoder
@@ -384,7 +384,7 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
     }
 
     fun deferHandling(httpRequest: IncomingHttpRequest, httpResponse: OutgoingHttpResponse, httpStream: HttpStream) {
-        executorListener.submit(DeferredRequestHandler(httpStream, httpHandlerStack, httpRequest, httpResponse))
+        executorListener.submit(DeferredRequestHandler(httpStream, handler, httpRequest, httpResponse))
     }
 
     val hpackEncoder: Encoder
@@ -434,11 +434,11 @@ constructor(socket: Socket, val localSettings: HttpSettings, private val executo
         ACTIVE, CLOSE_PENDING, CLOSE, FORCE_CLOSED
     }
 
-    private inner class DeferredRequestHandler(private val httpStream: HttpStream, private val handlerStack: HttpHandlerStack, private val httpRequest: IncomingHttpRequest, private val httpResponse: OutgoingHttpResponse) : Runnable {
+    private inner class DeferredRequestHandler(private val httpStream: HttpStream, private val handler: IncomingRequestHandler, private val httpRequest: IncomingHttpRequest, private val httpResponse: OutgoingHttpResponse) : Runnable {
 
         override fun run() {
             try {
-                handlerStack.handle(httpRequest, httpResponse)
+                handler.handle(httpRequest, httpResponse)
             } catch (t: Throwable) {
                 log.warn("Error while handling http request", t)
                 val byteArrayOutputStream = ByteArrayOutputStream()

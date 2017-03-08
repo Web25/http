@@ -4,7 +4,12 @@ import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
 import org.web25.http.HttpRequest
 import org.web25.http.StatusCode
-import org.web25.http.drivers.server.*
+import org.web25.http.drivers.server.TreeHttpServerThread
+import org.web25.http.drivers.treehandler.HandlerRequestHandler
+import org.web25.http.drivers.treehandler.MethodMatchers
+import org.web25.http.drivers.treehandler.MiddlewareRequestHandler
+import org.web25.http.drivers.treehandler.TreeHandler
+import org.web25.http.path.HttpPath
 import org.web25.http.server.*
 import org.web25.http.util.handler
 import org.web25.http.util.middleware
@@ -16,27 +21,27 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by felix on 2/24/16.
  */
-open class DefaultHttpServer(var port: Int, protected var ssl: Boolean, val context: HttpContext) : HttpServer {
+open class TreeHttpServer(var port: Int, protected var ssl: Boolean, val context: HttpContext) : HttpServer {
 
-    var httpHandlerStack: HttpHandlerStack
+    var treeHandler: TreeHandler = TreeHandler()
 
-    protected var serverThread: HttpServerThread? = null
+    protected var serverThread: TreeHttpServerThread? = null
+    val httpPath = HttpPath("/")
 
     init {
-        this.httpHandlerStack = HttpHandlerStack()
         use(middleware { req: IncomingHttpRequest, res: OutgoingHttpResponse -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) })
     }
 
     constructor(configurator: Configurator, context: HttpContext) : this(configurator.getInt("port"), configurator.getBoolean("ssl"), context)
 
     override fun start(): HttpServer {
-        use(handler { req: IncomingHttpRequest, res: OutgoingHttpResponse ->
+        fallback(handler { req: IncomingHttpRequest, res: OutgoingHttpResponse ->
             res.status(StatusCode.NOT_FOUND)
             res.entity("Could not find resource at " + req.method().toUpperCase() + " " + req.path())
             true
         })
         if (serverThread == null)
-            this.serverThread = HttpServerThread(httpHandlerStack, context)
+            this.serverThread = TreeHttpServerThread(treeHandler, context)
         serverThread!!.port = port
         serverThread!!.start()
         LOGGER.info("Started HTTP Server on port {}", port)
@@ -52,72 +57,61 @@ open class DefaultHttpServer(var port: Int, protected var ssl: Boolean, val cont
         if (this is HttpsServer) {
             return this
         }
-        return DefaultHttpsServer(this, context)
+        return TreeHttpsServer(this, context)
     }
 
-    final override fun use(handler: HttpMiddleware): HttpServer {
-        val handle = HttpMiddlewareHandle()
-        handle.httpMiddleware = handler
-        httpHandlerStack.submit(handle)
+    override fun use(handler: HttpMiddleware): HttpServer {
+        treeHandler.submit(httpPath, MiddlewareRequestHandler(handler))
         return this
     }
 
     override fun use(path: String, handler: HttpMiddleware): HttpServer {
-        val handle = HttpMiddlewareHandle()
-        handle.path = path
-        handle.httpMiddleware = handler
-        httpHandlerStack.submit(handle)
+        val httpPath = HttpPath(path)
+        treeHandler.submit(httpPath, MiddlewareRequestHandler(handler))
         return this
     }
 
-    override fun use(handler: HttpHandler): HttpServer {
-        if (handler is HttpRouter) {
-            val handle = HttpRouterHandle()
-            handler.parentPath("/")
-            handle.setRouter(handler)
-            httpHandlerStack.submit(handle)
-        } else {
-            val handle = HttpHandlerHandle()
-            handle.handler = handler
-            httpHandlerStack.submit(handle)
-        }
+    override fun fallback(handler: HttpHandler): HttpServer {
+        treeHandler.fallback(handler)
         return this
     }
 
     override fun use(path: String, httpHandler: HttpHandler): HttpServer {
-        if (httpHandler is HttpRoutable<*>) {
-            val handle = HttpRouterHandle()
-            (httpHandler as HttpRouter).parentPath(HttpRoutable.Companion.joinPaths("/", path))
-            handle.setRouter(httpHandler)
-            httpHandlerStack.submit(handle)
+        val httpPath = HttpPath(path)
+        if(httpHandler is HttpRouter) {
+            if(httpHandler is TreeHttpRouter) {
+                treeHandler.injectChild(httpPath, httpHandler.treeHandler.root)
+            } else {
+                throw TreeRouterException("Other types of routers aren't supported")
+            }
         } else {
-            val handle = HttpHandlerHandle()
-            handle.handler = httpHandler
-            handle.path = path
-            httpHandlerStack.submit(handle)
+            treeHandler.submit(httpPath, HandlerRequestHandler(httpHandler, MethodMatchers.any))
         }
         return this
     }
 
     override fun use(method: String, path: String, httpHandler: HttpHandler): HttpServer {
-        if (httpHandler is HttpRouter) {
-            return this
+        val httpPath = HttpPath(path)
+        if(httpHandler is HttpRouter) {
+            LOGGER.warn("Router has been used for a call with a method. Ignoring!")
+            if(httpHandler is TreeHttpRouter) {
+                treeHandler.injectChild(httpPath, httpHandler.treeHandler.root)
+            } else {
+                throw TreeRouterException("Other types of routers aren't supported")
+            }
+        } else {
+            treeHandler.submit(httpPath, HandlerRequestHandler(httpHandler, MethodMatchers[method]))
         }
-        val handle = HttpHandlerHandle()
-        handle.handler = httpHandler
-        handle.method = method
-        handle.path = path
-        httpHandlerStack.submit(handle)
         return this
     }
 
     override fun after(middleware: HttpMiddleware): HttpServer {
-        httpHandlerStack.submitAfter(middleware)
+        treeHandler.submitAfter(middleware)
         return this
     }
 
     override fun matches(httpRequest: HttpRequest): Boolean {
-        return httpHandlerStack.matches(httpRequest)
+        TODO()
     }
 
     override fun prependPath(path: String): HttpRoutable<HttpServer> {

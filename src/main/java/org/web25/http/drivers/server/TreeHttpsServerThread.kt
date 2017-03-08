@@ -4,6 +4,7 @@ import org.eclipse.jetty.alpn.ALPN
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
 import org.web25.http.HttpVersion
+import org.web25.http.drivers.treehandler.TreeHandler
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -19,8 +20,8 @@ import javax.net.ssl.SSLSocket
 /**
  * Created by felix on 9/14/16.
  */
-class HttpsServerThread @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
-constructor(private val httpHandlerStack: HttpHandlerStack, private val sslContext: SSLContext, context : HttpContext) : HttpServerThread(httpHandlerStack, context), ExecutorListener {
+class TreeHttpsServerThread @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
+constructor(private val treeHandler: TreeHandler, private val sslContext: SSLContext, context : HttpContext) : TreeHttpServerThread(treeHandler, context), ExecutorListener {
 
     private val log = LoggerFactory.getLogger("HTTP")
 
@@ -134,10 +135,10 @@ constructor(private val httpHandlerStack: HttpHandlerStack, private val sslConte
         override fun run() {
             if (httpVersion === HttpVersion.HTTP_11) {
                 log.debug("Using HTTP/1.1")
-                socketHandler = Http11SocketHandler(httpHandlerStack, context)
+                socketHandler = TreeHttp11SocketHandler(treeHandler, context)
             } else if (httpVersion === HttpVersion.HTTP_20) {
                 log.debug("Using HTTP/2.0")
-                socketHandler = Http20SocketHandler(httpHandlerStack, this@HttpsServerThread, context)
+                socketHandler = TreeHttp20SocketHandler(treeHandler, this@TreeHttpsServerThread, context)
             }
             socketHandler!!.handle(socket)
         }

@@ -5,6 +5,7 @@ import org.web25.http.HttpDriver
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.client.DefaultHttpRequest
 import org.web25.http.server.Configurator
+import org.web25.http.server.HttpRouter
 import org.web25.http.server.HttpServer
 
 import java.net.URL
@@ -24,18 +25,22 @@ open class DefaultDriver(context: HttpContext) : HttpDriver(context) {
 
     override fun server(port: Int, ssl: Boolean): HttpServer {
         if (ssl) {
-            return DefaultHttpsServer(port, context)
+            return TreeHttpsServer(port, context)
         } else {
-            return DefaultHttpServer(port, ssl, context)
+            return TreeHttpServer(port, ssl, context)
         }
     }
 
     override fun server(configurator: Configurator): HttpServer {
         if(configurator.getBoolean("ssl")) {
-            return DefaultHttpsServer(configurator, context)
+            return TreeHttpsServer(configurator, context)
         } else {
-            return DefaultHttpServer(configurator, context);
+            return TreeHttpServer(configurator, context);
         }
+    }
+
+    override fun router(): HttpRouter {
+        return TreeHttpRouter()
     }
 
     fun normalizePort(url: URL): Int = if(url.port <= 0) url.defaultPort else url.port

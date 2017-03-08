@@ -8,7 +8,7 @@ import java.util.*
  */
 class SimpleNonceManager : NonceManager {
     init {
-        LOGGER.warn("You are using an unsafe basic implementation of NonceManager. Please use a database backed one in production environments for security reasons.")
+        LOGGER.warn("You are using an unsafe basic implementation of NonceManager. Please fallback a database backed one in production environments for security reasons.")
     }
 
     override fun generateNew(): String {
