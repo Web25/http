@@ -48,7 +48,7 @@ class TreeHttp11SocketHandler(private val treeHandler: TreeHandler, val context 
                 log.debug("Handling request")
                 treeHandler.handle(httpRequest, response)
                 log.debug("Request handled!")
-                if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.header("Connection").value == "keep-alive") {
+                if (httpRequest.hasHeader("Connection") && !response.hasHeader("Connection") && httpRequest.headers["Connection"] == "keep-alive") {
                     log.debug("Keeping connection open")
                     response.header("Connection", "keep-alive")
                     run = true

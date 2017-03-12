@@ -59,7 +59,7 @@ object HttpCacheControl {
         response.header("Cache-Control", "max-age=" + maxAge)
         response.header("ETag", eTag)
         if (request.hasHeader("If-None-Match")) {
-            if (request.header("If-None-Match").equals(eTag)) {
+            if (request.headers["If-None-Match"].equals(eTag)) {
                 response.status(StatusCode.NOT_MODIFIED)
                 return true
             }

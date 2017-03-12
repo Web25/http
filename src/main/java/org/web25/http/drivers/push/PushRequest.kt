@@ -11,10 +11,10 @@ class PushRequest(httpRequest: HttpRequest, context : HttpContext) : DefaultInco
 
     init {
         if (httpRequest.hasHeader("User-Agent"))
-            header("User-Agent", httpRequest.header("User-Agent").value)
+            header("User-Agent", httpRequest.headers["User-Agent"])
         if (httpRequest.hasHeader(":authority"))
-            header(":authority", httpRequest.header(":authority").value)
+            header(":authority", httpRequest.headers[":authority"])
         if (httpRequest.hasHeader(":scheme"))
-            header(":scheme", httpRequest.header(":scheme").value)
+            header(":scheme", httpRequest.headers[":scheme"])
     }
 }

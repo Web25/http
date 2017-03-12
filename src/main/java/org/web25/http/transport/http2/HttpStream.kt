@@ -337,8 +337,8 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
             throw Http20Exception("Missing pseudo header field(s)", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
         }
         if (httpRequest.hasHeader("Content-Length")) {
-            log.debug("Received {} byte(s), headers stated {} byte(s)", httpRequest.entityBytes().size, httpRequest.header("Content-Length").asInt())
-            if (httpRequest.entityBytes().size != httpRequest.header("Content-Length").asInt()) {
+            log.debug("Received {} byte(s), headers stated {} byte(s)", httpRequest.entityBytes().size, httpRequest.headers["Content-Length"].toInt())
+            if (httpRequest.entityBytes().size != httpRequest.headers["Content-Length"].toInt()) {
                 throw Http20Exception("Invalid content length", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
             }
         }
@@ -353,9 +353,9 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
             val byteArrayOutputStream = ByteArrayOutputStream()
             try {
                 encoder.encodeHeader(byteArrayOutputStream, ":status".toByteArray(), httpResponse.statusCode().toString().toByteArray(), false)
-                httpResponse.headers.values.forEach { httpHeader ->
+                httpResponse.headers.forEach { name, value ->
                     try {
-                        encoder.encodeHeader(byteArrayOutputStream, httpHeader.name.toLowerCase().toByteArray(), httpHeader.value.toByteArray(), false)
+                        encoder.encodeHeader(byteArrayOutputStream, name.toLowerCase().toByteArray(), value.toByteArray(), false)
                     } catch (e: IOException) {
                         log.warn("Could not encode headers")
                     }
@@ -391,9 +391,9 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 try {
                     encoder.encodeHeader(byteArrayOutputStream, ":method".toByteArray(), pushRequest.method().toByteArray(), false)
                     encoder.encodeHeader(byteArrayOutputStream, ":path".toByteArray(), pushRequest.path().toByteArray(), false)
-                    pushRequest.headers.values.forEach { httpHeader ->
+                    pushRequest.headers.forEach { name, value ->
                         try {
-                            encoder.encodeHeader(byteArrayOutputStream, httpHeader.name.toLowerCase().toByteArray(), httpHeader.value.toByteArray(), false)
+                            encoder.encodeHeader(byteArrayOutputStream, name.toLowerCase().toByteArray(), value.toByteArray(), false)
                         } catch (e: IOException) {
                             log.warn("Could not encode headers")
                         }

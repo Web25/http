@@ -29,9 +29,9 @@ internal class HttpServerTest {
         val response = http.get("http://localhost:8080/").response()
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
-        assertEquals("7", response.header("Content-Length").value)
+        assertEquals("7", response.headers["Content-Length"])
         assertEquals("Did it!", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class HttpServerTest {
         val response = http.get("http://localhost:8080/style/default").response()
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
-        assertEquals("text/css", response.header("Content-Type").value)
+        assertEquals("text/css", response.headers["Content-Type"])
         assertEquals("body, html {font-family: \"Arial\";}", response.responseString())
     }
 
@@ -57,7 +57,7 @@ internal class HttpServerTest {
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
         assertEquals("Hello World", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
     @Test
@@ -66,7 +66,7 @@ internal class HttpServerTest {
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
         assertEquals("Hello World", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
     @Test
@@ -76,7 +76,7 @@ internal class HttpServerTest {
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
         assertEquals("Hello World", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
 
@@ -87,14 +87,14 @@ internal class HttpServerTest {
         assertNotNull(response)
         assertEquals(401, response.statusCode().toLong())
         assertTrue(response.hasHeader("WWW-Authenticate"))
-        assertTrue(response.header("WWW-Authenticate").value.startsWith("Basic"))
+        assertTrue(response.headers["WWW-Authenticate"].startsWith("Basic"))
         http.context.addAuthentication(Authentication.basic("felix", "test"))
         response = http.get("http://localhost:8080/auth/basic/").response()
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
-        assertEquals("7", response.header("Content-Length").value)
+        assertEquals("7", response.headers["Content-Length"])
         assertEquals("Did it!", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
     @Test
@@ -104,14 +104,14 @@ internal class HttpServerTest {
         assertNotNull(response)
         assertEquals(401, response.statusCode().toLong())
         assertTrue(response.hasHeader("WWW-Authenticate"))
-        assertTrue(response.header("WWW-Authenticate").value.startsWith("Digest"))
+        assertTrue(response.headers["WWW-Authenticate"].startsWith("Digest"))
         http.context.addAuthentication(Authentication.digest("felix", "test"))
         response = http.get("http://localhost:8080/auth/digest/").response()
         assertNotNull(response)
         assertEquals(200, response.statusCode().toLong())
-        assertEquals("7", response.header("Content-Length").value)
+        assertEquals("7", response.headers["Content-Length"])
         assertEquals("Did it!", response.responseString())
-        assertEquals("text/plain", response.header("Content-Type").value)
+        assertEquals("text/plain", response.headers["Content-Type"])
     }
 
     @Test
@@ -139,7 +139,7 @@ internal class HttpServerTest {
         //assertEquals(ZoneId.of("GMT"), lang.expires!!.zone)
         assertEquals(ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("Z")), lang.expires)
         val res = http.get("http://localhost:8080/cookie/").response()
-        assertEquals(7, res.header("Content-Length").asInt())
+        assertEquals(7, res.headers["Content-Length"].toInt())
         assertEquals("Alright", res.responseString())
     }
 
@@ -212,7 +212,7 @@ internal class HttpServerTest {
                     .use("/cookie", cookieRouter)
                     .after(middleware { request, response ->
                         System.out.printf("%-10s %s - %s byte(s)\n", request.method(), request.path(),
-                                if (response.hasHeader("Content-Length")) response.header("Content-Length").value else " --")
+                                if (response.hasHeader("Content-Length")) response.headers["Content-Length"] else " --")
                     }).start()
             var printStream = PrintStream("test.txt")
             printStream.print("Hello World")

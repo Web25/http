@@ -20,7 +20,6 @@ import java.util.*
  */
 open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(context) {
 
-    override val headers: MutableMap<String, HttpHeader> = TreeMap()
     override val query: MutableMap<String, Any> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
@@ -50,7 +49,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     }
 
     final override fun header(name: String, value: String): OutgoingHttpRequest {
-        headers.put(name.toLowerCase(), HttpHeader(name, value))
+        headers[name] = value
         return this
     }
 
@@ -110,7 +109,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                 if(!response.hasHeader("Location")) {
                     throw HttpException(this, "No location header provided by remote server. Redirect not possible")
                 }
-                val url = URL(response.header("Location").value)
+                val url = URL(response.headers["Location"])
                 this.host = url.host
                 this.port = url.port
                 response.cookies.forEach { it -> cookies[it.name] = it }
@@ -138,7 +137,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
                     execute(callback)
                 }
             } else {
-                log.warn("No suitable authentication option found for ${response.header("WWW-Authenticate").value}")
+                log.warn("No suitable authentication option found for ${response.headers["WWW-Authenticate"]}")
                 var handled = false
                 if (callback != null) {
                     try {
@@ -221,7 +220,7 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     override fun prepareEntity(): HttpRequest {
         if (data != null) {
             if (hasHeader("Content-Type")) {
-                val contentType = header("Content-Type").value
+                val contentType = headers["Content-Type"]
                 if (contentType == "application/x-www-form-urlencoded") {
                     writeUrlFormEncoded()
                 }
@@ -233,10 +232,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         return this
     }
 
-
-    fun isHeader(name: String): Boolean {
-        return headers.containsKey(name)
-    }
 
     override fun entityBytes(): ByteArray {
         return this.entity ?: byteArrayOf()
@@ -264,10 +259,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
 
     override fun requestLine(): String {
         return method.toUpperCase() + " " + path + " HTTP/1.1"
-    }
-
-    override fun header(name: String): HttpHeader {
-        return headers[name.toLowerCase()]!!
     }
 
     protected fun response(response: HttpResponse) {

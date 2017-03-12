@@ -3,7 +3,6 @@ package org.web25.http.drivers.push
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
-import org.web25.http.HttpHeader
 import org.web25.http.HttpRequest
 import org.web25.http.StatusCode
 import org.web25.http.server.OutgoingHttpResponse
@@ -85,7 +84,7 @@ class PushableHttpResponse(httpRequest: HttpRequest, context : HttpContext = htt
     }
 
     override fun header(name: String, value: String): OutgoingHttpResponse {
-        this.headers.put(name, HttpHeader(name, value))
+        this.headers[name] = value
         return this
     }
 

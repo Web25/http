@@ -43,7 +43,7 @@ class DefaultDigestStrategy(private val username: () -> String, private val pass
         get() = nonce != null && realm != null && opaque != null
 
     override fun matches(request: HttpRequest): Boolean {
-        return host!!.equals(request.header("Host").value, ignoreCase = true) && request.path().startsWith(basePath!!)
+        return host!!.equals(request.headers["Host"], ignoreCase = true) && request.path().startsWith(basePath!!)
     }
 
     override fun supportsMulti(): Boolean {
@@ -55,14 +55,14 @@ class DefaultDigestStrategy(private val username: () -> String, private val pass
     }
 
     override fun init(response: HttpResponse) {
-        val data = readData(response.header("WWW-Authenticate").value.substring("Digest".length))
+        val data = readData(response.headers["WWW-Authenticate"].substring("Digest".length))
         if (!data.containsKey("nonce") && !data.containsKey("opaque") && !data.containsKey("realm")) {
             throw HttpException(response.request(), "Not all required fields for HTTP Digest Authentication are present.")
         }
         this.nonce = removeQuotes(data.getProperty("nonce"))
         this.realm = removeQuotes(data.getProperty("realm"))
         this.opaque = removeQuotes(data.getProperty("opaque"))
-        this.host = response.request().header("Host").value
+        this.host = response.request().headers["Host"]
         this.basePath = response.request().path()
     }
 

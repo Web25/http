@@ -16,10 +16,10 @@ abstract class HttpRequest(val context : HttpContext) {
     abstract fun method(): String
 
     val cookies = CookieList()
+    val headers = HeaderList()
 
-    abstract val headers: MutableMap<String, HttpHeader>
     abstract val query: MutableMap<String, Any>
-    
+
     abstract fun entityBytes(): ByteArray
     abstract fun entityString(): String
 
@@ -29,11 +29,7 @@ abstract class HttpRequest(val context : HttpContext) {
     abstract fun transport(): Transport
     abstract fun requestLine(): String
 
-
-    @Throws(HeaderNotFoundException::class)
-    abstract fun header(name: String): HttpHeader
-    fun hasHeader(name: String): Boolean = headers.containsKey(name.toLowerCase())
-
+    fun hasHeader(name: String): Boolean = name in headers
     fun hasHeaders(vararg names: String): Boolean = names.all { hasHeader(it) }
 
     lateinit var path: HttpPath
