@@ -1,5 +1,6 @@
 package org.web25.http
 
+import com.jayway.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -54,7 +55,7 @@ internal class HttpCookieServerTest {
 
     companion object {
 
-        val SERVER_PORT = 8080
+        val SERVER_PORT = 8081
 
         val http = Http()
         val server: HttpServer = http.server(SERVER_PORT)
@@ -161,6 +162,7 @@ internal class HttpCookieServerTest {
                     .use("/invalidCookieDomain", invalidCookieDomainRouter)
                     .use("/pathScopes", pathScopesRouter)
                     .start()
+            await().until<Boolean> { server.ready() }
         }
 
         @AfterAll
