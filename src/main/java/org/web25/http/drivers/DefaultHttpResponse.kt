@@ -1,16 +1,12 @@
 package org.web25.http.drivers
 
 import org.web25.http.*
-import org.web25.http.exceptions.HeaderNotFoundException
-import java.util.*
 
 
 /**
  * Created by felix on 9/11/15.
  */
 open class DefaultHttpResponse(context : HttpContext) : HttpResponse(context) {
-
-    override val headers: MutableMap<String, HttpHeader> = TreeMap()
 
     var statusCode: StatusCode = StatusCode.OK
     var entity: ByteArray = byteArrayOf()
@@ -39,14 +35,6 @@ open class DefaultHttpResponse(context : HttpContext) : HttpResponse(context) {
 
     override fun request(): HttpRequest {
         return this.request
-    }
-
-    override fun header(name: String): HttpHeader {
-        if(hasHeader(name)) {
-            return headers[name]!!
-        } else {
-            throw HeaderNotFoundException(name)
-        }
     }
 
 }

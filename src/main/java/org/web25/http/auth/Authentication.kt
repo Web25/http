@@ -4,9 +4,6 @@ import org.web25.http.HttpRequest
 import org.web25.http.HttpResponse
 import org.web25.http.client.OutgoingHttpRequest
 import org.web25.http.drivers.Driver
-import org.web25.http.server.HttpMiddleware
-import org.web25.http.server.IncomingHttpRequest
-import org.web25.http.server.OutgoingHttpResponse
 
 /**
  * Created by felix on 6/21/16.
@@ -25,7 +22,7 @@ interface Authentication : Driver {
     fun authenticate(request: OutgoingHttpRequest)
 
     fun supports(response: HttpResponse): Boolean {
-        val authenticate: String = response.header("WWW-Authenticate").value
+        val authenticate: String = response.headers["WWW-Authenticate"]
         return authenticate.startsWith(strategy())
     }
 

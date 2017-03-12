@@ -28,7 +28,7 @@ class DigestStrategy(private val realm: String, private val credentialProvider: 
         if (!request.hasHeader("Authorization")) {
             return false
         }
-        val authorization = request.header("Authorization").value
+        val authorization = request.headers["Authorization"]
         if (!authorization.startsWith(name())) {
             return false
         }

@@ -35,7 +35,7 @@ class DefaultBasicStrategy : Authentication {
         get() = realm != null
 
     override fun matches(request: HttpRequest): Boolean {
-        return host!!.equals(request.header("Host").value, ignoreCase = true) && request.path().startsWith(basePath!!)
+        return host!!.equals(request.headers["Host"], ignoreCase = true) && request.path().startsWith(basePath!!)
     }
 
     override fun supportsMulti(): Boolean {
@@ -48,10 +48,10 @@ class DefaultBasicStrategy : Authentication {
 
     override fun init(response: HttpResponse) {
         if (response.hasHeader("WWW-Authenticate")) {
-            val matcher = pattern.matcher(response.header("WWW-Authenticate").value)
+            val matcher = pattern.matcher(response.headers["WWW-Authenticate"])
             if (matcher.find()) {
                 this.realm = matcher.group(1)
-                this.host = response.request().header("Host").value
+                this.host = response.request().headers["Host"]
                 this.basePath = response.request().path()
                 LOGGER.debug("Found realm {} @ {}{}", this.realm, this.host, this.basePath)
             } else {

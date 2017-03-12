@@ -22,15 +22,15 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         httpRequest.prepareEntity()
         context.cookieStore.findCookies(httpRequest)
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), httpRequest.path() /*+ if (httpRequest.openRequest().query != null) "?" + httpRequest.openRequest().query else ""*/, "HTTP/1.1")
-        for (header in httpRequest.headers.values) {
-            output.printf("%s: %s\r\n", header.name, header.value)
+        httpRequest.headers.forEach { name, value ->
+            output.printf("%s: %s\r\n", name, value)
         }
         if (httpRequest.cookies.isNotEmpty()) {
             val builder = StringBuilder()
-            httpRequest.cookies.forEach {
-                builder.append(it.name)
+            httpRequest.cookies.forEach { cookie ->
+                builder.append(cookie.name)
                 builder.append("=")
-                builder.append(it.value)
+                builder.append(cookie.value)
                 builder.append(";")
             }
             output.printf("%s: %s\r\n", "Cookie", builder.toString())
@@ -48,11 +48,11 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     override fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
         val stream = PrintStream(outputStream)
         stream.printf("HTTP/1.1 %03d %s\r\n", httpResponse.statusCode(), httpResponse.status().statusMessage())
-        for (header in httpResponse.headers.values) {
-            stream.printf("%s: %s\r\n", header.name, header.value)
+        httpResponse.headers.forEach { name, value ->
+            stream.printf("%s: %s\r\n", name, value)
         }
-        httpResponse.cookies.forEach {
-            stream.printf("Set-Cookie: %s\r\n", it.toString())
+        httpResponse.cookies.forEach { cookie ->
+            stream.printf("Set-Cookie: %s\r\n", cookie.toString())
         }
         stream.print("\r\n")
         if (entityStream != null) {
@@ -95,7 +95,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
         if (!request.method().equals(GET, ignoreCase = true) && request.hasHeader("Content-Length")) {
-            val length = Integer.parseInt(request.header("Content-Length").value)
+            val length = Integer.parseInt(request.headers["Content-Length"])
             if (length == 0) {
                 return request
             }
@@ -126,7 +126,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         context.cookieStore.store(request, response)
         if (response.hasHeader("Content-Length")) {
-            val length = response.header("Content-Length").asInt()
+            val length = response.headers["Content-Length"].toInt()
             if (pipe != null) {
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 inputBuffer.pipe(length, pipe, byteArrayOutputStream)
@@ -172,7 +172,7 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
     }
 
     fun header(name: String, value: String): DefaultIncomingHttpResponse {
-        this.headers.put(name, HttpHeader(name, value))
+        this.headers[name] = value
         return this
     }
 

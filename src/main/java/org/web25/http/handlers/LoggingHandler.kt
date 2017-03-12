@@ -16,7 +16,7 @@ class LoggingHandler : HttpMiddleware {
     override fun invoke(req: IncomingHttpRequest, res: OutgoingHttpResponse) {
         LOGGER.info("{} {} - {} {} {} byte(s)", req.method().toUpperCase(), req.path(),
                 res.statusCode(), res.status().statusMessage(),
-                if (res.hasHeader("Content-Length")) res.header("Content-Length").asInt() else "---")
+                if (res.hasHeader("Content-Length")) res.headers["Content-Length"].toInt() else "---")
     }
 
     companion object {
