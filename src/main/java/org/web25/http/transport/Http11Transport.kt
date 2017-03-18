@@ -19,7 +19,6 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
 
     override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
-        httpRequest.prepareEntity()
         var path = httpRequest.path.buildActualPath()
         if(!httpRequest.query.isEmpty()){
             path += "?"
@@ -29,7 +28,6 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             path = path.dropLast(1) //last character will be a '&' otherwise
         }
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
-
         context.cookieStore.findCookies(httpRequest)
         httpRequest.headers.forEach { name, value ->
             output.printf("%s: %s\r\n", name, value)
@@ -46,9 +44,10 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             output.printf("%s: %s\r\n", "Cookie", builder.toString())
             output.print("\r\n")
         }
-        if (httpRequest.entityBytes().isNotEmpty()) {
+        if (httpRequest.hasEntity) {
             output.print("\r\n")
-            output.write(httpRequest.entityBytes(), 0, httpRequest.entityBytes().size)
+            val data = httpRequest.entityBytes()
+            output.write(data, 0, data.size)
             output.print("\r\n")
         }
         output.print("\r\n")

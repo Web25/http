@@ -9,10 +9,8 @@ import org.web25.http.events.*
 import org.web25.http.exceptions.HttpException
 import java.io.IOException
 import java.io.OutputStream
-import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
 import java.net.URL
-import java.net.URLEncoder
 import java.util.*
 
 /**
@@ -25,7 +23,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     private val log = LoggerFactory.getLogger("HTTP")
 
     lateinit var method: String
-    private var entity: ByteArray? = null
     private var response: HttpResponse? = null
     private var data: MutableMap<String, ByteArray>? = null
     private var transport = Transport.HTTP
@@ -51,19 +48,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     final override fun header(name: String, value: String): OutgoingHttpRequest {
         headers[name] = value
         return this
-    }
-
-    override fun entity(entity: ByteArray): OutgoingHttpRequest {
-        header("Content-Length", entity.size.toString() + "")
-        if (!hasHeader("Content-Type")) {
-            header("Content-Type", "text/plain")
-        }
-        this.entity = entity
-        return this
-    }
-
-    override fun entity(entity: String): OutgoingHttpRequest {
-        return entity(entity.toByteArray())
     }
 
     override fun entity(entity: Any): OutgoingHttpRequest {
@@ -179,34 +163,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
         return this
     }
 
-    private fun writeUrlFormEncoded() {
-        val stringBuilder = StringBuilder()
-        val iterator = data!!.keys.iterator()
-        while (iterator.hasNext()) {
-            val key = iterator.next()
-            try {
-                stringBuilder.append(URLEncoder.encode(key, "UTF-8"))
-                        .append("=")
-                        .append(String(bytes = data!![key]!!))
-            } catch (e: UnsupportedEncodingException) {
-                throw HttpException(this, e)
-            }
-
-            if (iterator.hasNext()) {
-                stringBuilder.append("&")
-            }
-        }
-        entity(stringBuilder.toString())
-    }
-
-
-    override fun data(key: String, value: String): OutgoingHttpRequest {
-        if (data == null)
-            data = HashMap<String, ByteArray>()
-        data!!.put(key, value.toByteArray())
-        return this
-    }
-
     override fun using(driver: Driver): HttpRequest {
         this.drivers.add(driver)
         return this
@@ -215,30 +171,6 @@ open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(conte
     override fun pipe(outputStream: OutputStream): OutgoingHttpRequest {
         this.pipe = outputStream
         return this
-    }
-
-    override fun prepareEntity(): HttpRequest {
-        if (data != null) {
-            if (hasHeader("Content-Type")) {
-                val contentType = headers["Content-Type"]
-                if (contentType == "application/x-www-form-urlencoded") {
-                    writeUrlFormEncoded()
-                }
-            } else {
-                header("Content-Type", "application/x-www-form-urlencoded")
-                writeUrlFormEncoded()
-            }
-        }
-        return this
-    }
-
-
-    override fun entityBytes(): ByteArray {
-        return this.entity ?: byteArrayOf()
-    }
-
-    override fun entityString(): String {
-        return String(entityBytes())
     }
 
 

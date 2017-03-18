@@ -1,7 +1,7 @@
 package org.web25.http
 
 import org.web25.http.drivers.Driver
-import org.web25.http.exceptions.HeaderNotFoundException
+import org.web25.http.entities.AbstractStringableEntity
 import org.web25.http.path.HttpPath
 
 /**
@@ -11,8 +11,6 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract fun using(driver: Driver): HttpRequest
 
-    abstract fun prepareEntity(): HttpRequest
-
     abstract fun method(): String
 
     val cookies = CookieList()
@@ -20,8 +18,22 @@ abstract class HttpRequest(val context : HttpContext) {
 
     abstract val query: MutableMap<String, Any>
 
-    abstract fun entityBytes(): ByteArray
-    abstract fun entityString(): String
+    val hasEntity: Boolean
+    get() = entity != null
+
+    fun entityBytes() = entity!!.getBytes()
+    fun entityString(): String {
+        val entity = this.entity
+        if(entity != null) {
+            if(entity is AbstractStringableEntity) {
+                return entity.toString()
+            } else {
+                return String(entityBytes())
+            }
+        } else {
+            throw HttpEntityException("Entity not set!")
+        }
+    }
 
     abstract fun response(): HttpResponse
 
@@ -39,6 +51,8 @@ abstract class HttpRequest(val context : HttpContext) {
         this.path = HttpPath(path)
         return this
     }
+
+    var entity: HttpEntity? = null
 
 }
 

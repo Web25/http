@@ -54,7 +54,8 @@ internal class HttpTest {
 
     @Test
     fun testHttpPostWithArguments() {
-        val response = http.post("http://" + TestConstants.HTTP.HOST + "/post").data("param", "2").response()
+        val request = http.post("http://" + TestConstants.HTTP.HOST + "/post").entity(mapOf(Pair("param", "2")))
+        val response = request.response()
         assertEquals(200, response.statusCode().toLong())
         val content = parser.parse(response.responseString()).asJsonObject
         val form = content.getAsJsonObject("form")

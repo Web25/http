@@ -81,7 +81,7 @@ internal class AsyncExecutorHttpTest {
     @Test
     fun testHttpPostWithArguments() {
         var finished = false
-        http.post("http://" + TestConstants.HTTP.HOST + "/post").data("param", "2").execute {
+        http.post("http://" + TestConstants.HTTP.HOST + "/post").entity(mapOf(Pair("param", "2"))).execute {
             assertEquals(200, it.statusCode().toLong())
             val content = parser.parse(it.responseString()).asJsonObject
             val form = content.getAsJsonObject("form")

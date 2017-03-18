@@ -55,7 +55,7 @@ internal class HttpsTest {
     @Test
     @Throws(Exception::class)
     fun testHttpPostWithArguments() {
-        val response = http.post("https://httpbin.org/post").data("param", "2").response()
+        val response = http.post("https://httpbin.org/post").entity(mapOf(Pair("param", "2"))).response()
         assertEquals(200, response.statusCode())
         val content = parser.parse(response.responseString()).asJsonObject
         val form = content.getAsJsonObject("form")
