@@ -21,4 +21,6 @@ interface HttpContext {
 
     val cookieStore: HttpCookieStore
 
+    val registry: HttpRegistry
+
 }
