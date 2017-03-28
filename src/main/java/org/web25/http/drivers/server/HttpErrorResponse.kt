@@ -13,17 +13,6 @@ class HttpErrorResponse(context: HttpContext): OutgoingHttpResponse(context) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }
 
-    override fun entity(entity: String): OutgoingHttpResponse = entity(entity.toByteArray())
-
-    override fun entity(entity: ByteArray): OutgoingHttpResponse {
-        this.entity = entity
-        return this
-    }
-
-    override fun entity(inputStream: InputStream): OutgoingHttpResponse {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
-    }
-
     override fun entityStream(): InputStream? {
         throw UnsupportedOperationException("not implemented") //To change body of created functions fallback File | Settings | File Templates.
     }

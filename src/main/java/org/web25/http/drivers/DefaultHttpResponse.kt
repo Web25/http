@@ -9,7 +9,7 @@ import org.web25.http.*
 open class DefaultHttpResponse(context : HttpContext) : HttpResponse(context) {
 
     var statusCode: StatusCode = StatusCode.OK
-    var entity: ByteArray = byteArrayOf()
+    var entity: HttpEntity? = null
     private var httpTransport: HttpTransport? = null
     lateinit var request: HttpRequest
 
@@ -25,9 +25,7 @@ open class DefaultHttpResponse(context : HttpContext) : HttpResponse(context) {
         return String(responseBytes())
     }
 
-    override fun responseBytes(): ByteArray {
-        return entity
-    }
+    override fun responseBytes(): ByteArray = entity?.getBytes() ?: byteArrayOf()
 
     override fun request(request: HttpRequest) {
         this.request = request

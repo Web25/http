@@ -1,12 +1,10 @@
 package org.web25.http.drivers.push
 
-import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.HttpContext
 import org.web25.http.HttpRequest
 import org.web25.http.StatusCode
 import org.web25.http.server.OutgoingHttpResponse
-import java.io.IOException
 import java.io.InputStream
 import java.util.*
 
@@ -35,43 +33,10 @@ class PushableHttpResponse(httpRequest: HttpRequest, context : HttpContext = htt
         return this
     }
 
-    override fun responseBytes(): ByteArray {
-        if (request().method().equals("HEAD", ignoreCase = true)) {
-            return byteArrayOf()
-        } else if (entity.isEmpty() && entityStream != null) {
-            try {
-                this.entity = IOUtils.toByteArray(entityStream!!)
-            } catch (e: IOException) {
-                log.warn("Could not read resource", e)
-            }
-
-        }
-        return entity
-    }
+    override fun responseBytes(): ByteArray = entity?.getBytes() ?: byteArrayOf()
 
     fun getPushRequests(): List<PushRequest> {
         return pushRequests
-    }
-
-    override fun entity(entity: String): OutgoingHttpResponse {
-        return entity(entity.toByteArray())
-    }
-
-    override fun entity(entity: ByteArray): OutgoingHttpResponse {
-        header("Content-Length", entity.size.toString())
-        if (!hasHeader("Content-Type")) {
-            header("Content-Type", "text/plain")
-        }
-        this.entity = entity
-        return this
-    }
-
-    override fun entity(inputStream: InputStream): OutgoingHttpResponse {
-        if (!hasHeader("Content-Type")) {
-            header("Content-Type", "text/plain")
-        }
-        this.entityStream = inputStream
-        return this
     }
 
     override fun entityStream(): InputStream? {

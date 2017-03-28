@@ -29,6 +29,8 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
     lateinit var httpRequest: IncomingHttpRequest
     lateinit var httpResponse: PushableHttpResponse
 
+    private var rawBuffer = ByteArrayOutputStream()
+
     var state: State? = null
     private set(value) {
         log.debug("Stream {} transitioning from {} to {}", streamIdentifier, field, value)
@@ -176,8 +178,8 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 if (httpFrame.type == Constants.Http20.FrameType.DATA) {
                     try {
                         val dataFrame = DataFrame.from(httpFrame)
-
-                        httpRequest.appendBytes(dataFrame.data)
+                        rawBuffer.write(dataFrame.data)
+                        //httpRequest.appendBytes(dataFrame.data)
                     } catch (e: HttpFrameException) {
                         terminate(Constants.Http20.ErrorCodes.FRAME_SIZE_ERROR)
                     }
@@ -336,12 +338,13 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
         if (!(httpRequest.hasHeader(":method") && httpRequest.hasHeader(":scheme") && httpRequest.hasHeader(":path"))) {
             throw Http20Exception("Missing pseudo header field(s)", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
         }
-        if (httpRequest.hasHeader("Content-Length")) {
+        httpRequest.entity = httpConnection.context.registry.deserialize(rawBuffer.toByteArray(), httpRequest.headers["Content-Type"])
+        /*if (httpRequest.hasHeader("Content-Length")) {
             log.debug("Received {} byte(s), headers stated {} byte(s)", httpRequest.entityBytes().size, httpRequest.headers["Content-Length"].toInt())
             if (httpRequest.entityBytes().size != httpRequest.headers["Content-Length"].toInt()) {
                 throw Http20Exception("Invalid content length", Constants.Http20.ErrorCodes.PROTOCOL_ERROR)
             }
-        }
+        }*/
         val httpResponse = PushableHttpResponse(httpRequest)
         this.httpResponse = httpResponse
         httpConnection.deferHandling(httpRequest, httpResponse, this)
@@ -351,6 +354,12 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
         val encoder = httpConnection.hpackEncoder
         synchronized(encoder) {
             val byteArrayOutputStream = ByteArrayOutputStream()
+            val entity = httpResponse.entity
+            if(entity != null) {
+                httpResponse.header("Content-Length", entity.getLength().toString())
+                if(!httpResponse.hasHeader("Content-Type"))
+                    httpResponse.header("Content-Type", entity.contentType)
+            }
             try {
                 encoder.encodeHeader(byteArrayOutputStream, ":status".toByteArray(), httpResponse.statusCode().toString().toByteArray(), false)
                 httpResponse.headers.forEach { name, value ->

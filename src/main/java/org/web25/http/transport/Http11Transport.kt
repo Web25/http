@@ -1,6 +1,5 @@
 package org.web25.http.transport
 
-import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.web25.http.*
 import org.web25.http.Http.Methods.GET
@@ -9,6 +8,7 @@ import org.web25.http.drivers.DefaultHttpResponse
 import org.web25.http.drivers.DefaultIncomingHttpRequest
 import org.web25.http.drivers.InputBuffer
 import org.web25.http.server.IncomingHttpRequest
+import org.web25.http.server.OutgoingHttpResponse
 import org.web25.http.util.HttpCookieHelper
 import java.io.*
 
@@ -29,6 +29,12 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
         }
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
         context.cookieStore.findCookies(httpRequest)
+        val entity = httpRequest.entity
+        if(entity != null) {
+            httpRequest.header("Content-Length", entity.getLength())
+            if(!httpRequest.hasHeader("Content-Type"))
+                httpRequest.header("Content-Type", entity.contentType)
+        }
         httpRequest.headers.forEach { name, value ->
             output.printf("%s: %s\r\n", name, value)
         }
@@ -54,9 +60,15 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
     }
 
 
-    override fun write(httpResponse: HttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
+    override fun write(httpResponse: OutgoingHttpResponse, outputStream: OutputStream, entityStream: InputStream?) {
         val stream = PrintStream(outputStream)
         stream.printf("HTTP/1.1 %03d %s\r\n", httpResponse.statusCode(), httpResponse.status().statusMessage())
+        val entity = httpResponse.entity
+        if(entity != null) {
+            httpResponse.header("Content-Length", entity.getLength().toString())
+            if(!httpResponse.hasHeader("Content-Type"))
+                httpResponse.header("Content-Type", entity.contentType)
+        }
         httpResponse.headers.forEach { name, value ->
             stream.printf("%s: %s\r\n", name, value)
         }
@@ -108,7 +120,8 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             if (length == 0) {
                 return request
             }
-            request.entity(inputBuffer[length])
+            val raw = inputBuffer[length]
+            request.entity = context.registry.deserialize(raw, request.headers["Content-Type"])
         }
         return request
     }
@@ -134,16 +147,18 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
             statusLine = inputBuffer.readUntil('\r'.toByte(), 1)
         }
         context.cookieStore.store(request, response)
-        if (response.hasHeader("Content-Length")) {
+        if (response.hasHeader("Content-Length") && response.headers["Content-Length"].toInt() > 0) {
             val length = response.headers["Content-Length"].toInt()
+            val raw: ByteArray
             if (pipe != null) {
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 inputBuffer.pipe(length, pipe, byteArrayOutputStream)
                 pipe.close()
-                response.entity(byteArrayOutputStream.toByteArray())
+                raw = byteArrayOutputStream.toByteArray()
             } else {
-                response.entity(inputBuffer[length])
+                raw = inputBuffer[length]
             }
+            response.entity = context.registry.deserialize(raw, response.headers["Content-Type"])
         } else {
             log.debug("No content-length received. Treating entity as non existent!")
         }
@@ -171,10 +186,6 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
 
 class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(context) {
 
-    private val log = LoggerFactory.getLogger("HTTP")
-
-    private var entityStream: InputStream? = null
-
     fun status(statusCode : StatusCode): DefaultIncomingHttpResponse {
         this.statusCode = statusCode
         return this
@@ -191,36 +202,8 @@ class DefaultIncomingHttpResponse(context: HttpContext) : DefaultHttpResponse(co
         return this
     }
 
-    fun entity(entity: ByteArray): DefaultIncomingHttpResponse {
-        header("Content-Length", entity.size.toString())
-        if (!hasHeader("Content-Type")) {
-            header("Content-Type", "text/plain")
-        }
-        this.entity = entity
-        return this
-    }
 
-    fun entity(inputStream: InputStream): DefaultIncomingHttpResponse {
-        if (!hasHeader("Content-Type")) {
-            header("Content-Type", "text/plain")
-        }
-        this.entityStream = inputStream
-        return this
-    }
-
-    override fun responseBytes(): ByteArray {
-        if (request().method().equals("HEAD", ignoreCase = true)) {
-            return byteArrayOf()
-        } else if (entity.isEmpty() && entityStream != null) {
-            try {
-                this.entity = IOUtils.toByteArray(entityStream!!)
-            } catch (e: IOException) {
-                log.warn("Could not read resource", e)
-            }
-
-        }
-        return entity
-    }
+    override fun responseBytes(): ByteArray = entity?.getBytes() ?: byteArrayOf()
 
     fun cookie(cookie: HttpCookie): DefaultIncomingHttpResponse {
         cookies[cookie.name] = cookie

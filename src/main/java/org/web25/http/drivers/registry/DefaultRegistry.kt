@@ -3,7 +3,10 @@ package org.web25.http.drivers.registry
 import org.web25.http.HttpEntity
 import org.web25.http.HttpRegistry
 import org.web25.http.HttpSerializer
+import org.web25.http.entities.ByteArrayEntity
 import org.web25.http.serializer.ByteArraySerializer
+import org.web25.http.serializer.JsonSerializer
+import org.web25.http.serializer.StringSerializer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 
@@ -20,7 +23,12 @@ class DefaultRegistry: HttpRegistry {
      * Adds the default serializers for common entities
      */
     init {
-
+        addSerializer(JsonSerializer())
+        addSerializer(StringSerializer())
+        addSerializer(HttpSerializer.of<ByteArray, ByteArrayEntity>(
+                { ByteArrayEntity(it) },
+                { ByteArrayEntity(it) },
+                { true }))
     }
 
     override fun addSerializer(serializer: HttpSerializer<*, *>) {

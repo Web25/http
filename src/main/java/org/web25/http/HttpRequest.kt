@@ -21,7 +21,7 @@ abstract class HttpRequest(val context : HttpContext) {
     val hasEntity: Boolean
     get() = entity != null
 
-    fun entityBytes() = entity!!.getBytes()
+    fun entityBytes() = entity?.getBytes() ?: byteArrayOf()
     fun entityString(): String {
         val entity = this.entity
         if(entity != null) {

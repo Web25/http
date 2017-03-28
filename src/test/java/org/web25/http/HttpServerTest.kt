@@ -199,8 +199,8 @@ internal class HttpServerTest {
                         response.entity(request.entityBytes())
                         true
                     })
-                    .get("/test-res", FileHandler.Companion.resource("/test.txt", true, "text/plain"))
-                    .get("/test-file", FileHandler.Companion.buffered(File("test.txt"), true, "text/plain"))
+                    .get("/test-res", FileHandler.resource("/test.txt", true, "text/plain"))
+                    .get("/test-file", FileHandler.buffered(File("test.txt"), true, "text/plain"))
                     .get("/dynamic/{path}", handler { request, response ->
                         if(request.path["path"] == "value1")
                         response.entity("Yay")

@@ -2,15 +2,19 @@ package org.web25.http.helper
 
 import org.web25.http.HttpContext
 import org.web25.http.HttpCookieStore
+import org.web25.http.HttpRegistry
 import org.web25.http.HttpResponse
 import org.web25.http.auth.Authentication
 import org.web25.http.drivers.*
+import org.web25.http.drivers.registry.DefaultRegistry
 import java.util.*
 
 /**
  * Created by felix on 6/8/16.
  */
 class DefaultHttpContext(override val cookieStore : HttpCookieStore) : HttpContext {
+
+    override val registry: HttpRegistry = DefaultRegistry()
 
     private val authentications = mutableListOf<Authentication>()
 
