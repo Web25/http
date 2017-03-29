@@ -78,7 +78,7 @@ internal class HttpCookieServerTest {
                         true
                     })
             val expiringCookieRouter = http.router()
-                    .get("/", handler { request, response ->
+                    .get("/", handler { _, response ->
                         val current = ZonedDateTime.now()
                         response.cookie(HttpCookie("correct", "correct", expires = current.plusSeconds(20)))
                         response.cookie(HttpCookie("expired", "expired", expires = current.minusSeconds(10)))
@@ -94,7 +94,7 @@ internal class HttpCookieServerTest {
                         true
                     })
             val maxAgeCookieRouter = http.router()
-                    .get("/", handler { request, response ->
+                    .get("/", handler { _, response ->
                         response.cookie(HttpCookie("correct", "correct", maxAge = 3000))
                         response.cookie(HttpCookie("expired", "expired", maxAge = -10))
                         true
@@ -109,7 +109,7 @@ internal class HttpCookieServerTest {
                         true
                     })
             val invalidCookieDomainRouter = http.router()
-                    .get("/", handler { request, response ->
+                    .get("/", handler { _, response ->
                         response.cookie(HttpCookie("correct", "correct", domain = "localhost"))
                         response.cookie(HttpCookie("incorrect", "incorrect", domain = "google.com"))
                         true
@@ -124,7 +124,7 @@ internal class HttpCookieServerTest {
                         true
                     })
             val pathScopesRouter = http.router()
-                    .get("/subpath/", handler { request, response ->
+                    .get("/subpath/", handler { _, response ->
                         response.cookie(HttpCookie("visible", "visible", path = "/pathScopes/"))
                         response.cookie("invisible", "invisible")
                         true

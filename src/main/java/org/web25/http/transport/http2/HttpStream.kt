@@ -92,7 +92,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 }
                 if (headersFrame.isEndHeaders) {
                     try {
-                        httpConnection.hpackDecoder.decode(ByteArrayInputStream(headersFrame.headerBlockFragment), { nameBytes, valueBytes, sensitive -> this.addHeader(nameBytes, valueBytes) })
+                        httpConnection.hpackDecoder.decode(ByteArrayInputStream(headersFrame.headerBlockFragment), { nameBytes, valueBytes, _ -> this.addHeader(nameBytes, valueBytes) })
                     } catch (e: IOException) {
                         log.warn("Error while decoding headers", e)
                         httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR)
@@ -134,7 +134,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                 }
                 if (httpFrame.flags.toInt() and 0x4 == 0x4) {
                     try {
-                        httpConnection.hpackDecoder.decode(ByteArrayInputStream(headerBuffer!!.toByteArray()), { nameBytes, valueBytes, sensitive -> this.addHeader(nameBytes, valueBytes) })
+                        httpConnection.hpackDecoder.decode(ByteArrayInputStream(headerBuffer!!.toByteArray()), { nameBytes, valueBytes, _ -> this.addHeader(nameBytes, valueBytes) })
                     } catch (e: IOException) {
                         log.warn("Error while decoding headers", e)
                         httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR)
@@ -193,7 +193,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                         } else {
                             if (headersFrame.isEndHeaders) {
                                 try {
-                                    httpConnection.hpackDecoder.decode(ByteArrayInputStream(headersFrame.headerBlockFragment), { nameBytes, valueBytes, sensitive -> this.addHeader(nameBytes, valueBytes) })
+                                    httpConnection.hpackDecoder.decode(ByteArrayInputStream(headersFrame.headerBlockFragment), { nameBytes, valueBytes, _ -> this.addHeader(nameBytes, valueBytes) })
                                 } catch (e: IOException) {
                                     log.warn("Error while decoding headers", e)
                                     httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR)
@@ -240,7 +240,7 @@ class HttpStream(val httpConnection: HttpConnection, val streamIdentifier: Int) 
                     }
                     if (httpFrame.flags.toInt() and 0x4 == 0x4) {
                         try {
-                            httpConnection.hpackDecoder.decode(ByteArrayInputStream(headerBuffer!!.toByteArray()), { nameBytes, valueBytes, sensitive -> this.addHeader(nameBytes, valueBytes) })
+                            httpConnection.hpackDecoder.decode(ByteArrayInputStream(headerBuffer!!.toByteArray()), { nameBytes, valueBytes, _ -> this.addHeader(nameBytes, valueBytes) })
                         } catch (e: IOException) {
                             log.warn("Error while decoding headers", e)
                             httpConnection.terminate(Constants.Http20.ErrorCodes.COMPRESION_ERROR)

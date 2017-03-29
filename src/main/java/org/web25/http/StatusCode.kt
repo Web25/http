@@ -37,8 +37,8 @@ class StatusCode private constructor(private var status: Int, private var status
     }
 
     @Contract(value = "null -> false", pure = true)
-    override fun equals(o: Any?): Boolean {
-        return o is StatusCode && o.status == status
+    override fun equals(other: Any?): Boolean {
+        return other is StatusCode && other.status == status
     }
 
     init {
