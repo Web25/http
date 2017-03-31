@@ -92,6 +92,9 @@ constructor(private val treeHandler: TreeHandler, private val sslContext: SSLCon
                 interrupt()
             } catch (e: IOException) {
                 log.warn("Socket Error", e)
+            } catch (t: Throwable) {
+                log.error("Caught unexpected exception in SSL thread", t)
+                t.printStackTrace()
             }
 
         }

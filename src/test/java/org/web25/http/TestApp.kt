@@ -2,8 +2,6 @@ package org.web25.http
 
 import org.web25.http.handlers.Handlers
 import org.web25.http.handlers.auth.CredentialProvider
-import org.web25.http.server.IncomingHttpRequest
-import org.web25.http.server.OutgoingHttpResponse
 import org.web25.http.util.handler
 import org.web25.http.util.middleware
 import java.io.File
@@ -27,18 +25,18 @@ object TestApp {
         }*/
         val http = Http()
         val cookieRouter = http.router()
-                .get("/", handler { request, response ->
+                .get("/", handler { _, response ->
                     response.cookie(HttpCookie("lang", "en-US", expires = ZonedDateTime.of(2021, 6, 9, 10, 18, 14, 0, ZoneId.of("GMT")), path = "/cookie/", domain = "localhost", secure = true,
                             httpOnly = true))
                     true
                 })
         val httpServer = http.server(8080)
-                /*.secure()
+                .secure()
                 .keyPass("test1234")
                 .keystorePass("test1234")
-                .keystore("test.keystore")*/
+                .keystore("test.keystore")
                 //.fallback(Authentication.digest("test", (uname) -> uname.equals("felix") ? new CredentialProvider.Credentials("felix", "test") : null))
-                .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/", handler { _, response ->
                     response.entity("<html>" +
                             "<head>" +
                             "<title>Web 2.5 HTTP Server</title>" +
@@ -57,7 +55,7 @@ object TestApp {
                             .header("Content-Type", "text/html")
                     true
                 })
-                .get("/webpage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/webpage", handler { _, response ->
                     response.entity("<!DOCTYPE html>" +
                             "<html>" +
                             "<head>" +
@@ -75,7 +73,7 @@ object TestApp {
                             .push("GET", "/style.css")
                     true
                 })
-                .get("/form", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/form", handler { _, response ->
                     response.entity("<html>" +
                             "<head><title>POST Form Site</title></head>" +
                             "<body>" +
@@ -90,7 +88,7 @@ object TestApp {
                             .header("Content-Type", "text/html")
                     true
                 })
-                .post("/form", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .post("/form", handler { request, response ->
                     response.entity("<html>" +
                             "<head><title>POST Form Site</title></head>" +
                             "<body>" +
@@ -105,7 +103,7 @@ object TestApp {
                             .header("Content-Type", "text/html")
                     true
                 })
-                .get("/restpage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/restpage", handler { _, response ->
                     response.entity("<html>" +
                             "<head>" +
                             "<title>REST Test Site</title>" +
@@ -127,7 +125,7 @@ object TestApp {
                             .push("GET", "/rest/time")
                     true
                 })
-                .get("/cookiepage", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/cookiepage", handler { request, response ->
                     var entity = "<html>" +
                             "<head>" +
                             "<title>Cookie Test Site</title>" +
@@ -145,7 +143,7 @@ object TestApp {
                             .header("Content-Type", "text/html")
                     true
                 })
-                .get("/style.css", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                .get("/style.css", handler { _, response ->
                     response.entity("body { background-color: black; color: white } a { color: white }")
                             .header("Content-Type", "text/css")
                     true
@@ -161,7 +159,7 @@ object TestApp {
                                 }
                             }
                         }))
-                        .get("/", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                        .get("/", handler { _, response ->
                             response.entity("<body>" +
                                     "<p>This is a secure site!</p>" +
                                     "<p><a href=\"/\">Back</a></p>" +
@@ -171,8 +169,8 @@ object TestApp {
                         })
                 )
                 .use("/rest", http.router()
-                        .use(middleware { request: IncomingHttpRequest, response: OutgoingHttpResponse -> response.header("X-Replace-Env", "true")})
-                        .get("/time", handler { request: IncomingHttpRequest, response: OutgoingHttpResponse ->
+                        .use(middleware { _, response -> response.header("X-Replace-Env", "true")})
+                        .get("/time", handler { _, response ->
                             response.entity("\${{iso_datetime}}")
                                     .header("X-Replace-Env", "true")
                             true

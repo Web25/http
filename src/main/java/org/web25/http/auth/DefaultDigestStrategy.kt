@@ -123,13 +123,13 @@ class DefaultDigestStrategy(private val username: () -> String, private val pass
     }
 
     private fun removeQuotes(string: String): String {
-        var string = string
-        while (string.startsWith("\"")) {
-            string = string.substring(1)
+        var result = string
+        while (result.startsWith("\"")) {
+            result = result.substring(1)
         }
-        while (string.endsWith("\"")) {
-            string = string.substring(0, string.length - 1)
+        while (result.endsWith("\"")) {
+            result = result.substring(0, result.length - 1)
         }
-        return string
+        return result
     }
 }

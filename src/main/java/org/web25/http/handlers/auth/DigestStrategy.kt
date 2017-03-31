@@ -35,7 +35,7 @@ class DigestStrategy(private val realm: String, private val credentialProvider: 
         val authData = authorization.substring(authorization.indexOf(" ") + 1)
         val properties = readData(authData)
         val user = removeQuotes(properties.getProperty("username"))
-        val credentials = credentialProvider.findByUsername(user) ?: return false
+        val credentials = credentialProvider.findByUsername(user)
         val nonce = removeQuotes(properties.getProperty("nonce"))
         val nc = properties.getProperty("nc")
         if (!nonceManager.verifyAndUpdate(nonce, nc)) {
@@ -83,13 +83,13 @@ class DigestStrategy(private val realm: String, private val credentialProvider: 
     }
 
     private fun removeQuotes(string: String): String {
-        var string = string
-        while (string.startsWith("\"")) {
-            string = string.substring(1)
+        var result = string
+        while (result.startsWith("\"")) {
+            result = result.substring(1)
         }
-        while (string.endsWith("\"")) {
-            string = string.substring(0, string.length - 1)
+        while (result.endsWith("\"")) {
+            result = result.substring(0, result.length - 1)
         }
-        return string
+        return result
     }
 }

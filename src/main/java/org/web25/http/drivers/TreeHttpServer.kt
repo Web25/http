@@ -29,13 +29,13 @@ open class TreeHttpServer(var port: Int, protected var ssl: Boolean, val context
     val httpPath = HttpPath("/")
 
     init {
-        use(middleware { req: IncomingHttpRequest, res: OutgoingHttpResponse -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) })
+        use(middleware { _, res -> res.header("Date", ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.RFC_1123_DATE_TIME)) })
     }
 
     constructor(configurator: Configurator, context: HttpContext) : this(configurator.getInt("port"), configurator.getBoolean("ssl"), context)
 
     override fun start(): HttpServer {
-        fallback(handler { req: IncomingHttpRequest, res: OutgoingHttpResponse ->
+        fallback(handler { req, res ->
             res.status(StatusCode.NOT_FOUND)
             res.entity("Could not find resource at " + req.method().toUpperCase() + " " + req.path())
             true

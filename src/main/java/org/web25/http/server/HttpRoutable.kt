@@ -81,19 +81,19 @@ interface HttpRoutable<T: HttpRoutable<T>> {
     companion object {
 
         fun joinPaths(path1: String?, path2: String?): String {
-            var path1 = path1
-            var path2 = path2
-            if (path1 == null) {
-                path1 = ""
-            } else if (path1.endsWith("/")) {
-                path1 = path1.substring(0, path1.length - 1)
+            var left = path1
+            var right = path2
+            if (left == null) {
+                left = ""
+            } else if (left.endsWith("/")) {
+                left = left.substring(0, left.length - 1)
             }
-            if (path2 == null) {
-                path2 = ""
-            } else if (path2.startsWith("/")) {
-                path2 = path2.substring(1)
+            if (right == null) {
+                right = ""
+            } else if (right.startsWith("/")) {
+                right = right.substring(1)
             }
-            return arrayOf(path1, path2).joinToString("/")
+            return arrayOf(left, right).joinToString("/")
         }
     }
 
