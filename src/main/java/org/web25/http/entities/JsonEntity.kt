@@ -1,4 +1,4 @@
-package org.web25.http.serializer
+package org.web25.http.entities
 
 import com.google.gson.JsonElement
 import org.web25.http.entities.BufferedEntity

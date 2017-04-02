@@ -3,6 +3,7 @@ package org.web25.http.serializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import org.web25.http.HttpSerializer
+import org.web25.http.entities.JsonEntity
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 
@@ -21,6 +22,6 @@ class JsonSerializer: HttpSerializer<JsonElement, JsonEntity> {
         return JsonEntity(jsonParser.parse(InputStreamReader(ByteArrayInputStream(data))))
     }
 
-    override fun supportsContentType(contentType: String): Boolean = contentType == "application/json"
+    override fun supportsContentType(contentType: String): Boolean = contentType.startsWith("application/json")
 }
 

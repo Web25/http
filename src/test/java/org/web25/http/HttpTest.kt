@@ -9,7 +9,7 @@ import org.web25.http.auth.Authentication
 /**
  * Created by felix on 1/19/16.
  */
-internal class HttpTest {
+class HttpTest {
 
     val http = Http()
     val parser = JsonParser()

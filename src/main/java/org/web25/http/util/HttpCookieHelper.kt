@@ -61,7 +61,7 @@ object HttpCookieHelper {
                     attributeName.equals(other = "max-age", ignoreCase = true) -> {
                         if(attributeValue.isEmpty())
                             throw HttpCookieException("Invalid Cookie. Max-Age attribute is empty")
-                        cookie.maxAge = attributeValue.toLong()
+                        cookie.maxAge = attributeValue.toDouble().toLong()
                     }
                     attributeName.equals(other = "domain", ignoreCase = true) -> {
                         if(attributeValue.isEmpty())
