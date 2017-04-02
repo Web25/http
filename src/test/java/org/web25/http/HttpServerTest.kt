@@ -162,7 +162,7 @@ internal class HttpServerTest {
         fun setUp() {
             val http = Http()
             val router = http.router()
-                    .get("/default", handler { req, res ->
+                    .get("/default", handler { _, res ->
                         res.entity("body, html {font-family: \"Arial\";}")
                         res.header("Content-Type", "text/css")
                         true
@@ -170,13 +170,13 @@ internal class HttpServerTest {
             val authRouter = http.router()
                     .use("/basic", http.router()
                             .use(org.web25.http.handlers.Authentication.basic("Basic_Authentication_Realm", credentialProvider))
-                            .get("/", handler { request, response ->
+                            .get("/", handler { _, response ->
                                 response.entity("Did it!")
                                 true
                             })
                     ).use("/digest", http.router()
                     .use(org.web25.http.handlers.Authentication.digest("Digest_Authentication_Realm", credentialProvider))
-                    .get("/", handler { request, response ->
+                    .get("/", handler { _, response ->
                         response.entity("Did it!")
                         true
                     })
@@ -191,7 +191,7 @@ internal class HttpServerTest {
                         true
                     })
             httpServer = http.server(8080)
-                    .get("/", handler { request, response ->
+                    .get("/", handler { _, response ->
                         response.entity("Did it!")
                         true
                     })

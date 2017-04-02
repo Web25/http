@@ -9,9 +9,7 @@ import org.web25.http.transport.http2.HttpUtil
 /**
  * Created by felix on 9/18/16.
  */
-class RstStreamFrame @JvmOverloads constructor(settings: HttpSettings, errorCode: Int = Constants.Http20.ErrorCodes.NO_ERROR) : HttpFrame(settings) {
-
-    var errorCode: Int = 0
+class RstStreamFrame @JvmOverloads constructor(settings: HttpSettings, var errorCode: Int = Constants.Http20.ErrorCodes.NO_ERROR) : HttpFrame(settings) {
 
     init {
         type = Constants.Http20.FrameType.RST_STREAM

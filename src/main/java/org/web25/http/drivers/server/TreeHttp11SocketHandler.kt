@@ -6,8 +6,6 @@ import org.web25.http.HttpTransport
 import org.web25.http.StatusCode
 import org.web25.http.drivers.push.PushableHttpResponse
 import org.web25.http.drivers.treehandler.TreeHandler
-import org.web25.http.helper.HttpHelper
-import org.web25.http.helper.HttpSocketOptions
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.Socket
@@ -36,15 +34,10 @@ class TreeHttp11SocketHandler(private val treeHandler: TreeHandler, val context 
 
         while (run) {
             try {
-                HttpHelper.get().add(HttpSocketOptions())
                 log.debug("Reading request")
                 val httpRequest = transport.readRequest(socket.inputStream)
                 val response = PushableHttpResponse(httpRequest, context)
                 val start = System.currentTimeMillis()
-                HttpHelper.remote(socket.remoteSocketAddress)
-                HttpHelper.request(httpRequest)
-                HttpHelper.response(response)
-                HttpHelper.get().add(socket)
                 log.debug("Handling request")
                 treeHandler.handle(httpRequest, response)
                 log.debug("Request handled!")
@@ -62,14 +55,13 @@ class TreeHttp11SocketHandler(private val treeHandler: TreeHandler, val context 
                 log.debug("Writing {} bytes to {}", byteArrayOutputStream.size(), socket.remoteSocketAddress.toString())
                 byteArrayOutputStream.writeTo(socket.outputStream)
                 socket.outputStream.flush()
-                val httpSocketOptions = HttpHelper.get().getFirst<HttpSocketOptions>(HttpSocketOptions::class.java).get()
+                val httpSocketOptions = httpRequest.httpSocketOptions
                 if (httpSocketOptions.isClose)
                     socket.close()
                 if (httpSocketOptions.hasHandledCallback()) {
                     httpSocketOptions.callHandledCallback()
                 }
                 log.info("Took {} ms to handle request", System.currentTimeMillis() - start)
-                HttpHelper.get().reset()
             } catch (e: SSLHandshakeException) {
                 log.warn("Error during handshake", e)
                 run = false

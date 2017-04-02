@@ -12,15 +12,15 @@ class TreeHttpRouterTest {
     @Test
     fun testTree() {
         val router = TreeHttpRouter()
-        router.get("/hello", handler { request, response -> response.entity("Hello World"); true })
-        router.get("/hello/world", handler { request, response -> response.entity("Another Hello World"); true })
-        router.get("/", handler { request, response -> response.entity("Index"); true })
-        router.use(middleware { request, response ->
+        router.get("/hello", handler { _, response -> response.entity("Hello World"); true })
+        router.get("/hello/world", handler { _, response -> response.entity("Another Hello World"); true })
+        router.get("/", handler { _, response -> response.entity("Index"); true })
+        router.use(middleware { request, _ ->
             println(request.requestLine())
         })
         val externalRouter = TreeHttpRouter()
-        externalRouter.get("/", handler { request, response -> response.entity("External stuff"); true })
-        externalRouter.get("/hello/", handler { request, response -> response.entity("Another hello from ext"); true })
+        externalRouter.get("/", handler { _, response -> response.entity("External stuff"); true })
+        externalRouter.get("/hello/", handler { _, response -> response.entity("Another hello from ext"); true })
         router.use("/ext/", externalRouter)
         router.nop()
     }
