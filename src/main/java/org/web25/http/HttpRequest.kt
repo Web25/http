@@ -3,6 +3,8 @@ package org.web25.http
 import org.web25.http.drivers.Driver
 import org.web25.http.entities.AbstractStringableEntity
 import org.web25.http.path.HttpPath
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 /**
  * Created by felix on 9/10/15.
@@ -16,7 +18,11 @@ abstract class HttpRequest(val context : HttpContext) {
     val cookies = CookieList()
     val headers = HeaderList()
 
-    abstract val query: MutableMap<String, Any>
+    val query: MutableMap<String, Any> by object : ReadOnlyProperty<HttpRequest, MutableMap<String, Any>>  {
+
+        override fun getValue(thisRef: HttpRequest, property: KProperty<*>): MutableMap<String, Any> = path.query
+
+    }
 
     val hasEntity: Boolean
     get() = entity != null

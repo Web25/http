@@ -11,14 +11,11 @@ import java.io.IOException
 import java.io.OutputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
 
 /**
  * Created by felix on 9/11/15.
  */
 open class DefaultHttpRequest(context : HttpContext) : OutgoingHttpRequest(context) {
-
-    override val query: MutableMap<String, Any> = TreeMap()
 
     private val log = LoggerFactory.getLogger("HTTP")
 

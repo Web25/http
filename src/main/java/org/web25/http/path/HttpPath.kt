@@ -12,13 +12,14 @@ class HttpPath private constructor(internal var endsWithSlash: Boolean) {
     private val onPathPrepended = mutableListOf<(HttpPath) -> Unit>()
     private var listening = false
 
+    val query: MutableMap<String, Any> = mutableMapOf()
 
-    constructor(path: String): this(path.endsWith("/") && path != "/") {
+    constructor(path: String): this((path.endsWith("/") || (path.contains("?") && path[path.indexOf("?") - 1] == '/')) && path != "/") {
         populateSegments(path)
     }
 
     private fun populateSegments(path: String) {
-        val parts = splitPath(path)
+        val (parts, query) = splitPath(path)
         parts.forEach {
             if(it.startsWith("{") && it.endsWith("}")) {
                 segments.add(DynamicSegment(it.substring(1, it.lastIndex), map, this))
@@ -27,6 +28,11 @@ class HttpPath private constructor(internal var endsWithSlash: Boolean) {
             } else {
                 segments.add(StaticSegment(it, this))
             }
+        }
+        query.forEach {
+            val name = with(it) { substring(0, indexOf('=')) }
+            val value = with(it) { substring(indexOf('=') + 1) }
+            this.query[name] = value
         }
     }
 
@@ -51,7 +57,7 @@ class HttpPath private constructor(internal var endsWithSlash: Boolean) {
     }
 
     fun matches(path: String): Boolean {
-        val parts = splitPath(path)
+        val (parts, _) = splitPath(path)
         if(parts.size != segments.size)
             return false
         if(endsWithSlash != (path.endsWith("/") && path != "/"))         // TODO remove this to make /api/users/ equal to /api/users
@@ -78,7 +84,7 @@ class HttpPath private constructor(internal var endsWithSlash: Boolean) {
             throw RuntimeException("Invalid path supplied")
         }
         httpPath.prependPath(this)
-        val parts = splitPath(path)
+        val (parts, _) = splitPath(path)
         segments.forEachIndexed { i, segment ->
             if(segment is DynamicSegment) {
                 httpPath.map[segment.key] = parts[i]
@@ -86,28 +92,36 @@ class HttpPath private constructor(internal var endsWithSlash: Boolean) {
         }
     }
 
-    fun buildActualPath(): String {
-        return segments.map(PathSegment::render).joinToString(separator = "/", prefix = "/", postfix = if(endsWithSlash) "/" else "")
+    fun requestPath(): String {
+        return segments.map(PathSegment::render).joinToString(separator = "/", prefix = "/", postfix = if(endsWithSlash) "/" else "") +
+                if(query.isNotEmpty()) {
+                    query.map {
+                        it.key + "=" + it.value
+                    }.joinToString(separator = "&", prefix = "?")
+                } else ""
     }
 
     fun buildOriginalPath(): String {
         return segments.map(PathSegment::originalRender).joinToString(separator = "/", prefix = "/", postfix = if(endsWithSlash) "/" else "")
     }
 
-    operator fun invoke(): String = buildActualPath()
+    operator fun invoke(): String = requestPath()
 
-    private fun splitPath(path: String): List<String> {
-        var finalPath = path
-        if(finalPath.startsWith("/")) {
-            finalPath = finalPath.substring(1)
+    private fun splitPath(path: String): Pair<List<String>, List<String>> {
+        val hasQuery = path.contains("?")
+        var segmentPath = if(hasQuery) path.substring(0, path.indexOf("?")) else path
+        if(segmentPath.startsWith("/")) {
+            segmentPath = segmentPath.substring(1)
         }
-        if(finalPath.endsWith("/")) {
-            finalPath = finalPath.substring(0, finalPath.lastIndex)
+        if(segmentPath.endsWith("/")) {
+            segmentPath = segmentPath.substring(0, segmentPath.lastIndex)
         }
-        return if(finalPath == "") listOf() else finalPath.split("/")
+        val segments = if(segmentPath == "") listOf() else segmentPath.split("/")
+        val query = if(!hasQuery) listOf() else path.substring(path.indexOf('?') + 1).split("&")
+        return Pair(segments, query)
     }
 
-    override fun toString() = buildActualPath()
+    override fun toString() = requestPath()
 
     fun forEach(function: (PathSegment) -> Unit) = segments.forEach(function)
 

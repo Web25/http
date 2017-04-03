@@ -13,11 +13,11 @@ internal class HttpPathTest {
     internal fun testPathCreation() {
         val path = HttpPath("/{action}/{userId}")
         assertThrows<KotlinNullPointerException>(KotlinNullPointerException::class.java, {
-            path.buildActualPath()
+            path.requestPath()
         })
         path["action"] = "show"
         path["userId"] = "12"
-        assertEquals("/show/12", path.buildActualPath())
+        assertEquals("/show/12", path.requestPath())
     }
 
     @Test
@@ -49,5 +49,20 @@ internal class HttpPathTest {
         val reqPath = userActionPath.match("/rest/api/users/12/show/")
         assertEquals("show", reqPath["action"])
         assertEquals("12", reqPath["userId"])
+    }
+
+    @Test
+    fun testQuery() {
+        val basePath = HttpPath("/test/query/?anotherTest=abc")
+        basePath.query["test"] = true
+        assertEquals("/test/query/?anotherTest=abc&test=true", basePath.requestPath())
+    }
+
+    @Test
+    fun testRequestQuery() {
+        val http = Http()
+        val req = http.get("http://example.org/test/query/")
+        req.query["test"] = "true"
+        assertEquals("/test/query/?test=true", req.path.requestPath())
     }
 }

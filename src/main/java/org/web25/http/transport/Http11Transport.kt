@@ -19,14 +19,7 @@ class Http11Transport(val context : HttpContext) : org.web25.http.HttpTransport 
 
     override fun write(httpRequest: OutgoingHttpRequest, outputStream: OutputStream) {
         val output = PrintStream(outputStream)
-        var path = httpRequest.path.buildActualPath()
-        if(!httpRequest.query.isEmpty()){
-            path += "?"
-            httpRequest.query.forEach { entry ->
-                path += entry.key+"="+entry.value+"&"
-            }
-            path = path.dropLast(1) //last character will be a '&' otherwise
-        }
+        val path = httpRequest.path.requestPath()
         output.printf("%s %s %s\r\n", httpRequest.method().toUpperCase(), path, "HTTP/1.1")
         context.cookieStore.findCookies(httpRequest)
         val entity = httpRequest.entity
